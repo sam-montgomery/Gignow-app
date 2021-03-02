@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "798610644113",
+    "project_id": "gignow-402c6",
+    "storage_bucket": "gignow-402c6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798610644113:android:d2cf9f3d37c3718908b330",
+        "android_client_info": {
+          "package_name": "com.toomanyronans.gignow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "798610644113-nufvcet44cen93th880kon6mao4l8f6o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHWuGAwzTXX-Q9XDvDrIR8XkMepurVqgg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "798610644113-nufvcet44cen93th880kon6mao4l8f6o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
