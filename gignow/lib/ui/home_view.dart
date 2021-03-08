@@ -15,19 +15,6 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    // return Material(
-    //   child: Center(
-    //     child: Text("Home View"),
-    //   ),
-    // );
-    return Scaffold(
-      body: FutureBuilder(
-          future: firebaseService.getProfile(auth.currentUser.uid),
-          builder: (context, snapshot) {
-            return snapshot.hasData
-                ? Text(snapshot.data.toString())
-                : CircularProgressIndicator();
-          }),
-    );
+    return firebaseService.getFirstView(auth.currentUser.uid);
   }
 }
