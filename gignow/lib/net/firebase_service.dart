@@ -58,14 +58,16 @@ class FirebaseService {
     });
   }
 
-  void createArtistProfile(
-      String firstName, String lastName, String phone, String genres) {
+  void createArtistProfile(String firstName, String lastName, String phone,
+      String genres, String profilePictureUrl) {
     final user = auth.currentUser;
     firestoreInstance.collection("Artists").doc(auth.currentUser.uid).set({
       "userUid": user.uid,
       "firstName": firstName,
       "lastName": lastName,
-      "genres": genres
+      "phoneNumber": phone,
+      "genres": genres,
+      "profile_picture_url": profilePictureUrl
     });
   }
 
