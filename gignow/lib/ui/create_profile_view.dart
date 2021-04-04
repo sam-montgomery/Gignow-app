@@ -25,6 +25,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
   TextEditingController _venueNameField = TextEditingController();
   TextEditingController _phoneField = TextEditingController();
   TextEditingController _genreField = TextEditingController();
+  TextEditingController _spotifyField = TextEditingController();
   //   Column CreateVenueColumn() {
   //     return Column(
   //       children: [
@@ -74,8 +75,13 @@ class _CreateProfileViewState extends State<CreateProfileView> {
     taskSnapshot.ref.getDownloadURL().then(
       (value) {
         print("Done: $value");
-        firebaseService.createArtistProfile(_firstNameField.text,
-            _lastNameField.text, _phoneField.text, _genreField.text, value);
+        firebaseService.createArtistProfile(
+            _firstNameField.text,
+            _lastNameField.text,
+            _phoneField.text,
+            _genreField.text,
+            value,
+            _spotifyField.text);
       },
     );
     Navigator.pushAndRemoveUntil(
@@ -217,6 +223,29 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                               hintText: 'Pop, Rock, etc.',
                               labelText:
                                   'Genres (Seperate Each Genre With A Comma)',
+                              labelStyle: TextStyle(
+                                color: Colors.blue,
+                              )),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: _spotifyField,
+                          decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              hintText: '2M9ro2krNb7nr7HSprkEgo',
+                              labelText:
+                                  'Spotify Track Code (Spotify Song to Appear on Profile)',
                               labelStyle: TextStyle(
                                 color: Colors.blue,
                               )),

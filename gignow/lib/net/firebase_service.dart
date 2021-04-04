@@ -59,7 +59,7 @@ class FirebaseService {
   }
 
   void createArtistProfile(String firstName, String lastName, String phone,
-      String genres, String profilePictureUrl) {
+      String genres, String profilePictureUrl, String spotifyCode) {
     final user = auth.currentUser;
     firestoreInstance.collection("Artists").doc(auth.currentUser.uid).set({
       "userUid": user.uid,
@@ -67,7 +67,8 @@ class FirebaseService {
       "lastName": lastName,
       "phoneNumber": phone,
       "genres": genres,
-      "profile_picture_url": profilePictureUrl
+      "profile_picture_url": profilePictureUrl,
+      "spotifyHighlightTrackCode": spotifyCode
     });
   }
 

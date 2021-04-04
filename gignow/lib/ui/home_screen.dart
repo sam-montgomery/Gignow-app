@@ -1,9 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:webview_flutter/webview_flutter.dart';
 
 //Profile UI https://medium.com/@palmeiro.leonardo/simple-profile-screen-with-flutter-fe2f1f7cfaf5
 class HomeScreen extends StatefulWidget {
@@ -75,6 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.white,
                   ),
                 ),
+                Expanded(
+                  child: Center(
+                    child: Container(
+                      child: spotifySnippet(
+                          widget.profile["spotifyHighlightTrackCode"]),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -169,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Divider(),
+                //spotifySnippet(widget.profile["spotifyHighlightTrackCode"])
                 // ListTile(
                 //   title: Text(
                 //     'Linkedin',
@@ -190,6 +202,35 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
+    );
+  }
+
+  WebView spotifySnippet(String trackCode) {
+    String html = """<!DOCTYPE html>
+          <html>
+                                                
+        <div class="embed-youtube">
+         <iframe src="https://open.spotify.com/embed/track/$trackCode" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe></div>
+          </body>                                    
+        </html>
+    """;
+    final Completer<WebViewController> _controller =
+        Completer<WebViewController>();
+    final String contentBase64 =
+        base64Encode(const Utf8Encoder().convert(html));
+    return WebView(
+      initialUrl: 'data:text/html;base64,$contentBase64',
+      javascriptMode: JavascriptMode.unrestricted,
+      onWebViewCreated: (WebViewController webViewController) {
+        _controller.complete(webViewController);
+      },
+      onPageStarted: (String url) {
+        print('Page started loading: $url');
+      },
+      onPageFinished: (String url) {
+        print('Page finished loading: $url');
+      },
+      gestureNavigationEnabled: true,
     );
   }
 
