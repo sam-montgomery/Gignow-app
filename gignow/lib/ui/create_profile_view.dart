@@ -26,6 +26,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
   TextEditingController _phoneField = TextEditingController();
   TextEditingController _genreField = TextEditingController();
   TextEditingController _spotifyField = TextEditingController();
+  TextEditingController _socialField = TextEditingController();
   //   Column CreateVenueColumn() {
   //     return Column(
   //       children: [
@@ -96,13 +97,18 @@ class _CreateProfileViewState extends State<CreateProfileView> {
     taskSnapshot.ref.getDownloadURL().then(
       (value) {
         print("Done: $value");
-        firebaseService.createArtistProfile(
-            _firstNameField.text,
-            _lastNameField.text,
-            _phoneField.text,
-            _genreField.text,
-            value,
-            _spotifyField.text);
+        if (_accountType == "Venue") {
+          firebaseService.createVenueProfile(_venueNameField.text,
+              _phoneField.text, _genreField.text, value, _socialField.text);
+        } else if (_accountType == "Artist") {
+          firebaseService.createArtistProfile(
+              _firstNameField.text,
+              _lastNameField.text,
+              _phoneField.text,
+              _genreField.text,
+              value,
+              _spotifyField.text);
+        }
       },
     );
     Navigator.pushAndRemoveUntil(
@@ -131,6 +137,9 @@ class _CreateProfileViewState extends State<CreateProfileView> {
       ),
       body: Column(
         children: [
+          Row(
+            children: [],
+          ),
           Text("Account Type:"),
           ListTile(
             title: const Text('Artist'),
@@ -311,6 +320,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
+                          controller: _venueNameField,
                           decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
                                 borderRadius:
@@ -332,6 +342,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
+                          controller: _phoneField,
                           decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
                                 borderRadius:
@@ -344,6 +355,52 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                                 borderSide: BorderSide(color: Colors.grey),
                               ),
                               labelText: 'Phone Number',
+                              labelStyle: TextStyle(
+                                color: Colors.blue,
+                              )),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: _genreField,
+                          decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              hintText: 'Pop, Rock, etc.',
+                              labelText:
+                                  'Genres (Seperate Each Genre With A Comma)',
+                              labelStyle: TextStyle(
+                                color: Colors.blue,
+                              )),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: _socialField,
+                          decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              hintText: 'www.fb.com etc.',
+                              labelText:
+                                  'Social Media Links (Seperate Each Link With A Comma)',
                               labelStyle: TextStyle(
                                 color: Colors.blue,
                               )),
@@ -372,11 +429,8 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                         ),
                         child: MaterialButton(
                           onPressed: () {
-                            //uploadImageToFirebase(context);
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return HomeView();
-                            }));
+                            createProfileAndUploadImageToFirebase(
+                                context, firebaseUser.uid);
                           },
                           child: Text("Create Profile"),
                         ),

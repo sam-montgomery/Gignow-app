@@ -22,8 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool venue = (widget.profile['venueName'] != null ? true : false);
     String firstName = widget.profile['firstName'];
     String lastName = widget.profile['lastName'];
+    String venueName = widget.profile['venueName'];
     return Scaffold(
       appBar: AppBar(
         title: Text("Your Profile"),
@@ -76,14 +78,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 10,
                 ),
-                Text(
-                  '$firstName $lastName',
-                  style: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                venue
+                    ? Text(
+                        '$venueName',
+                        style: TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        '$firstName $lastName',
+                        style: TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                 Expanded(
                   child: Center(
                     child: Container(
@@ -91,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           widget.profile["spotifyHighlightTrackCode"]),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -185,6 +196,39 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                venue
+                    ? ListTile(
+                        title: Text(
+                          'Genres',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          widget.profile['genres'],
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      )
+                    : ListTile(
+                        title: Text(
+                          'Genres',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          widget.profile['genres'],
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
                 Divider(),
                 //spotifySnippet(widget.profile["spotifyHighlightTrackCode"])
                 // ListTile(

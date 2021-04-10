@@ -11,6 +11,7 @@ class FirebaseService {
   final FirebaseAuth auth = FirebaseAuth.instance;
   CollectionReference artists =
       FirebaseFirestore.instance.collection('Artists');
+  CollectionReference venues = FirebaseFirestore.instance.collection('Venues');
 
   Future getDocSnap(String uid) {
     artists.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
@@ -24,6 +25,35 @@ class FirebaseService {
   FutureBuilder<DocumentSnapshot> getFirstView(String uid) {
     return FutureBuilder<DocumentSnapshot>(
         future: artists.doc(uid).get(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          try {
+            if (snapshot.hasError) {
+              return Loading();
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              try {
+                Map<String, dynamic> data = snapshot.data.data();
+                if (data != null) {
+                  return HomeScreen(data);
+                } else {
+                  return getFirstVenueView(uid);
+                }
+              } catch (e) {
+                return Loading();
+              }
+            }
+
+            return Loading();
+          } catch (e) {
+            return Loading();
+          }
+        });
+  }
+
+  FutureBuilder<DocumentSnapshot> getFirstVenueView(String uid) {
+    return FutureBuilder<DocumentSnapshot>(
+        future: venues.doc(uid).get(),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           try {
@@ -51,8 +81,15 @@ class FirebaseService {
         });
   }
 
-  Map<String, dynamic> getProfile(String uid) {
+  Map<String, dynamic> getArtistProfile(String uid) {
     firestoreInstance.collection("Artists").doc(uid).get().then((value) {
+      print(value.data());
+      return (value.data());
+    });
+  }
+
+  Map<String, dynamic> getVenueProfile(String uid) {
+    firestoreInstance.collection("Venues").doc(uid).get().then((value) {
       print(value.data());
       return (value.data());
     });
@@ -69,6 +106,19 @@ class FirebaseService {
       "genres": genres,
       "profile_picture_url": profilePictureUrl,
       "spotifyHighlightTrackCode": spotifyCode
+    });
+  }
+
+  void createVenueProfile(String venueName, String phone, String genres,
+      String profilePictureUrl, String socials) {
+    final user = auth.currentUser;
+    firestoreInstance.collection("Venues").doc(auth.currentUser.uid).set({
+      "userUid": user.uid,
+      "venueName": venueName,
+      "phoneNumber": phone,
+      "genres": genres,
+      "profile_picture_url": profilePictureUrl,
+      "socials": socials
     });
   }
 
