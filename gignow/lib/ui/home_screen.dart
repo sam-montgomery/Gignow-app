@@ -37,6 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/chat');
+        },
+        child: Text("Chat"),
+      ),
       body: ListView(
         children: <Widget>[
           Container(

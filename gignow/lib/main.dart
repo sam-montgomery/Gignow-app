@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/ui/authentication.dart';
+import 'package:gignow/ui/chats/chats_screen.dart';
 import 'package:gignow/ui/embed_html.dart';
 import 'package:gignow/ui/home_view.dart';
 import 'package:provider/provider.dart';
@@ -24,10 +25,10 @@ class MyApp extends StatelessWidget {
             create: (context) =>
                 context.read<AuthenticationService>().authStateChanges),
       ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        home: AuthenticationWrapper(),
-      ),
+      child: MaterialApp(title: 'Flutter Demo', initialRoute: '/', routes: {
+        '/': (context) => AuthenticationWrapper(),
+        '/chat': (context) => ChatsScreen()
+      }),
     );
   }
 }
