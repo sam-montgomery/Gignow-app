@@ -48,7 +48,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
   FirebaseService firebaseService = FirebaseService();
 
   Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
     setState(() {
       if (pickedFile != null) {
@@ -58,6 +58,27 @@ class _CreateProfileViewState extends State<CreateProfileView> {
         print('No image selected.');
       }
     });
+  }
+
+  Future getVideo() async {
+    final pickedFile = await picker.getVideo(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      String fileName = pickedFile.path;
+      firebase_storage.Reference firebaseStorageRef = firebase_storage
+          .FirebaseStorage.instance
+          .ref()
+          .child('profile_pictures/$fileName');
+      firebase_storage.UploadTask uploadTask =
+          firebaseStorageRef.putFile(File(pickedFile.path));
+      firebase_storage.TaskSnapshot taskSnapshot =
+          await uploadTask.whenComplete(() => null);
+      taskSnapshot.ref.getDownloadURL().then((value) {
+        print("Done: $value");
+      });
+    } else {
+      print('No image selected.');
+    }
   }
 
   Future createProfileAndUploadImageToFirebase(
