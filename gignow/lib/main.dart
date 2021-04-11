@@ -5,6 +5,7 @@ import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/ui/signInOrSignUP/signin_or_signup_screen.dart';
 import 'package:gignow/ui/chats/chats_screen.dart';
 import 'package:gignow/ui/home_view.dart';
+import 'package:gignow/ui/userAccount/settings_screen.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(title: 'Flutter Demo', initialRoute: '/', routes: {
         '/': (context) => AuthenticationWrapper(),
-        '/chat': (context) => ChatsScreen()
+        '/chat': (context) => ChatsScreen(),
+        '/settings': (context) => SettingsScreen()
       }),
     );
   }

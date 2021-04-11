@@ -23,40 +23,49 @@ class UserAccountScreenState extends State<UserAccountScreen> {
   @override
   Widget build(BuildContext context) {
     bool venue = (widget.profile['venueName'] != null ? true : false);
+    bool hasUsername = (widget.profile['username'] != null ? true : false);
     String firstName = widget.profile['firstName'];
     String lastName = widget.profile['lastName'];
     String venueName = widget.profile['venueName'];
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Your Profile"),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: () => auth.signOut(),
-              child: Icon(Icons.logout),
-            ),
-          )
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/chat');
-        },
-        child: Text("Chat"),
-      ),
+      // // appBar: AppBar(
+      // //   title: Text("Your Profile"),
+      // //   actions: [
+      // //     Padding(
+      // //       padding: const EdgeInsets.only(right: 20.0),
+      // //       child: GestureDetector(
+      // //         onTap: () => auth.signOut(),
+      // //         child: Icon(Icons.logout),
+      // //       ),
+      // //     )
+      // //   ],
+      // // ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.pushNamed(context, '/chat');
+      //   },
+      //   child: Text("Chat"),
+      // ),
       body: ListView(
         children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+              child: Text(
+            hasUsername ? widget.profile["username"] : "@NoUsername",
+            style: TextStyle(fontSize: 20),
+          )),
           Container(
             height: 250,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue, Colors.blue.shade300],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: [0.5, 0.9],
-              ),
-            ),
+            // decoration: BoxDecoration(
+            //   gradient: LinearGradient(
+            //     colors: [Colors.white, Colors.blue.shade300],
+            //     begin: Alignment.centerLeft,
+            //     end: Alignment.centerRight,
+            //     stops: [0.5, 0.9],
+            //   ),
+            // ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -68,7 +77,7 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                       backgroundColor: Colors.white70,
                       minRadius: 60.0,
                       child: CircleAvatar(
-                        radius: 50.0,
+                        radius: 80.0,
                         backgroundImage:
                             NetworkImage(widget.profile["profile_picture_url"]),
                       ),
@@ -82,30 +91,60 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                     ? Text(
                         '$venueName',
                         style: TextStyle(
-                          fontSize: 35,
+                          fontSize: 25,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       )
                     : Text(
                         '$firstName $lastName',
                         style: TextStyle(
-                          fontSize: 35,
+                          fontSize: 25,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
-                Expanded(
-                  child: Center(
-                    child: Container(
-                      child: spotifySnippet(
-                          widget.profile["spotifyHighlightTrackCode"]),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Column(
+                children: [
+                  IconButton(
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/settings');
+                      }),
+                  Text("Settings")
+                ],
+              ),
+              Column(
+                children: [
+                  IconButton(
+                      icon: Icon(Icons.build, color: Colors.grey),
+                      onPressed: () {}),
+                  Text("Edit Profile")
+                ],
+              ),
+            ],
+          ),
+          Center(
+            child: Column(
+              children: [
+                IconButton(
+                    icon: Icon(Icons.camera_alt_outlined,
+                        size: 30, color: Colors.red[300]),
+                    onPressed: () {}),
+                Text("Add Media")
+              ],
+            ),
+          ),
+
           // Container(
           //   child: Row(
           //     children: <Widget>[
@@ -160,96 +199,103 @@ class UserAccountScreenState extends State<UserAccountScreen> {
           //     ],
           //   ),
           // ),
-          Container(
-            child: Column(
-              children: <Widget>[
-                ListTile(
-                  title: Text(
-                    'Phone #',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    widget.profile["phoneNumber"],
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text(
-                    'Genres',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    widget.profile['genres'],
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-                venue
-                    ? ListTile(
-                        title: Text(
-                          'Genres',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Text(
-                          widget.profile['genres'],
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      )
-                    : ListTile(
-                        title: Text(
-                          'Genres',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Text(
-                          widget.profile['genres'],
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                Divider(),
-                //spotifySnippet(widget.profile["spotifyHighlightTrackCode"])
-                // ListTile(
-                //   title: Text(
-                //     'Linkedin',
-                //     style: TextStyle(
-                //       color: Colors.blue,
-                //       fontSize: 20,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                //   subtitle: Text(
-                //     'www.linkedin.com/in/leonardo-palmeiro-834a1755',
-                //     style: TextStyle(
-                //       fontSize: 18,
-                //     ),
-                //   ),
-                // ),
-              ],
-            ),
-          )
+          // Center(
+          //   child: Container(
+          //     height: 80,
+          //     child:
+          //         spotifySnippet(widget.profile["spotifyHighlightTrackCode"]),
+          //   ),
+          // ),
+          // Container(
+          //   child: Column(
+          //     children: <Widget>[
+          //       ListTile(
+          //         title: Text(
+          //           'Phone #',
+          //           style: TextStyle(
+          //             color: Colors.blue,
+          //             fontSize: 20,
+          //             fontWeight: FontWeight.bold,
+          //           ),
+          //         ),
+          //         subtitle: Text(
+          //           widget.profile["phoneNumber"],
+          //           style: TextStyle(
+          //             fontSize: 18,
+          //           ),
+          //         ),
+          //       ),
+          //       Divider(),
+          //       ListTile(
+          //         title: Text(
+          //           'Genres',
+          //           style: TextStyle(
+          //             color: Colors.blue,
+          //             fontSize: 20,
+          //             fontWeight: FontWeight.bold,
+          //           ),
+          //         ),
+          //         subtitle: Text(
+          //           widget.profile['genres'],
+          //           style: TextStyle(
+          //             fontSize: 18,
+          //           ),
+          //         ),
+          //       ),
+          //       venue
+          //           ? ListTile(
+          //               title: Text(
+          //                 'Genres',
+          //                 style: TextStyle(
+          //                   color: Colors.blue,
+          //                   fontSize: 20,
+          //                   fontWeight: FontWeight.bold,
+          //                 ),
+          //               ),
+          //               subtitle: Text(
+          //                 widget.profile['genres'],
+          //                 style: TextStyle(
+          //                   fontSize: 18,
+          //                 ),
+          //               ),
+          //             )
+          //           : ListTile(
+          //               title: Text(
+          //                 'Genres',
+          //                 style: TextStyle(
+          //                   color: Colors.blue,
+          //                   fontSize: 20,
+          //                   fontWeight: FontWeight.bold,
+          //                 ),
+          //               ),
+          //               subtitle: Text(
+          //                 widget.profile['genres'],
+          //                 style: TextStyle(
+          //                   fontSize: 18,
+          //                 ),
+          //               ),
+          //             ),
+          //       Divider(),
+          //       //spotifySnippet(widget.profile["spotifyHighlightTrackCode"])
+          //       // ListTile(
+          //       //   title: Text(
+          //       //     'Linkedin',
+          //       //     style: TextStyle(
+          //       //       color: Colors.blue,
+          //       //       fontSize: 20,
+          //       //       fontWeight: FontWeight.bold,
+          //       //     ),
+          //       //   ),
+          //       //   subtitle: Text(
+          //       //     'www.linkedin.com/in/leonardo-palmeiro-834a1755',
+          //       //     style: TextStyle(
+          //       //       fontSize: 18,
+          //       //     ),
+          //       //   ),
+          //       // ),
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );
