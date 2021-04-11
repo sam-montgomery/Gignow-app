@@ -2,9 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gignow/net/authentication_service.dart';
-import 'package:gignow/ui/authentication.dart';
+import 'package:gignow/ui/signInOrSignUP/signin_or_signup_screen.dart';
 import 'package:gignow/ui/chats/chats_screen.dart';
-import 'package:gignow/ui/embed_html.dart';
 import 'package:gignow/ui/home_view.dart';
 import 'package:provider/provider.dart';
 
@@ -41,6 +40,6 @@ class AuthenticationWrapper extends StatelessWidget {
     if (firebaseUser != null) {
       return HomeView();
     }
-    return Authentication();
+    return SignInOrSignUp();
   }
 }

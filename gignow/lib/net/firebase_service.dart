@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:gignow/ui/create_profile_view.dart';
-import 'package:gignow/ui/home_screen.dart';
+import 'package:gignow/ui/createProfile/create_profile_screen.dart';
+import 'package:gignow/ui/userAccount/user_account_screen.dart';
 import 'package:gignow/ui/loading.dart';
 
 class FirebaseService {
@@ -35,7 +35,7 @@ class FirebaseService {
               try {
                 Map<String, dynamic> data = snapshot.data.data();
                 if (data != null) {
-                  return HomeScreen(data);
+                  return UserAccountScreen(data);
                 } else {
                   return getFirstVenueView(uid);
                 }
@@ -65,9 +65,9 @@ class FirebaseService {
               try {
                 Map<String, dynamic> data = snapshot.data.data();
                 if (data != null) {
-                  return HomeScreen(data);
+                  return UserAccountScreen(data);
                 } else {
-                  return CreateProfileView();
+                  return CreateProfileScreen();
                 }
               } catch (e) {
                 return Loading();

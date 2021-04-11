@@ -9,14 +9,14 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:webview_flutter/webview_flutter.dart';
 
 //Profile UI https://medium.com/@palmeiro.leonardo/simple-profile-screen-with-flutter-fe2f1f7cfaf5
-class HomeScreen extends StatefulWidget {
+class UserAccountScreen extends StatefulWidget {
   final Map<String, dynamic> profile;
-  HomeScreen(this.profile);
+  UserAccountScreen(this.profile);
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  UserAccountScreenState createState() => UserAccountScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class UserAccountScreenState extends State<UserAccountScreen> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseService firebaseService = FirebaseService();
 

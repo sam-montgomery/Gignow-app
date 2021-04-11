@@ -4,15 +4,16 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/ui/home_view.dart';
 import 'package:provider/provider.dart';
+import 'package:gignow/constants.dart';
 
-class Authentication extends StatefulWidget {
+class SignInOrSignUp extends StatefulWidget {
   @override
-  _AuthenticationState createState() => _AuthenticationState();
+  SignInOrSignUpState createState() => SignInOrSignUpState();
 }
 
 //https://github.com/yogitakumar/loginform_validation_demo
 
-class _AuthenticationState extends State<Authentication> {
+class SignInOrSignUpState extends State<SignInOrSignUp> {
   TextEditingController _emailField = TextEditingController();
   TextEditingController _passwordField = TextEditingController();
   TextEditingController _registerPasswordField = TextEditingController();
@@ -40,7 +41,7 @@ class _AuthenticationState extends State<Authentication> {
       tag: 'hero',
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
-        radius: 48.0,
+        radius: kLogoRadius,
         child: Image.asset('assets/logo-blue-black.png'),
       ),
     );
@@ -51,8 +52,10 @@ class _AuthenticationState extends State<Authentication> {
       autofocus: false,
       decoration: InputDecoration(
         hintText: 'Email',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        contentPadding: EdgeInsets.fromLTRB(kDefaultPadding,
+            kHalfDefaultPadding, kDefaultPadding, kHalfDefaultPadding),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(kFormBorderRadius)),
       ),
       validator: MultiValidator([
         RequiredValidator(errorText: "* Required"),
@@ -60,12 +63,10 @@ class _AuthenticationState extends State<Authentication> {
       ]),
     );
     final invalidLoginLabel = Text("Invalid Login Credentials",
-        style:
-            TextStyle(backgroundColor: Colors.red[300], color: Colors.white));
+        style: TextStyle(backgroundColor: kErrorColor, color: Colors.white));
 
     final invalidRegisterLabel = Text(invalidRegisterText,
-        style:
-            TextStyle(backgroundColor: Colors.red[300], color: Colors.white));
+        style: TextStyle(backgroundColor: kErrorColor, color: Colors.white));
 
     final password = TextFormField(
       controller: _passwordField,
@@ -73,8 +74,10 @@ class _AuthenticationState extends State<Authentication> {
       obscureText: true,
       decoration: InputDecoration(
         hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        contentPadding: EdgeInsets.fromLTRB(kDefaultPadding,
+            kHalfDefaultPadding, kDefaultPadding, kHalfDefaultPadding),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(kFormBorderRadius)),
       ),
     );
 
@@ -84,8 +87,10 @@ class _AuthenticationState extends State<Authentication> {
         obscureText: true,
         decoration: InputDecoration(
           hintText: 'Password',
-          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+          contentPadding: EdgeInsets.fromLTRB(kDefaultPadding,
+              kHalfDefaultPadding, kDefaultPadding, kHalfDefaultPadding),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(kFormBorderRadius)),
         ),
         validator: MultiValidator([
           RequiredValidator(errorText: "* Required"),
@@ -96,10 +101,10 @@ class _AuthenticationState extends State<Authentication> {
         ]));
 
     final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
+      padding: EdgeInsets.symmetric(vertical: kButtonVerticalPadding),
       child: RaisedButton(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(kButtonCircularPadding),
         ),
         onPressed: () async {
           try {
@@ -119,17 +124,17 @@ class _AuthenticationState extends State<Authentication> {
             });
           }
         },
-        padding: EdgeInsets.all(12),
-        color: Colors.lightBlueAccent,
-        child: Text('Log In', style: TextStyle(color: Colors.white)),
+        padding: EdgeInsets.all(kButtonAllPadding),
+        color: kButtonBackgroundColour,
+        child: Text('Log In', style: TextStyle(color: kButtonTextColour)),
       ),
     );
 
     final registerButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
+      padding: EdgeInsets.symmetric(vertical: kButtonVerticalPadding),
       child: RaisedButton(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(kButtonCircularPadding),
         ),
         onPressed: () async {
           try {
@@ -152,16 +157,16 @@ class _AuthenticationState extends State<Authentication> {
             print(e.code);
           }
         },
-        padding: EdgeInsets.all(12),
-        color: Colors.lightBlueAccent,
-        child: Text('Register', style: TextStyle(color: Colors.white)),
+        padding: EdgeInsets.all(kButtonAllPadding),
+        color: kButtonBackgroundColour,
+        child: Text('Register', style: TextStyle(color: kButtonTextColour)),
       ),
     );
 
     final forgotLabel = FlatButton(
       child: Text(
         'Forgot password?',
-        style: TextStyle(color: Colors.black54),
+        style: TextStyle(color: kHintColor),
       ),
       onPressed: () {},
     );
@@ -169,7 +174,7 @@ class _AuthenticationState extends State<Authentication> {
     final registerLabel = FlatButton(
       child: Text(
         'No Account? Register',
-        style: TextStyle(color: Colors.black54),
+        style: TextStyle(color: kHintColor),
       ),
       onPressed: () {
         _emailField.clear();
@@ -185,7 +190,7 @@ class _AuthenticationState extends State<Authentication> {
     final signInLabel = FlatButton(
       child: Text(
         'Already Registered? Sign In',
-        style: TextStyle(color: Colors.black54),
+        style: TextStyle(color: kHintColor),
       ),
       onPressed: () {
         _emailField.clear();
@@ -199,7 +204,7 @@ class _AuthenticationState extends State<Authentication> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.blue[50],
+      backgroundColor: kBackgroundColour,
       body: Center(
         child: Form(
           autovalidate: true,

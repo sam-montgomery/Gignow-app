@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gignow/net/firebase_service.dart';
-import 'package:gignow/ui/create_profile_view.dart';
-import 'package:gignow/ui/home_screen.dart';
+import 'package:gignow/ui/createProfile/create_profile_screen.dart';
+import 'package:gignow/ui/userAccount/user_account_screen.dart';
 
 class HomeView extends StatefulWidget {
   @override

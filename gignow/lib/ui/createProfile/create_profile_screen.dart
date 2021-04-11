@@ -13,12 +13,12 @@ import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
 
-class CreateProfileView extends StatefulWidget {
+class CreateProfileScreen extends StatefulWidget {
   @override
-  _CreateProfileViewState createState() => _CreateProfileViewState();
+  CreateProfileScreenState createState() => CreateProfileScreenState();
 }
 
-class _CreateProfileViewState extends State<CreateProfileView> {
+class CreateProfileScreenState extends State<CreateProfileScreen> {
   String _accountType = "Artist";
   TextEditingController _firstNameField = TextEditingController();
   TextEditingController _lastNameField = TextEditingController();
