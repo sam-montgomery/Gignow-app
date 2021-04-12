@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gignow/model/post.dart';
 
-class VideoPost extends Post {
-  String videoURL;
+class ImagePost extends Post {
+  String imageURL;
 
-  VideoPost(String postID, String userUID, Timestamp postDate,
-      String postDescription, this.videoURL)
+  ImagePost(String postID, String userUID, Timestamp postDate,
+      String postDescription, this.imageURL)
       : super(
             postID: postID,
             userUID: userUID,

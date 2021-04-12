@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gignow/model/user.dart';
+import 'package:gignow/model/video_post.dart';
 import 'package:gignow/ui/createProfile/create_profile_screen.dart';
 import 'package:gignow/ui/userAccount/user_account_screen.dart';
 import 'package:gignow/ui/loading.dart';
@@ -12,6 +14,60 @@ class FirebaseService {
   CollectionReference artists =
       FirebaseFirestore.instance.collection('Artists');
   CollectionReference venues = FirebaseFirestore.instance.collection('Venues');
+  CollectionReference videoPosts =
+      FirebaseFirestore.instance.collection('VideoPosts');
+
+  Future<String> getProfilePicURL(String userUid) async {
+    DocumentReference docRef = artists.doc(userUid);
+    String url;
+    await docRef.get().then((snapshot) {
+      url = snapshot.get('profile_picture_url').toString();
+    });
+
+    if (url == null) {
+      docRef = venues.doc(userUid);
+      await docRef.get().then((snapshot) {
+        url = snapshot.get('profile_picture_url').toString();
+      });
+    }
+
+    return url;
+  }
+
+  Future<UserModel> getUser(String userUid) async {
+    DocumentReference docRef = artists.doc(userUid);
+    UserModel user;
+    await docRef.get().then((snapshot) {
+      if (snapshot.exists) {
+        String fullName = snapshot.get('firstName').toString() +
+            " " +
+            snapshot.get('lastName').toString();
+        user = UserModel(
+            snapshot.get('userUid').toString(),
+            fullName,
+            snapshot.get('genres').toString(),
+            snapshot.get('phoneNumber').toString(),
+            "DefaultHandler",
+            snapshot.get('profile_picture_url').toString());
+      }
+    });
+    if (user == null) {
+      docRef = venues.doc(userUid);
+      await docRef.get().then((snapshot) {
+        if (snapshot.exists) {
+          user = UserModel(
+              snapshot.get('userUid').toString(),
+              snapshot.get('venueName').toString(),
+              snapshot.get('genres').toString(),
+              snapshot.get('phoneNumber').toString(),
+              "DefaultHandler",
+              snapshot.get('profile_picture_url').toString());
+        }
+      });
+    }
+
+    return user;
+  }
 
   Future getDocSnap(String uid) {
     artists.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
@@ -109,6 +165,17 @@ class FirebaseService {
     });
   }
 
+  void createVideoPost(String email, String fullName, DateTime date,
+      String desc, String videoURL) {
+    final user = auth.currentUser;
+    firestoreInstance.collection("VideoPosts").doc().set({
+      "user": artists.doc(user.uid),
+      "postDate": date,
+      "postDescription": desc,
+      "videoURL": videoURL
+    });
+  }
+
   void createVenueProfile(String venueName, String phone, String genres,
       String profilePictureUrl, String socials) {
     final user = auth.currentUser;
@@ -132,6 +199,33 @@ class FirebaseService {
     } catch (e) {
       throw e;
     }
+  }
+
+  Future<List<VideoPost>> getVideoPosts() async {
+    List<VideoPost> posts = new List<VideoPost>();
+    var result = await videoPosts.get();
+    result.docs.forEach((element) async {
+      DocumentReference ref = element['user'];
+      String userUid = ref.id;
+      VideoPost post = VideoPost(element.id, userUid, element['postDate'],
+          element['postDescription'], element['videoURL']);
+      posts.add(post);
+    });
+    return posts;
+  }
+
+  Future<List<VideoPost>> getUsersVideoPosts(String uid) async {
+    List<VideoPost> posts = new List<VideoPost>();
+    DocumentReference userDocRef = artists.doc(uid);
+    var result = await videoPosts.where("user", isEqualTo: userDocRef).get();
+    result.docs.forEach((element) async {
+      DocumentReference ref = element['user'];
+      String userUid = ref.id;
+      VideoPost post = VideoPost(element.id, userUid, element['postDate'],
+          element['postDescription'], element['videoURL']);
+      posts.add(post);
+    });
+    return posts;
   }
 
   FirebaseService();

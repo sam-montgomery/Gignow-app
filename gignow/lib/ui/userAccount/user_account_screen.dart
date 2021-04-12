@@ -3,9 +3,13 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gignow/model/user.dart';
+import 'package:gignow/model/video_post.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:gignow/widgets/video_post_list.dart';
+import 'package:gignow/widgets/video_post_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 //Profile UI https://medium.com/@palmeiro.leonardo/simple-profile-screen-with-flutter-fe2f1f7cfaf5
@@ -22,6 +26,15 @@ class UserAccountScreenState extends State<UserAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserModel dummyUser = UserModel(
+        auth.currentUser.uid,
+        "Test Name",
+        "Pop",
+        "07889922331",
+        "@testuser",
+        "https://firebasestorage.googleapis.com/v0/b/gignow-402c6.appspot.com/o/profile_pictures%2Fprofile_picture_HouyUStDx1VIzmvH5zcrCviloow1?alt=media&token=a6310648-e9b1-4107-8b26-da5d6dce0698");
+    VideoPost dummyPost = VideoPost("1", dummyUser.uid,
+        Timestamp.fromDate(DateTime.now()), "Test Post", "videoURL");
     bool venue = (widget.profile['venueName'] != null ? true : false);
     bool hasUsername = (widget.profile['username'] != null ? true : false);
     String firstName = widget.profile['firstName'];
@@ -127,7 +140,9 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                 children: [
                   IconButton(
                       icon: Icon(Icons.build, color: Colors.grey),
-                      onPressed: () {}),
+                      onPressed: () async {
+                        firebaseService.getVideoPosts();
+                      }),
                   Text("Edit Profile")
                 ],
               ),
@@ -139,11 +154,17 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                 IconButton(
                     icon: Icon(Icons.camera_alt_outlined,
                         size: 30, color: Colors.red[300]),
-                    onPressed: () {}),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/postvideo');
+                    }),
                 Text("Add Media")
               ],
             ),
           ),
+          SizedBox(
+            height: 20,
+          ),
+          SingleChildScrollView(child: UsersVideoPostList(auth.currentUser.uid))
 
           // Container(
           //   child: Row(

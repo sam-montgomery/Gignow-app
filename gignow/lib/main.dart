@@ -8,6 +8,7 @@ import 'package:gignow/ui/signInOrSignUP/signin_or_signup_screen.dart';
 import 'package:gignow/ui/chats/chats_screen.dart';
 import 'package:gignow/ui/home_view.dart';
 import 'package:gignow/ui/userAccount/settings_screen.dart';
+import 'package:gignow/widgets/post_form.dart';
 import 'package:provider/provider.dart';
 
 import 'artist_cards/swipe_feed_page.dart';
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(title: 'Flutter Demo', initialRoute: '/', routes: {
         '/': (context) => AuthenticationWrapper(),
         '/chat': (context) => ChatsScreen(),
-        '/settings': (context) => SettingsScreen()
+        '/settings': (context) => SettingsScreen(),
+        '/postvideo': (context) => PostForm(),
       }),
     );
   }
