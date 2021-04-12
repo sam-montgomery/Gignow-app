@@ -7,41 +7,22 @@ class SwipeFeedPage extends StatefulWidget {
 }
 
 class _SwipeFeedPageState extends State<SwipeFeedPage> {
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       elevation: 0.0,
-  //       centerTitle: true,
-  //       backgroundColor: Colors.white,
-  //       leading: IconButton(
-  //           onPressed: () {}, icon: Icon(Icons.settings, color: Colors.grey)),
-  //       title: Switch(
-  //         onChanged: (bool value) => setState(() => showAlignmentCards = value),
-  //         value: showAlignmentCards,
-  //         activeColor: Colors.red,
-  //       ),
-  //       actions: <Widget>[
-  //         IconButton(
-  //             onPressed: () {},
-  //             icon: Icon(Icons.question_answer, color: Colors.grey)),
-  //       ],
-  //     ),
-  //     backgroundColor: Colors.white,
-  //     body: Column(
-  //       children: <Widget>[
-  //         showAlignmentCards
-  //             ? CardsSectionAlignment(context)
-  //             : CardsSectionAlignment(context),
-  //         buttonsRow()
-  //       ],
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+            onPressed: () {}, icon: Icon(Icons.settings, color: Colors.grey)),
+        actions: <Widget>[
+          IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.question_answer, color: Colors.grey)),
+        ],
+      ),
+      backgroundColor: Colors.white,
       body: Column(
           children: <Widget>[CardsSectionAlignment(context), buttonsRow()]),
     );
@@ -49,7 +30,7 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
 
   Widget buttonsRow() {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 100.0),
+      margin: EdgeInsets.symmetric(vertical: 60.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

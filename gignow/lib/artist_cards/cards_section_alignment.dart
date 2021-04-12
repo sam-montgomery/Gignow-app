@@ -4,8 +4,8 @@ import 'dart:math';
 
 List<Alignment> cardsAlign = [
   Alignment(0.0, 1.0),
-  Alignment(0.0, 0.8),
-  Alignment(0.0, 0.0)
+  Alignment(0.0, 1.0),
+  Alignment(0.0, 1.0)
 ];
 List<Size> cardsSize = List(3);
 
@@ -13,8 +13,8 @@ class CardsSectionAlignment extends StatefulWidget {
   CardsSectionAlignment(BuildContext context) {
     cardsSize[0] = Size(MediaQuery.of(context).size.width * 0.9,
         MediaQuery.of(context).size.height * 0.6);
-    cardsSize[1] = Size(MediaQuery.of(context).size.width * 0.85,
-        MediaQuery.of(context).size.height * 0.55);
+    cardsSize[1] = Size(MediaQuery.of(context).size.width * 0.9,
+        MediaQuery.of(context).size.height * 0.6);
     cardsSize[2] = Size(MediaQuery.of(context).size.width * 0.8,
         MediaQuery.of(context).size.height * 0.5);
   }
@@ -30,7 +30,7 @@ class _CardsSectionState extends State<CardsSectionAlignment>
   List<ProfileCardAlignment> cards = List();
   AnimationController _controller;
 
-  final Alignment defaultFrontCardAlign = Alignment(0.0, 0.0);
+  final Alignment defaultFrontCardAlign = Alignment(0.0, 1.0);
   Alignment frontCardAlign;
   double frontCardRot = 0.0;
 
