@@ -10,18 +10,20 @@ class VideoPostWidget extends StatefulWidget {
   VideoPost post;
   VideoPostWidget(this.post);
   @override
-  _VideoPostWidgetState createState() => _VideoPostWidgetState();
+  _VideoPostWidgetState createState() => _VideoPostWidgetState(post);
 }
 
 class _VideoPostWidgetState extends State<VideoPostWidget> {
+  VideoPost post;
+  _VideoPostWidgetState(this.post);
+
   VideoPlayerController _controller;
   FirebaseService firebaseService = FirebaseService();
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-        'https://firebasestorage.googleapis.com/v0/b/gignow-402c6.appspot.com/o/videos%2Fvideo-2021-04-11%2019%3A30%3A22.819498?alt=media&token=92e04c07-2908-48b2-9ca0-8a9d9bdca21a');
+    _controller = VideoPlayerController.network(post.videoURL);
     _controller.addListener(() {
       setState(() {});
     });
@@ -32,7 +34,7 @@ class _VideoPostWidgetState extends State<VideoPostWidget> {
 
   @override
   Widget build(BuildContext context) {
-    VideoPost post = widget.post;
+    //VideoPost post = widget.post;
 
     return Container(
         child: FutureBuilder<UserModel>(

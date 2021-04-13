@@ -39,15 +39,13 @@ class FirebaseService {
     UserModel user;
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
-        String fullName = snapshot.get('firstName').toString() +
-            " " +
-            snapshot.get('lastName').toString();
+        String fullName = snapshot.get('name').toString();
         user = UserModel(
             snapshot.get('userUid').toString(),
             fullName,
             snapshot.get('genres').toString(),
             snapshot.get('phoneNumber').toString(),
-            "DefaultHandler",
+            snapshot.get('handle').toString(),
             snapshot.get('profile_picture_url').toString());
       }
     });
@@ -60,7 +58,7 @@ class FirebaseService {
               snapshot.get('venueName').toString(),
               snapshot.get('genres').toString(),
               snapshot.get('phoneNumber').toString(),
-              "DefaultHandler",
+              snapshot.get('handle').toString(),
               snapshot.get('profile_picture_url').toString());
         }
       });

@@ -49,6 +49,7 @@ class _UsersVideoPostListState extends State<UsersVideoPostList> {
         if (snapshot.hasData) {
           List<VideoPost> posts = snapshot.data;
           return ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: posts.length,
               itemBuilder: (context, index) {

@@ -130,7 +130,7 @@ class UserAccountScreenState extends State<UserAccountScreen> {
               Column(
                 children: [
                   IconButton(
-                      icon: Icon(Icons.build, color: Colors.grey),
+                      icon: Icon(Icons.edit, color: Colors.grey),
                       onPressed: () async {
                         firebaseService.getVideoPosts();
                       }),

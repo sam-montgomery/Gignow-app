@@ -11,6 +11,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: IconButton(
+        icon: Icon(Icons.close),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       body: ListView(
         children: [
           SizedBox(height: 24.0),
