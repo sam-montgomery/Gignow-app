@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gignow/widgets/video_post_list.dart';
 import '../../artist_cards/swipe_feed_page.dart';
 import '../../net/firebase_service.dart';
 
@@ -18,7 +19,7 @@ class _ANavBarState extends State<ArtistNavbar> {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      Center(child: Text('Home Video Feed')),
+      Center(child: VideoPostList()),
       Center(child: Text('Events')),
       Center(child: Text('New post')),
       Center(child: Text('Connections')),
