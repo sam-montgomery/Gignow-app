@@ -37,9 +37,9 @@ class UserAccountScreenState extends State<UserAccountScreen> {
         Timestamp.fromDate(DateTime.now()), "Test Post", "videoURL");
     bool venue = (widget.profile['venueName'] != null ? true : false);
     bool hasUsername = (widget.profile['username'] != null ? true : false);
-    String firstName = widget.profile['firstName'];
-    String lastName = widget.profile['lastName'];
-    String venueName = widget.profile['venueName'];
+    String name =
+        (venue ? widget.profile["venueName"] : widget.profile["name"]);
+    String handle = widget.profile["handle"];
     return Scaffold(
       // // appBar: AppBar(
       // //   title: Text("Your Profile"),
@@ -66,7 +66,7 @@ class UserAccountScreenState extends State<UserAccountScreen> {
           ),
           Center(
               child: Text(
-            hasUsername ? widget.profile["username"] : "@NoUsername",
+            handle,
             style: TextStyle(fontSize: 20),
           )),
           Container(
@@ -100,23 +100,14 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                 SizedBox(
                   height: 10,
                 ),
-                venue
-                    ? Text(
-                        '$venueName',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      )
-                    : Text(
-                        '$firstName $lastName',
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
+                Text(
+                  '$name',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
               ],
             ),
           ),

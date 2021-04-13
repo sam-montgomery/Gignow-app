@@ -12,6 +12,9 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
+import 'package:gignow/constants.dart';
+import 'package:gignow/ui/createProfile/create_profile_consts.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class CreateProfileScreen extends StatefulWidget {
   @override
@@ -20,33 +23,65 @@ class CreateProfileScreen extends StatefulWidget {
 
 class CreateProfileScreenState extends State<CreateProfileScreen> {
   String _accountType = "Artist";
-  TextEditingController _firstNameField = TextEditingController();
-  TextEditingController _lastNameField = TextEditingController();
-  TextEditingController _venueNameField = TextEditingController();
-  TextEditingController _phoneField = TextEditingController();
-  TextEditingController _genreField = TextEditingController();
-  TextEditingController _spotifyField = TextEditingController();
-  TextEditingController _socialField = TextEditingController();
-  //   Column CreateVenueColumn() {
-  //     return Column(
-  //       children: [
-  //         TextFormField(
-  //           controller: _firstNameField,
-  //           decoration: InputDecoration(
-  //               hintText: 'Joe',
-  //               labelText: 'First Name',
-  //               labelStyle: TextStyle(
-  //                 color: Colors.white,
-  //               )),
-  //         ),
-  //       ],
-  //     );
-  //   }
+
+  CircleAvatar profilePicture = CircleAvatar(
+    radius: 60.0,
+    backgroundImage: AssetImage('assets/no-profile-picture.png'),
+    backgroundColor: Colors.white,
+  );
+
+  static TextEditingController _nameCont = TextEditingController();
+  static TextEditingController _phoneCont = TextEditingController();
+  static TextEditingController _handleCont = TextEditingController();
+
+  TextFormField nameField = generateFormField(_nameCont, 'Joe Bloggs', 'Name');
+  TextFormField phoneField =
+      generateFormField(_phoneCont, '0300 123 6600', 'Phone Number');
+  TextFormField handleField =
+      generateFormField(_handleCont, '@GigNow', 'Handle');
+
   String imageUrl;
   File _imageFile;
   final picker = ImagePicker();
   String downloadURL;
   FirebaseService firebaseService = FirebaseService();
+
+  // static List<Genre> _genres = [
+  //   Genre(id: 1, genre: "Pop"),
+  //   Genre(id: 2, genre: "Rock"),
+  //   Genre(id: 3, genre: "Metal"),
+  //   Genre(id: 4, genre: "Accoustic"),
+  //   Genre(id: 5, genre: "Folk")
+  // ];
+  static List<String> _genres = ["Pop", "Rock", "Metal", "Accoustic", "Folk"];
+
+  static List<String> selectedGenres;
+
+  void cleanControllers() {
+    _nameCont.text = "";
+    _phoneCont.text = "";
+    _handleCont.text = "";
+  }
+
+  final genreSelector = MultiSelectChipField(
+    items:
+        _genres.map((genre) => MultiSelectItem<String>(genre, genre)).toList(),
+    title: Text("Genres:"),
+    headerColor: Colors.blue.withOpacity(0.5),
+    decoration: BoxDecoration(
+      border: Border.all(color: kButtonBackgroundColour, width: 1.8),
+    ),
+    selectedChipColor: Colors.blue.withOpacity(0.5),
+    selectedTextStyle: TextStyle(color: Colors.blue[800]),
+    onTap: (values) {
+      selectedGenres = values;
+    },
+  );
+
+  void updatePhoto() {
+    profilePicture =
+        CircleAvatar(radius: 60.0, backgroundImage: FileImage(_imageFile));
+  }
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -54,6 +89,7 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
     setState(() {
       if (pickedFile != null) {
         _imageFile = File(pickedFile.path);
+        updatePhoto();
         print(pickedFile.path);
       } else {
         print('No image selected.');
@@ -98,17 +134,13 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
       (value) {
         print("Done: $value");
         if (_accountType == "Venue") {
-          firebaseService.createVenueProfile(_venueNameField.text,
-              _phoneField.text, _genreField.text, value, _socialField.text);
+          firebaseService.createVenueProfile(_nameCont.text, _phoneCont.text,
+              _handleCont.text, selectedGenres.toList().join(","), value);
         } else if (_accountType == "Artist") {
-          firebaseService.createArtistProfile(
-              _firstNameField.text,
-              _lastNameField.text,
-              _phoneField.text,
-              _genreField.text,
-              value,
-              _spotifyField.text);
+          firebaseService.createArtistProfile(_nameCont.text, _phoneCont.text,
+              _handleCont.text, selectedGenres.toList().join(","), value);
         }
+        cleanControllers();
       },
     );
     Navigator.pushAndRemoveUntil(
@@ -118,326 +150,104 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
     );
   }
 
+  final logo = Hero(
+    tag: 'hero',
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(20.0), //or 15.0
+      child: Container(
+        height: 90.0,
+        width: 175.0,
+        color: Colors.transparent,
+        child: Image.asset('assets/logo-blue-black-trimmed.png'),
+      ),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Create Profile"),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: () => context.read<AuthenticationService>().signOut(),
-              child: Icon(Icons.logout),
-            ),
-          )
-        ],
-      ),
       body: Column(
-        children: [
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          SizedBox(height: 50),
+          logo,
+          Text("Are you a... ",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 15),
           Row(
-            children: [],
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text("Artist: "),
+              Radio(
+                value: "Artist",
+                groupValue: _accountType,
+                onChanged: (String value) {
+                  setState(() {
+                    _accountType = value;
+                  });
+                },
+              ),
+              Text(" or a "),
+              Text("Venue: "),
+              Radio(
+                value: "Venue",
+                groupValue: _accountType,
+                onChanged: (String value) {
+                  setState(() {
+                    _accountType = value;
+                  });
+                },
+              ),
+            ],
           ),
-          Text("Account Type:"),
-          ListTile(
-            title: const Text('Artist'),
-            leading: Radio(
-              value: "Artist",
-              groupValue: _accountType,
-              onChanged: (String value) {
-                setState(() {
-                  _accountType = value;
-                });
-              },
-            ),
-          ),
-          ListTile(
-            title: const Text('Venue'),
-            leading: Radio(
-              value: "Venue",
-              groupValue: _accountType,
-              onChanged: (String value) {
-                setState(() {
-                  _accountType = value;
-                });
-              },
-            ),
-          ),
-          _accountType == "Artist"
-              ? Expanded(
-                  child: ListView(
-                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _firstNameField,
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              hintText: 'Joe',
-                              labelText: 'First Name',
-                              labelStyle: TextStyle(
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _lastNameField,
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              hintText: 'Bloggs',
-                              labelText: 'Last Name',
-                              labelStyle: TextStyle(
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _phoneField,
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              labelText: 'Phone Number',
-                              labelStyle: TextStyle(
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _genreField,
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              hintText: 'Pop, Rock, etc.',
-                              labelText:
-                                  'Genres (Seperate Each Genre With A Comma)',
-                              labelStyle: TextStyle(
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _spotifyField,
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              hintText: '2M9ro2krNb7nr7HSprkEgo',
-                              labelText:
-                                  'Spotify Track Code (Spotify Song to Appear on Profile)',
-                              labelStyle: TextStyle(
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: MaterialButton(
-                          onPressed: () {
-                            getImage();
-                          },
-                          child: Text("Select Profile Picture"),
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: MaterialButton(
-                          onPressed: () {
-                            print("test");
-                            createProfileAndUploadImageToFirebase(
-                                context, firebaseUser.uid);
-                          },
-                          child: Text("Create Profile"),
-                        ),
-                      )
-                    ],
+          SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              profilePicture,
+              TextButton(
+                  child: Text(
+                    'Upload Image',
+                    style: TextStyle(color: kHintColor),
                   ),
-                )
-              : Expanded(
-                  child: ListView(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _venueNameField,
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              hintText: 'Your Venue',
-                              labelText: 'Venue Name',
-                              labelStyle: TextStyle(
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _phoneField,
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              labelText: 'Phone Number',
-                              labelStyle: TextStyle(
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _genreField,
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              hintText: 'Pop, Rock, etc.',
-                              labelText:
-                                  'Genres (Seperate Each Genre With A Comma)',
-                              labelStyle: TextStyle(
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          controller: _socialField,
-                          decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              hintText: 'www.fb.com etc.',
-                              labelText:
-                                  'Social Media Links (Seperate Each Link With A Comma)',
-                              labelStyle: TextStyle(
-                                color: Colors.blue,
-                              )),
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: MaterialButton(
-                          onPressed: () {
-                            getImage();
-                          },
-                          child: Text("Select Profile Picture"),
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: MaterialButton(
-                          onPressed: () {
-                            createProfileAndUploadImageToFirebase(
-                                context, firebaseUser.uid);
-                          },
-                          child: Text("Create Profile"),
-                        ),
-                      )
-                    ],
+                  onPressed: () {
+                    getImage();
+                  }),
+            ],
+          ),
+          Expanded(
+            child: ListView(
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Padding(padding: const EdgeInsets.all(8.0), child: nameField),
+                Padding(padding: const EdgeInsets.all(8.0), child: phoneField),
+                Padding(padding: const EdgeInsets.all(8.0), child: handleField),
+                Padding(
+                    padding: const EdgeInsets.all(8.0), child: genreSelector),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: kButtonVerticalPadding),
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(kButtonCircularPadding),
+                    ),
+                    onPressed: () {
+                      createProfileAndUploadImageToFirebase(
+                          context, firebaseUser.uid);
+                    },
+                    padding: EdgeInsets.all(kButtonAllPadding),
+                    color: kButtonBackgroundColour,
+                    child: Text('Register Account',
+                        style: TextStyle(color: kButtonTextColour)),
                   ),
                 ),
+              ],
+            ),
+          ),
         ],
       ),
     );

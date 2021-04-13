@@ -151,17 +151,16 @@ class FirebaseService {
     });
   }
 
-  void createArtistProfile(String firstName, String lastName, String phone,
-      String genres, String profilePictureUrl, String spotifyCode) {
+  void createArtistProfile(String name, String phone, String handle,
+      String genres, String profilePictureUrl) {
     final user = auth.currentUser;
     firestoreInstance.collection("Artists").doc(auth.currentUser.uid).set({
       "userUid": user.uid,
-      "firstName": firstName,
-      "lastName": lastName,
+      "name": name,
       "phoneNumber": phone,
+      "handle": handle,
       "genres": genres,
-      "profile_picture_url": profilePictureUrl,
-      "spotifyHighlightTrackCode": spotifyCode
+      "profile_picture_url": profilePictureUrl
     });
   }
 
@@ -176,16 +175,16 @@ class FirebaseService {
     });
   }
 
-  void createVenueProfile(String venueName, String phone, String genres,
-      String profilePictureUrl, String socials) {
+  void createVenueProfile(String name, String phone, String handle,
+      String genres, String profilePictureUrl) {
     final user = auth.currentUser;
     firestoreInstance.collection("Venues").doc(auth.currentUser.uid).set({
       "userUid": user.uid,
-      "venueName": venueName,
+      "venueName": name,
       "phoneNumber": phone,
+      "handle": handle,
       "genres": genres,
-      "profile_picture_url": profilePictureUrl,
-      "socials": socials
+      "profile_picture_url": profilePictureUrl
     });
   }
 
