@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import '../model/user.dart';
+import '../model/user.dart';
+import '../net/firebase_service.dart';
+import '../net/firebase_service.dart';
 import 'profile_card_alignment.dart';
 import 'dart:math';
+import 'profile_view.dart';
 
 List<Alignment> cardsAlign = [
   Alignment(0.0, 1.0),
@@ -12,20 +17,26 @@ List<Size> cardsSize = List(3);
 class CardsSectionAlignment extends StatefulWidget {
   CardsSectionAlignment(BuildContext context) {
     cardsSize[0] = Size(MediaQuery.of(context).size.width * 0.9,
-        MediaQuery.of(context).size.height * 0.6);
+        MediaQuery.of(context).size.height * 0.8);
     cardsSize[1] = Size(MediaQuery.of(context).size.width * 0.9,
-        MediaQuery.of(context).size.height * 0.6);
-    cardsSize[2] = Size(MediaQuery.of(context).size.width * 0.8,
-        MediaQuery.of(context).size.height * 0.5);
+        MediaQuery.of(context).size.height * 0.8);
+    cardsSize[2] = Size(MediaQuery.of(context).size.width * 0.9,
+        MediaQuery.of(context).size.height * 0.8);
   }
 
   @override
-  _CardsSectionState createState() => _CardsSectionState();
+  _CardsSectionState createState() => _CardsSectionState(user);
+  UserModel user;
 }
 
 class _CardsSectionState extends State<CardsSectionAlignment>
     with SingleTickerProviderStateMixin {
-  int cardsCounter = 0;
+  int cardsCounter;
+
+  UserModel user;
+  _CardsSectionState(user);
+
+  FirebaseService firebaseService = FirebaseService();
 
   List<ProfileCardAlignment> cards = List();
   AnimationController _controller;
@@ -33,6 +44,7 @@ class _CardsSectionState extends State<CardsSectionAlignment>
   final Alignment defaultFrontCardAlign = Alignment(0.0, 1.0);
   Alignment frontCardAlign;
   double frontCardRot = 0.0;
+  int profileIndex = 0;
 
   @override
   void initState() {
@@ -40,7 +52,8 @@ class _CardsSectionState extends State<CardsSectionAlignment>
 
     // Init cards
     for (cardsCounter = 0; cardsCounter < 3; cardsCounter++) {
-      cards.add(ProfileCardAlignment(cardsCounter));
+      cards.add(ProfileCardAlignment(profileIndex));
+      profileIndex++;
     }
 
     frontCardAlign = cardsAlign[2];
@@ -151,7 +164,7 @@ class _CardsSectionState extends State<CardsSectionAlignment>
       cards[1] = cards[2];
       cards[2] = temp;
 
-      cards[2] = ProfileCardAlignment(cardsCounter);
+      cards[2] = ProfileCardAlignment(profileIndex);
       cardsCounter++;
 
       frontCardAlign = defaultFrontCardAlign;

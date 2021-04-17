@@ -7,6 +7,7 @@ import 'package:gignow/model/video_post.dart';
 import 'package:gignow/ui/createProfile/create_profile_screen.dart';
 import 'package:gignow/ui/userAccount/user_account_screen.dart';
 import 'package:gignow/ui/loading.dart';
+import '../model/user.dart';
 
 class FirebaseService {
   final firestoreInstance = FirebaseFirestore.instance;
@@ -223,6 +224,24 @@ class FirebaseService {
       posts.add(post);
     });
     return posts;
+  }
+
+  Future<List<UserModel>> getArtistAccounts() async {
+    List<UserModel> artistsCards = new List<UserModel>();
+    var result = await artists.get();
+    result.docs.forEach((element) async {
+      // DocumentReference ref = element['user'];
+      // String userUid = ref.id;
+      UserModel card = UserModel(
+          element.id,
+          element['name'],
+          element['genres'],
+          element['phoneNumber'],
+          element['handle'],
+          element['profile_picture_url']);
+      artistsCards.add(card);
+    });
+    return artistsCards;
   }
 
   FirebaseService();
