@@ -18,7 +18,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    //return firebaseService.getFirstView(auth.currentUser.uid);
+    //return ArtistNavbar();
     return VenueNavbar();
   }
 }

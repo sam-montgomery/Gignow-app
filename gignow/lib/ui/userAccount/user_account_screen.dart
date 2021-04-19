@@ -32,7 +32,8 @@ class UserAccountScreenState extends State<UserAccountScreen> {
         "Pop",
         "07889922331",
         "@testuser",
-        "https://firebasestorage.googleapis.com/v0/b/gignow-402c6.appspot.com/o/profile_pictures%2Fprofile_picture_HouyUStDx1VIzmvH5zcrCviloow1?alt=media&token=a6310648-e9b1-4107-8b26-da5d6dce0698");
+        "https://firebasestorage.googleapis.com/v0/b/gignow-402c6.appspot.com/o/profile_pictures%2Fprofile_picture_HouyUStDx1VIzmvH5zcrCviloow1?alt=media&token=a6310648-e9b1-4107-8b26-da5d6dce0698",
+        false);
     VideoPost dummyPost = VideoPost("1", dummyUser.uid,
         Timestamp.fromDate(DateTime.now()), "Test Post", "videoURL");
     bool venue = (widget.profile['venueName'] != null ? true : false);
@@ -41,24 +42,6 @@ class UserAccountScreenState extends State<UserAccountScreen> {
         (venue ? widget.profile["venueName"] : widget.profile["name"]);
     String handle = widget.profile["handle"];
     return Scaffold(
-      // // appBar: AppBar(
-      // //   title: Text("Your Profile"),
-      // //   actions: [
-      // //     Padding(
-      // //       padding: const EdgeInsets.only(right: 20.0),
-      // //       child: GestureDetector(
-      // //         onTap: () => auth.signOut(),
-      // //         child: Icon(Icons.logout),
-      // //       ),
-      // //     )
-      // //   ],
-      // // ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, '/chat');
-      //   },
-      //   child: Text("Chat"),
-      // ),
       body: ListView(
         children: <Widget>[
           SizedBox(
@@ -71,14 +54,6 @@ class UserAccountScreenState extends State<UserAccountScreen> {
           )),
           Container(
             height: 250,
-            // decoration: BoxDecoration(
-            //   gradient: LinearGradient(
-            //     colors: [Colors.white, Colors.blue.shade300],
-            //     begin: Alignment.centerLeft,
-            //     end: Alignment.centerRight,
-            //     stops: [0.5, 0.9],
-            //   ),
-            // ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -156,158 +131,6 @@ class UserAccountScreenState extends State<UserAccountScreen> {
             height: 20,
           ),
           SingleChildScrollView(child: UsersVideoPostList(auth.currentUser.uid))
-
-          // Container(
-          //   child: Row(
-          //     children: <Widget>[
-          //       Expanded(
-          //         child: Container(
-          //           color: Colors.blue.shade300,
-          //           child: ListTile(
-          //             title: Text(
-          //               '5000',
-          //               textAlign: TextAlign.center,
-          //               style: TextStyle(
-          //                 fontWeight: FontWeight.bold,
-          //                 fontSize: 30,
-          //                 color: Colors.white,
-          //               ),
-          //             ),
-          //             subtitle: Text(
-          //               'Followers',
-          //               textAlign: TextAlign.center,
-          //               style: TextStyle(
-          //                 fontSize: 20,
-          //                 color: Colors.white70,
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       Expanded(
-          //         child: Container(
-          //           color: Colors.blue,
-          //           child: ListTile(
-          //             title: Text(
-          //               '5000',
-          //               textAlign: TextAlign.center,
-          //               style: TextStyle(
-          //                 fontWeight: FontWeight.bold,
-          //                 fontSize: 30,
-          //                 color: Colors.white,
-          //               ),
-          //             ),
-          //             subtitle: Text(
-          //               'Following',
-          //               textAlign: TextAlign.center,
-          //               style: TextStyle(
-          //                 fontSize: 20,
-          //                 color: Colors.white70,
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // Center(
-          //   child: Container(
-          //     height: 80,
-          //     child:
-          //         spotifySnippet(widget.profile["spotifyHighlightTrackCode"]),
-          //   ),
-          // ),
-          // Container(
-          //   child: Column(
-          //     children: <Widget>[
-          //       ListTile(
-          //         title: Text(
-          //           'Phone #',
-          //           style: TextStyle(
-          //             color: Colors.blue,
-          //             fontSize: 20,
-          //             fontWeight: FontWeight.bold,
-          //           ),
-          //         ),
-          //         subtitle: Text(
-          //           widget.profile["phoneNumber"],
-          //           style: TextStyle(
-          //             fontSize: 18,
-          //           ),
-          //         ),
-          //       ),
-          //       Divider(),
-          //       ListTile(
-          //         title: Text(
-          //           'Genres',
-          //           style: TextStyle(
-          //             color: Colors.blue,
-          //             fontSize: 20,
-          //             fontWeight: FontWeight.bold,
-          //           ),
-          //         ),
-          //         subtitle: Text(
-          //           widget.profile['genres'],
-          //           style: TextStyle(
-          //             fontSize: 18,
-          //           ),
-          //         ),
-          //       ),
-          //       venue
-          //           ? ListTile(
-          //               title: Text(
-          //                 'Genres',
-          //                 style: TextStyle(
-          //                   color: Colors.blue,
-          //                   fontSize: 20,
-          //                   fontWeight: FontWeight.bold,
-          //                 ),
-          //               ),
-          //               subtitle: Text(
-          //                 widget.profile['genres'],
-          //                 style: TextStyle(
-          //                   fontSize: 18,
-          //                 ),
-          //               ),
-          //             )
-          //           : ListTile(
-          //               title: Text(
-          //                 'Genres',
-          //                 style: TextStyle(
-          //                   color: Colors.blue,
-          //                   fontSize: 20,
-          //                   fontWeight: FontWeight.bold,
-          //                 ),
-          //               ),
-          //               subtitle: Text(
-          //                 widget.profile['genres'],
-          //                 style: TextStyle(
-          //                   fontSize: 18,
-          //                 ),
-          //               ),
-          //             ),
-          //       Divider(),
-          //       //spotifySnippet(widget.profile["spotifyHighlightTrackCode"])
-          //       // ListTile(
-          //       //   title: Text(
-          //       //     'Linkedin',
-          //       //     style: TextStyle(
-          //       //       color: Colors.blue,
-          //       //       fontSize: 20,
-          //       //       fontWeight: FontWeight.bold,
-          //       //     ),
-          //       //   ),
-          //       //   subtitle: Text(
-          //       //     'www.linkedin.com/in/leonardo-palmeiro-834a1755',
-          //       //     style: TextStyle(
-          //       //       fontSize: 18,
-          //       //     ),
-          //       //   ),
-          //       // ),
-          //     ],
-          //   ),
-          // )
         ],
       ),
     );
@@ -341,18 +164,4 @@ class UserAccountScreenState extends State<UserAccountScreen> {
       gestureNavigationEnabled: true,
     );
   }
-
-  // Future<Widget> _getImage(BuildContext context, String image) async {
-  //   Image m;
-  //   await firebase_storage.Reference
-  //   await FireStorageService.loadFromStorage(context, image)
-  //       .then((downloadUrl) {
-  //     m = Image.network(
-  //       downloadUrl.toString(),
-  //       fit: BoxFit.scaleDown,
-  //     );
-  //   });
-
-  //   return m;
-  // }
 }
