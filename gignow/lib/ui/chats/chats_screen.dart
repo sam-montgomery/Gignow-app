@@ -67,10 +67,11 @@ class ChatScreenState extends State<ChatsScreen> {
     setState(() {});
   }
 
-  Widget userTile(String uid, profileURL, name, handle) {
+  Widget userTile(String uid, String profileURL, String name, String handle) {
     return GestureDetector(
       onTap: () {
-        var chatRoomID = getChatRoomIDByHandle(handle, myHandle);
+        var chatRoomID =
+            DatabaseMethods().getChatRoomIDByHandle(handle, myHandle);
         Map<String, dynamic> chatRoomInfoMap = {
           "users": [myHandle, handle]
         };

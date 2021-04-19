@@ -32,7 +32,8 @@ class ConversationScreenState extends State<ConversationScreen> {
     String chatName = widget.chatWithName;
     print("Testing $chatName");
 
-    chatRoomID = getChatRoomIDByHandle(widget.chatWithHandle, myHandle);
+    chatRoomID = DatabaseMethods()
+        .getChatRoomIDByHandle(widget.chatWithHandle, myHandle);
   }
 
   getChatRoomIDByHandle(String handleA, String handleB) {

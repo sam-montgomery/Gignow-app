@@ -20,8 +20,8 @@ class DatabaseMethods {
         .get();
   }
 
-  Future addMessage(String chatRoomID, Map messageInfoMap) async {
-    return FirebaseFirestore.instance
+  addMessage(String chatRoomID, Map messageInfoMap) {
+    FirebaseFirestore.instance
         .collection("chatRooms")
         .doc(chatRoomID)
         .collection("chats")
@@ -33,6 +33,15 @@ class DatabaseMethods {
         .collection("chatRooms")
         .doc(chatRoomID)
         .update(lastMessageInfoMap);
+  }
+
+  getChatRoomIDByHandle(String handleA, String handleB) {
+    if (handleA.substring(1, 2).codeUnitAt(0) >=
+        handleB.substring(1, 2).codeUnitAt(0)) {
+      return "$handleB\_$handleA";
+    } else {
+      return "$handleA\_$handleB";
+    }
   }
 
   Future<Stream<QuerySnapshot>> getChatRoomMessages(chatRoomID) async {
