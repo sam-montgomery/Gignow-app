@@ -68,7 +68,7 @@ class ConversationScreenState extends State<ConversationScreen> {
           "lastMessageSentTimeStamp": lastMessageTimeStamp,
           "lastMessageSentBy": myName
         };
-        DatabaseMethods().updateLastMessageSent(chatRoomID, lastMessageInfoMap);
+        // DatabaseMethods().updateLastMessageSent(chatRoomID, lastMessageInfoMap);
         messageTextEditingController.text = "";
       });
     }

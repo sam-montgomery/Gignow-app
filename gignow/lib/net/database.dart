@@ -26,6 +26,14 @@ class DatabaseMethods {
         .doc(chatRoomID)
         .collection("chats")
         .add(messageInfoMap);
+
+    Map<String, dynamic> lastMessageInfoMap = {
+      "lastMessage": messageInfoMap["message"],
+      "lastMessageSentTimeStamp": messageInfoMap["timeStamp"],
+      "lastMessageSentBy": messageInfoMap["sentBy"]
+    };
+
+    updateLastMessageSent(chatRoomID, lastMessageInfoMap);
   }
 
   updateLastMessageSent(String chatRoomID, Map lastMessageInfoMap) {

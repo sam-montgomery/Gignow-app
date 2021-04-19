@@ -7,6 +7,7 @@ import 'package:gignow/model/user.dart';
 import 'package:gignow/net/database.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/home_view.dart';
+import 'package:gignow/ui/loading.dart';
 
 import 'conversation_screen.dart';
 
@@ -131,21 +132,23 @@ class ChatScreenState extends State<ChatsScreen> {
     return StreamBuilder(
         stream: chatRoomsStream,
         builder: (context, snapshot) {
-          return snapshot.hasData
-              ? ListView.builder(
-                  itemCount: snapshot.data.docs.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot ds = snapshot.data.docs[index];
-                    return ChatRoomListTile(
-                      ds["lastMessage"],
-                      ds.id,
-                      myHandle,
-                      widget.profile,
-                    );
-                  },
-                )
-              : Center(child: CircularProgressIndicator());
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data.docs.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                DocumentSnapshot ds = snapshot.data.docs[index];
+                return ChatRoomListTile(
+                  ds["lastMessage"],
+                  ds.id,
+                  myHandle,
+                  widget.profile,
+                );
+              },
+            );
+          } else {
+            return Loading();
+          }
         });
   }
 
