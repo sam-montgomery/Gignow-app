@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gignow/helper_functions/shared_preferences_helper.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
@@ -7,6 +8,10 @@ class AuthenticationService {
 
   /// Changed to idTokenChanges as it updates depending on more cases.
   Stream<User> get authStateChanges => _firebaseAuth.idTokenChanges();
+
+  getCurrentUser() {
+    return _firebaseAuth.currentUser;
+  }
 
   /// This won't pop routes so you could do something like
   /// Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);

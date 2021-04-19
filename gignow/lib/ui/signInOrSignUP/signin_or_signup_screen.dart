@@ -5,6 +5,7 @@ import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/ui/home_view.dart';
 import 'package:provider/provider.dart';
 import 'package:gignow/constants.dart';
+import 'package:gignow/widgets/form_button.dart';
 
 class SignInOrSignUp extends StatefulWidget {
   @override
@@ -100,13 +101,8 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
               errorText: "Password should not be greater than 15 characters")
         ]));
 
-    final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: kButtonVerticalPadding),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(kButtonCircularPadding),
-        ),
-        onPressed: () async {
+    final loginButton = FormButton(
+        press: () async {
           try {
             bool loginSuccess = await context
                 .read<AuthenticationService>()
@@ -124,19 +120,10 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
             });
           }
         },
-        padding: EdgeInsets.all(kButtonAllPadding),
-        color: kButtonBackgroundColour,
-        child: Text('Log In', style: TextStyle(color: kButtonTextColour)),
-      ),
-    );
+        text: "Log In");
 
-    final registerButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: kButtonVerticalPadding),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(kButtonCircularPadding),
-        ),
-        onPressed: () async {
+    final registerButton = FormButton(
+        press: () async {
           try {
             String registerResult = await context
                 .read<AuthenticationService>()
@@ -157,11 +144,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
             print(e.code);
           }
         },
-        padding: EdgeInsets.all(kButtonAllPadding),
-        color: kButtonBackgroundColour,
-        child: Text('Register', style: TextStyle(color: kButtonTextColour)),
-      ),
-    );
+        text: "Register");
 
     final forgotLabel = FlatButton(
       child: Text(
