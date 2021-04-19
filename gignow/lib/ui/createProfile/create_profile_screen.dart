@@ -134,11 +134,16 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
       (value) {
         print("Done: $value");
         if (_accountType == "Venue") {
-          firebaseService.createVenueProfile(_nameCont.text, _phoneCont.text,
-              _handleCont.text, selectedGenres.toList().join(","), value);
+          firebaseService.createProfile(_nameCont.text, _phoneCont.text,
+              _handleCont.text, selectedGenres.toList().join(","), value, true);
         } else if (_accountType == "Artist") {
-          firebaseService.createArtistProfile(_nameCont.text, _phoneCont.text,
-              _handleCont.text, selectedGenres.toList().join(","), value);
+          firebaseService.createProfile(
+              _nameCont.text,
+              _phoneCont.text,
+              _handleCont.text,
+              selectedGenres.toList().join(","),
+              value,
+              false);
         }
         cleanControllers();
       },

@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gignow/model/event.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/model/video_post.dart';
 import 'package:gignow/ui/createProfile/create_profile_screen.dart';
+import 'package:gignow/ui/events/events_screen.dart';
 import 'package:gignow/ui/userAccount/user_account_screen.dart';
 import 'package:gignow/ui/loading.dart';
 import '../model/user.dart';
@@ -12,110 +14,49 @@ import '../model/user.dart';
 class FirebaseService {
   final firestoreInstance = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
-  CollectionReference artists =
-      FirebaseFirestore.instance.collection('Artists');
-  CollectionReference venues = FirebaseFirestore.instance.collection('Venues');
+  CollectionReference users = FirebaseFirestore.instance.collection('Users');
   CollectionReference videoPosts =
       FirebaseFirestore.instance.collection('VideoPosts');
+  CollectionReference events = FirebaseFirestore.instance.collection('Events');
 
   Future<String> getProfilePicURL(String userUid) async {
-    DocumentReference docRef = artists.doc(userUid);
+    DocumentReference docRef = users.doc(userUid);
     String url;
     await docRef.get().then((snapshot) {
       url = snapshot.get('profile_picture_url').toString();
     });
 
-    if (url == null) {
-      docRef = venues.doc(userUid);
-      await docRef.get().then((snapshot) {
-        url = snapshot.get('profile_picture_url').toString();
-      });
-    }
-
     return url;
   }
 
   Future<UserModel> getUser(String userUid) async {
-    DocumentReference docRef = artists.doc(userUid);
+    DocumentReference docRef = users.doc(userUid);
     UserModel user;
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
-        String fullName = snapshot.get('name').toString();
         user = UserModel(
             snapshot.get('userUid').toString(),
-            fullName,
+            snapshot.get('name').toString(),
             snapshot.get('genres').toString(),
             snapshot.get('phoneNumber').toString(),
             snapshot.get('handle').toString(),
-            snapshot.get('profile_picture_url').toString());
+            snapshot.get('profile_picture_url').toString(),
+            snapshot.get('venue'));
       }
     });
-    if (user == null) {
-      docRef = venues.doc(userUid);
-      await docRef.get().then((snapshot) {
-        if (snapshot.exists) {
-          user = UserModel(
-              snapshot.get('userUid').toString(),
-              snapshot.get('venueName').toString(),
-              snapshot.get('genres').toString(),
-              snapshot.get('phoneNumber').toString(),
-              snapshot.get('handle').toString(),
-              snapshot.get('profile_picture_url').toString());
-        }
-      });
-    }
 
     return user;
   }
 
-  Future getDocSnap(String uid) {
-    artists.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        return true;
-      }
-      return false;
-    });
-  }
-
   FutureBuilder<DocumentSnapshot> getFirstView(String uid) {
     return FutureBuilder<DocumentSnapshot>(
-        future: artists.doc(uid).get(),
+        future: users.doc(uid).get(),
         builder:
             (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           try {
             if (snapshot.hasError) {
               return Loading();
             }
-            if (snapshot.connectionState == ConnectionState.done) {
-              try {
-                Map<String, dynamic> data = snapshot.data.data();
-                if (data != null) {
-                  return UserAccountScreen(data);
-                } else {
-                  return getFirstVenueView(uid);
-                }
-              } catch (e) {
-                return Loading();
-              }
-            }
-
-            return Loading();
-          } catch (e) {
-            return Loading();
-          }
-        });
-  }
-
-  FutureBuilder<DocumentSnapshot> getFirstVenueView(String uid) {
-    return FutureBuilder<DocumentSnapshot>(
-        future: venues.doc(uid).get(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          try {
-            if (snapshot.hasError) {
-              return Loading();
-            }
-
             if (snapshot.connectionState == ConnectionState.done) {
               try {
                 Map<String, dynamic> data = snapshot.data.data();
@@ -136,30 +77,77 @@ class FirebaseService {
         });
   }
 
-  Map<String, dynamic> getArtistProfile(String uid) {
-    firestoreInstance.collection("Artists").doc(uid).get().then((value) {
-      print(value.data());
-      return (value.data());
-    });
+  FutureBuilder<DocumentSnapshot> getVenueEventsPage(String uid) {
+    return FutureBuilder<DocumentSnapshot>(
+        future: users.doc(uid).get(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          try {
+            if (snapshot.hasError) {
+              return Loading();
+            }
+
+            if (snapshot.connectionState == ConnectionState.done) {
+              try {
+                Map<String, dynamic> data = snapshot.data.data();
+                if (data != null) {
+                  return EventsScreen(data);
+                } else {
+                  return CreateProfileScreen();
+                }
+              } catch (e) {
+                return Loading();
+              }
+            }
+
+            return Loading();
+          } catch (e) {
+            return Loading();
+          }
+        });
   }
 
-  Map<String, dynamic> getVenueProfile(String uid) {
-    firestoreInstance.collection("Venues").doc(uid).get().then((value) {
-      print(value.data());
-      return (value.data());
-    });
+  FutureBuilder<DocumentSnapshot> getEventsVenueView(String uid) {
+    return FutureBuilder<DocumentSnapshot>(
+        future: users.doc(uid).get(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          try {
+            if (snapshot.hasError) {
+              return Loading();
+            }
+
+            if (snapshot.connectionState == ConnectionState.done) {
+              try {
+                Map<String, dynamic> data = snapshot.data.data();
+                if (data != null) {
+                  return EventsScreen(data);
+                } else {
+                  return CreateProfileScreen();
+                }
+              } catch (e) {
+                return Loading();
+              }
+            }
+
+            return Loading();
+          } catch (e) {
+            return Loading();
+          }
+        });
   }
 
-  void createArtistProfile(String name, String phone, String handle,
-      String genres, String profilePictureUrl) {
+  void createProfile(String name, String phone, String handle, String genres,
+      String profilePictureUrl, bool venue) {
     final user = auth.currentUser;
-    firestoreInstance.collection("Artists").doc(auth.currentUser.uid).set({
+    firestoreInstance.collection("Users").doc(auth.currentUser.uid).set({
       "userUid": user.uid,
       "name": name,
       "phoneNumber": phone,
       "handle": handle,
       "genres": genres,
-      "profile_picture_url": profilePictureUrl
+      "profile_picture_url": profilePictureUrl,
+      "venue": venue
     });
   }
 
@@ -167,23 +155,21 @@ class FirebaseService {
       String desc, String videoURL) {
     final user = auth.currentUser;
     firestoreInstance.collection("VideoPosts").doc().set({
-      "user": artists.doc(user.uid),
+      "user": users.doc(user.uid),
       "postDate": date,
       "postDescription": desc,
       "videoURL": videoURL
     });
   }
 
-  void createVenueProfile(String name, String phone, String handle,
-      String genres, String profilePictureUrl) {
+  void createEvent(String name, String phone, String handle, String genres) {
     final user = auth.currentUser;
-    firestoreInstance.collection("Venues").doc(auth.currentUser.uid).set({
-      "userUid": user.uid,
+    firestoreInstance.collection("Events").doc(auth.currentUser.uid).set({
+      "eventId": user.uid,
       "venueName": name,
       "phoneNumber": phone,
       "handle": handle,
-      "genres": genres,
-      "profile_picture_url": profilePictureUrl
+      "genres": genres
     });
   }
 
@@ -212,9 +198,56 @@ class FirebaseService {
     return posts;
   }
 
+  Future<Event> getEvent(String eventId) async {
+    firestoreInstance.collection("Events").doc(eventId).get().then((value) {
+      Event event = Event(
+          value.data()['eventId'],
+          DateTime.parse(value.data()['eventStartTime']),
+          DateTime.parse(value.data()['eventFinishTime']),
+          value.data()['venueId']);
+      return event;
+    });
+  }
+
+  Future<List<Event>> getAllEvents() async {
+    List<Event> returned = [];
+    events.get().then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        print(doc['eventId']);
+        Event newEvent = Event(
+            doc['eventId'],
+            DateTime.parse(doc['eventStartTime']),
+            DateTime.parse(doc['eventFinishTime']),
+            doc['venueId']);
+        returned.add(newEvent);
+      });
+      print("All events: " + returned.toString());
+      return returned;
+    });
+  }
+
+  Future<List<Event>> getAllEventsForVenue(String venueId) async {
+    List<Event> returned = [];
+    FirebaseFirestore.instance
+        .collection('Events')
+        .where('venueId', isEqualTo: venueId)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        returned.add(Event(
+            doc['eventId'],
+            DateTime.parse(doc['eventStartTime']),
+            DateTime.parse(doc['eventFinishTime']),
+            doc['venueId']));
+      });
+      print("All events for venue: $venueId:" + returned.toString());
+      return returned;
+    });
+  }
+
   Future<List<VideoPost>> getUsersVideoPosts(String uid) async {
     List<VideoPost> posts = new List<VideoPost>();
-    DocumentReference userDocRef = artists.doc(uid);
+    DocumentReference userDocRef = users.doc(uid);
     var result = await videoPosts.where("user", isEqualTo: userDocRef).get();
     result.docs.forEach((element) async {
       DocumentReference ref = element['user'];
@@ -228,7 +261,7 @@ class FirebaseService {
 
   Future<List<UserModel>> getArtistAccounts() async {
     List<UserModel> artistsCards = new List<UserModel>();
-    var result = await artists.get();
+    var result = await users.where("venue", isEqualTo: false).get();
     result.docs.forEach((element) async {
       // DocumentReference ref = element['user'];
       // String userUid = ref.id;
@@ -238,7 +271,8 @@ class FirebaseService {
           element['genres'],
           element['phoneNumber'],
           element['handle'],
-          element['profile_picture_url']);
+          element['profile_picture_url'],
+          element['venue']);
       artistsCards.add(card);
     });
     return artistsCards;
