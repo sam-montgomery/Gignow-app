@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,8 @@ import 'package:gignow/ui/events/events_screen.dart';
 import 'package:gignow/ui/userAccount/user_account_screen.dart';
 import 'package:gignow/ui/loading.dart';
 import '../model/user.dart';
+import 'package:path/path.dart' as path;
+import 'package:http/http.dart' as http;
 
 class FirebaseService {
   final firestoreInstance = FirebaseFirestore.instance;
@@ -18,6 +22,8 @@ class FirebaseService {
   CollectionReference videoPosts =
       FirebaseFirestore.instance.collection('VideoPosts');
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
+  CollectionReference connections =
+      FirebaseFirestore.instance.collection('Connections');
 
   Future<String> getProfilePicURL(String userUid) async {
     DocumentReference docRef = users.doc(userUid);
@@ -137,8 +143,8 @@ class FirebaseService {
         });
   }
 
-  void createProfile(String name, String phone, String handle, String genres,
-      String profilePictureUrl, bool venue) {
+  void createProfile(context, String name, String phone, String handle,
+      String genres, String profilePictureUrl, bool venue) {
     final user = auth.currentUser;
     firestoreInstance.collection("Users").doc(auth.currentUser.uid).set({
       "userUid": user.uid,
@@ -148,17 +154,34 @@ class FirebaseService {
       "genres": genres,
       "profile_picture_url": profilePictureUrl,
       "venue": venue
-    });
+    }).then((value) => Navigator.pushNamed(context, '/'));
   }
 
-  void createVideoPost(String email, String fullName, DateTime date,
-      String desc, String videoURL) {
+  Future<String> uploadVideo(videoID, filename, url) async {
+    Map<String, String> videoUrl = {"videoID": videoID};
+    String queryString = Uri(queryParameters: videoUrl).query;
+    var requestUrl = url + '?' + queryString;
+    var request = http.MultipartRequest('POST', Uri.parse(requestUrl));
+
+    request.files.add(await http.MultipartFile.fromPath('package', filename));
+
+    request.fields.addAll(videoUrl);
+    var res = await request.send();
+    return res.reasonPhrase;
+  }
+
+  void createVideoPost(File video, DateTime date, String desc) {
     final user = auth.currentUser;
-    firestoreInstance.collection("VideoPosts").doc().set({
+    firestoreInstance.collection("VideoPosts").add({
       "user": users.doc(user.uid),
       "postDate": date,
       "postDescription": desc,
-      "videoURL": videoURL
+    }).then((docRef) {
+      String dir = path.dirname(video.path);
+      String newPath = path.join(dir, "${docRef.id}.mp4");
+      video.renameSync(newPath);
+      uploadVideo(
+          docRef.id, newPath, "https://gignow-310714.ew.r.appspot.com/upload");
     });
   }
 
@@ -189,11 +212,13 @@ class FirebaseService {
     List<VideoPost> posts = new List<VideoPost>();
     var result = await videoPosts.get();
     result.docs.forEach((element) async {
-      DocumentReference ref = element['user'];
-      String userUid = ref.id;
-      VideoPost post = VideoPost(element.id, userUid, element['postDate'],
-          element['postDescription'], element['videoURL']);
-      posts.add(post);
+      if (element.data().containsKey('videoURL')) {
+        DocumentReference ref = element['user'];
+        String userUid = ref.id;
+        VideoPost post = VideoPost(element.id, userUid, element['postDate'],
+            element['postDescription'], element['videoURL']);
+        posts.add(post);
+      }
     });
     return posts;
   }
@@ -250,11 +275,13 @@ class FirebaseService {
     DocumentReference userDocRef = users.doc(uid);
     var result = await videoPosts.where("user", isEqualTo: userDocRef).get();
     result.docs.forEach((element) async {
-      DocumentReference ref = element['user'];
-      String userUid = ref.id;
-      VideoPost post = VideoPost(element.id, userUid, element['postDate'],
-          element['postDescription'], element['videoURL']);
-      posts.add(post);
+      if (element.data().containsKey('videoURL')) {
+        DocumentReference ref = element['user'];
+        String userUid = ref.id;
+        VideoPost post = VideoPost(element.id, userUid, element['postDate'],
+            element['postDescription'], element['videoURL']);
+        posts.add(post);
+      }
     });
     return posts;
   }
@@ -276,6 +303,15 @@ class FirebaseService {
       artistsCards.add(card);
     });
     return artistsCards;
+  }
+
+  void createConnection(String userUidA, String userUidB) {
+    String _id = "${userUidA}_${userUidB}";
+    DocumentReference refA = users.doc(userUidA);
+    DocumentReference refB = users.doc(userUidB);
+    firestoreInstance.collection("Connections").doc(_id).set({
+      "users": [refA, refB]
+    });
   }
 
   FirebaseService();

@@ -6,120 +6,198 @@ import '../ui/loading.dart';
 import 'profile_view.dart';
 
 class ProfileCardAlignment extends StatefulWidget {
-  final int cardNum;
+  //final int cardNum;
   bool isCard = true;
-  ProfileCardAlignment(this.cardNum);
+  UserModel artist;
+  ProfileCardAlignment(this.artist);
   @override
-  _ProfileCardAlignementState createState() =>
-      _ProfileCardAlignementState(cardNum);
+  _ProfileCardAlignementState createState() => _ProfileCardAlignementState();
 }
 
 class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
-  final int cardNum;
-  _ProfileCardAlignementState(this.cardNum);
+  //final int cardNum;
+  _ProfileCardAlignementState();
   FirebaseService firebaseService = FirebaseService();
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: firebaseService.getArtistAccounts(),
-        //firebaseService.getUser("08KWaAMZsuamtPY2B4GgKBqsBmp1"),
-        builder: (BuildContext context, snapshot) {
-          print("");
-          if (snapshot.hasData) {
-            List<UserModel> artists = snapshot.data;
-            return Column(
-              children: [
-                FlatButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () {
-                      if (!widget.isCard) {
-                        setState(() {
-                          widget.isCard = true;
-                        });
-                      }
-                    },
-                    child: Align(
-                        alignment: Alignment.topLeft,
-                        child: widget.isCard
-                            ? Text("")
-                            : Icon(Icons.arrow_back_rounded,
-                                color: Colors.grey))),
-                Expanded(
-                  child: Card(
-                    child: !widget.isCard
-                        ? ProfileView(artists[cardNum])
-                        : Stack(
-                            children: <Widget>[
-                              SizedBox.expand(
-                                child: Material(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  child: Image.network(
-                                      artists[cardNum].profilePictureUrl,
-                                      fit: BoxFit.cover),
-                                ),
-                              ),
-                              SizedBox.expand(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          colors: [
-                                        Colors.transparent,
-                                        Colors.black54
-                                      ],
-                                          begin: Alignment.center,
-                                          end: Alignment.bottomCenter)),
-                                ),
-                              ),
-                              Align(
-                                alignment: Alignment.bottomLeft,
-                                child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 16.0, horizontal: 16.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(artists[cardNum].name,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.w700)),
-                                        Padding(
-                                            padding:
-                                                EdgeInsets.only(bottom: 8.0)),
-                                        Text(artists[cardNum].genres,
-                                            textAlign: TextAlign.start,
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                        Padding(
-                                            padding:
-                                                EdgeInsets.only(bottom: 8.0)),
-                                        FloatingActionButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                widget.isCard = false;
-                                              });
-                                            },
-                                            backgroundColor: Colors.grey,
-                                            child: Icon(Icons.info_rounded,
-                                                color: Colors.white)),
-                                      ],
-                                    )),
-                              )
-                            ],
-                          ),
+    UserModel artist = widget.artist;
+    return Column(
+      children: [
+        FlatButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onPressed: () {
+              if (!widget.isCard) {
+                setState(() {
+                  widget.isCard = true;
+                });
+              }
+            },
+            child: Align(
+                alignment: Alignment.topLeft,
+                child: widget.isCard
+                    ? Text("")
+                    : Icon(Icons.arrow_back_rounded, color: Colors.grey))),
+        Expanded(
+          child: Card(
+            child: !widget.isCard
+                ? ProfileView(artist)
+                : Stack(
+                    children: <Widget>[
+                      SizedBox.expand(
+                        child: Material(
+                          borderRadius: BorderRadius.circular(12.0),
+                          child: Image.network(artist.profilePictureUrl,
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                      SizedBox.expand(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  colors: [Colors.transparent, Colors.black54],
+                                  begin: Alignment.center,
+                                  end: Alignment.bottomCenter)),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 16.0, horizontal: 16.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(artist.name,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w700)),
+                                Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                                Text(artist.genres,
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(color: Colors.white)),
+                                Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                                FloatingActionButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        widget.isCard = false;
+                                      });
+                                    },
+                                    backgroundColor: Colors.grey,
+                                    child: Icon(Icons.info_rounded,
+                                        color: Colors.white)),
+                              ],
+                            )),
+                      )
+                    ],
                   ),
-                ),
-              ],
-            );
-          } else {
-            return Loading();
-          }
-        });
+          ),
+        ),
+      ],
+    );
   }
+  // return FutureBuilder(
+  //     future: firebaseService.getArtistAccounts(),
+  //     //firebaseService.getUser("08KWaAMZsuamtPY2B4GgKBqsBmp1"),
+  //     builder: (BuildContext context, snapshot) {
+  //       print("");
+  //       if (snapshot.hasData) {
+  //         List<UserModel> artists = snapshot.data;
+  //         return Column(
+  //           children: [
+  //             FlatButton(
+  //                 splashColor: Colors.transparent,
+  //                 highlightColor: Colors.transparent,
+  //                 onPressed: () {
+  //                   if (!widget.isCard) {
+  //                     setState(() {
+  //                       widget.isCard = true;
+  //                     });
+  //                   }
+  //                 },
+  //                 child: Align(
+  //                     alignment: Alignment.topLeft,
+  //                     child: widget.isCard
+  //                         ? Text("")
+  //                         : Icon(Icons.arrow_back_rounded,
+  //                             color: Colors.grey))),
+  //             Expanded(
+  //               child: Card(
+  //                 child: !widget.isCard
+  //                     ? ProfileView(artists[cardNum])
+  //                     : Stack(
+  //                         children: <Widget>[
+  //                           SizedBox.expand(
+  //                             child: Material(
+  //                               borderRadius: BorderRadius.circular(12.0),
+  //                               child: Image.network(
+  //                                   artists[cardNum].profilePictureUrl,
+  //                                   fit: BoxFit.cover),
+  //                             ),
+  //                           ),
+  //                           SizedBox.expand(
+  //                             child: Container(
+  //                               decoration: BoxDecoration(
+  //                                   gradient: LinearGradient(
+  //                                       colors: [
+  //                                     Colors.transparent,
+  //                                     Colors.black54
+  //                                   ],
+  //                                       begin: Alignment.center,
+  //                                       end: Alignment.bottomCenter)),
+  //                             ),
+  //                           ),
+  //                           Align(
+  //                             alignment: Alignment.bottomLeft,
+  //                             child: Container(
+  //                                 padding: EdgeInsets.symmetric(
+  //                                     vertical: 16.0, horizontal: 16.0),
+  //                                 child: Column(
+  //                                   mainAxisAlignment: MainAxisAlignment.end,
+  //                                   crossAxisAlignment:
+  //                                       CrossAxisAlignment.start,
+  //                                   children: <Widget>[
+  //                                     Text(artists[cardNum].name,
+  //                                         style: TextStyle(
+  //                                             color: Colors.white,
+  //                                             fontSize: 20.0,
+  //                                             fontWeight: FontWeight.w700)),
+  //                                     Padding(
+  //                                         padding:
+  //                                             EdgeInsets.only(bottom: 8.0)),
+  //                                     Text(artists[cardNum].genres,
+  //                                         textAlign: TextAlign.start,
+  //                                         style:
+  //                                             TextStyle(color: Colors.white)),
+  //                                     Padding(
+  //                                         padding:
+  //                                             EdgeInsets.only(bottom: 8.0)),
+  //                                     FloatingActionButton(
+  //                                         onPressed: () {
+  //                                           setState(() {
+  //                                             widget.isCard = false;
+  //                                           });
+  //                                         },
+  //                                         backgroundColor: Colors.grey,
+  //                                         child: Icon(Icons.info_rounded,
+  //                                             color: Colors.white)),
+  //                                   ],
+  //                                 )),
+  //                           )
+  //                         ],
+  //                       ),
+  //               ),
+  //             ),
+  //           ],
+  //         );
+  //       } else {
+  //         return Loading();
+  //       }
+  //     });
+
 }
 
 // class ProfileCardAlignment extends StatelessWidget {

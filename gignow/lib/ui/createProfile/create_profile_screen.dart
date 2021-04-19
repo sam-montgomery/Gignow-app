@@ -133,26 +133,35 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
     taskSnapshot.ref.getDownloadURL().then(
       (value) {
         print("Done: $value");
-        if (_accountType == "Venue") {
-          firebaseService.createProfile(_nameCont.text, _phoneCont.text,
-              _handleCont.text, selectedGenres.toList().join(","), value, true);
-        } else if (_accountType == "Artist") {
-          firebaseService.createProfile(
-              _nameCont.text,
-              _phoneCont.text,
-              _handleCont.text,
-              selectedGenres.toList().join(","),
-              value,
-              false);
-        }
+        firebaseService.createProfile(
+            context,
+            _nameCont.text,
+            _phoneCont.text,
+            _handleCont.text,
+            selectedGenres.toList().join(","),
+            value,
+            (_accountType == "Venue"));
+        // if (_accountType == "Venue") {
+        //   firebaseService.createProfile(_nameCont.text, _phoneCont.text,
+        //       _handleCont.text, selectedGenres.toList().join(","), value, true);
+        // } else if (_accountType == "Artist") {
+        //   firebaseService.createProfile(
+        //       _nameCont.text,
+        //       _phoneCont.text,
+        //       _handleCont.text,
+        //       selectedGenres.toList().join(","),
+        //       value,
+        //       (_accountType =="Venue"));
+        // }
         cleanControllers();
       },
     );
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => AuthenticationWrapper()),
-      (Route<dynamic> route) => false,
-    );
+    // Navigator.pushNamed(context, '/');
+    // Navigator.pushAndRemoveUntil(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => AuthenticationWrapper()),
+    //   (Route<dynamic> route) => false,
+    // );
   }
 
   final logo = Hero(

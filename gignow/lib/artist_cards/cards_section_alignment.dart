@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gignow/ui/loading.dart';
 import '../model/user.dart';
 import '../model/user.dart';
 import '../net/firebase_service.dart';
@@ -15,7 +17,8 @@ List<Alignment> cardsAlign = [
 List<Size> cardsSize = List(3);
 
 class CardsSectionAlignment extends StatefulWidget {
-  CardsSectionAlignment(BuildContext context) {
+  List<UserModel> artists;
+  CardsSectionAlignment(this.artists, BuildContext context) {
     cardsSize[0] = Size(MediaQuery.of(context).size.width * 0.9,
         MediaQuery.of(context).size.height * 0.8);
     cardsSize[1] = Size(MediaQuery.of(context).size.width * 0.9,
@@ -37,6 +40,7 @@ class _CardsSectionState extends State<CardsSectionAlignment>
   _CardsSectionState(user);
 
   FirebaseService firebaseService = FirebaseService();
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   List<ProfileCardAlignment> cards = List();
   AnimationController _controller;
@@ -45,15 +49,20 @@ class _CardsSectionState extends State<CardsSectionAlignment>
   Alignment frontCardAlign;
   double frontCardRot = 0.0;
   int profileIndex = 0;
+  List<UserModel> artists;
 
   @override
   void initState() {
     super.initState();
-
+    artists = widget.artists;
     // Init cards
+    // for (cardsCounter = 0; cardsCounter < 3; cardsCounter++) {
+    //   cards.add(ProfileCardAlignment(profileIndex));
+    //   profileIndex++;
+    // }
     for (cardsCounter = 0; cardsCounter < 3; cardsCounter++) {
-      cards.add(ProfileCardAlignment(profileIndex));
-      profileIndex++;
+      cards.add(ProfileCardAlignment(artists[cardsCounter]));
+      //profileIndex++;
     }
 
     frontCardAlign = cardsAlign[2];
@@ -101,7 +110,11 @@ class _CardsSectionState extends State<CardsSectionAlignment>
                 // When releasing the first card
                 onPanEnd: (_) {
                   // If the front card was swiped far enough to count as swiped
-                  if (frontCardAlign.x > 3.0 || frontCardAlign.x < -3.0) {
+                  if (frontCardAlign.x > 3.0) {
+                    firebaseService.createConnection(
+                        auth.currentUser.uid, cards[0].artist.uid);
+                    animateCards();
+                  } else if (frontCardAlign.x < -3.0) {
                     animateCards();
                   } else {
                     // Return to the initial rotation and alignment
@@ -115,6 +128,73 @@ class _CardsSectionState extends State<CardsSectionAlignment>
             : Container(),
       ],
     ));
+    // return FutureBuilder(
+    //     future: firebaseService.getArtistAccounts(),
+    //     builder: (context, snapshot) {
+    //       if (snapshot.hasData) {
+    //         artists = snapshot.data;
+    //         // artists.forEach((element) {
+    //         //   cards.add(ProfileCardAlignment(cardNum, artists))
+    //         // });
+    //         for (cardsCounter = 0; cardsCounter < 3; cardsCounter++) {
+    //           cards.add(ProfileCardAlignment(artists[cardsCounter]));
+    //           //profileIndex++;
+    //         }
+    //         return Expanded(
+    //             child: Stack(
+    //           children: <Widget>[
+    //             backCard(),
+    //             middleCard(),
+    //             frontCard(),
+
+    //             // Prevent swiping if the cards are animating
+    //             _controller.status != AnimationStatus.forward
+    //                 ? SizedBox.expand(
+    //                     child: GestureDetector(
+    //                     // While dragging the first card
+    //                     onPanUpdate: (DragUpdateDetails details) {
+    //                       // Add what the user swiped in the last frame to the alignment of the card
+    //                       setState(() {
+    //                         // 20 is the "speed" at which moves the card
+    //                         frontCardAlign = Alignment(
+    //                             frontCardAlign.x +
+    //                                 20 *
+    //                                     details.delta.dx /
+    //                                     MediaQuery.of(context).size.width,
+    //                             frontCardAlign.y +
+    //                                 40 *
+    //                                     details.delta.dy /
+    //                                     MediaQuery.of(context).size.height);
+
+    //                         frontCardRot =
+    //                             frontCardAlign.x; // * rotation speed;
+    //                       });
+    //                     },
+    //                     // When releasing the first card
+    //                     onPanEnd: (_) {
+    //                       // If the front card was swiped far enough to count as swiped
+    //                       if (frontCardAlign.x > 3.0) {
+    //                         firebaseService.createConnection(
+    //                             auth.currentUser.uid, cards[0].artist.uid);
+    //                         animateCards();
+    //                       } else if (frontCardAlign.x < -3.0) {
+    //                         animateCards();
+    //                       } else {
+    //                         // Return to the initial rotation and alignment
+    //                         setState(() {
+    //                           frontCardAlign = defaultFrontCardAlign;
+    //                           frontCardRot = 0.0;
+    //                         });
+    //                       }
+    //                     },
+    //                   ))
+    //                 : Container(),
+    //           ],
+    //         ));
+    //       } else {
+    //         return Loading();
+    //       }
+    //     });
   }
 
   Widget backCard() {
@@ -164,7 +244,7 @@ class _CardsSectionState extends State<CardsSectionAlignment>
       cards[1] = cards[2];
       cards[2] = temp;
 
-      cards[2] = ProfileCardAlignment(profileIndex);
+      //cards[2] = ProfileCardAlignment(artists[cardsCounter]);
       cardsCounter++;
 
       frontCardAlign = defaultFrontCardAlign;
