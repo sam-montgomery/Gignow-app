@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gignow/model/event.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/model/video_post.dart';
+import 'package:gignow/ui/chats/chats_screen.dart';
+import 'package:gignow/ui/chats/conversation_screen.dart';
 import 'package:gignow/ui/createProfile/create_profile_screen.dart';
 import 'package:gignow/ui/events/events_screen.dart';
 import 'package:gignow/ui/userAccount/user_account_screen.dart';
@@ -31,6 +33,25 @@ class FirebaseService {
 
   Future<UserModel> getUser(String userUid) async {
     DocumentReference docRef = users.doc(userUid);
+    UserModel user;
+    await docRef.get().then((snapshot) {
+      if (snapshot.exists) {
+        user = UserModel(
+            snapshot.get('userUid').toString(),
+            snapshot.get('name').toString(),
+            snapshot.get('genres').toString(),
+            snapshot.get('phoneNumber').toString(),
+            snapshot.get('handle').toString(),
+            snapshot.get('profile_picture_url').toString(),
+            snapshot.get('venue'));
+      }
+    });
+
+    return user;
+  }
+
+  Future<UserModel> getUserByHandle(String handle) async {
+    DocumentReference docRef = users.doc(handle);
     UserModel user;
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
@@ -107,11 +128,10 @@ class FirebaseService {
         });
   }
 
-  FutureBuilder<DocumentSnapshot> getEventsVenueView(String uid) {
-    return FutureBuilder<DocumentSnapshot>(
-        future: users.doc(uid).get(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+  FutureBuilder<UserModel> getChatsScreenView(String uid) {
+    return FutureBuilder<UserModel>(
+        future: getUser(uid),
+        builder: (context, snapshot) {
           try {
             if (snapshot.hasError) {
               return Loading();
@@ -119,9 +139,9 @@ class FirebaseService {
 
             if (snapshot.connectionState == ConnectionState.done) {
               try {
-                Map<String, dynamic> data = snapshot.data.data();
-                if (data != null) {
-                  return EventsScreen(data);
+                if (snapshot.hasData) {
+                  UserModel user = snapshot.data;
+                  return ChatsScreen(user);
                 } else {
                   return CreateProfileScreen();
                 }

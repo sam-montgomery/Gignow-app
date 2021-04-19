@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gignow/net/authentication_service.dart';
+import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/navBar/artist_nav_bar.dart';
 import 'package:gignow/ui/navBar/venue_nav_bar.dart';
 import 'package:gignow/ui/signInOrSignUP/signin_or_signup_screen.dart';
@@ -15,6 +16,7 @@ import 'artist_cards/swipe_feed_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //FirebaseService _firebaseService = FirebaseService();5
   await Firebase.initializeApp();
   runApp(MyApp());
 }
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(title: 'Flutter Demo', initialRoute: '/', routes: {
         '/': (context) => AuthenticationWrapper(),
-        '/chat': (context) => ChatsScreen(),
+        //'/chat': (context) => ChatsScreen(_firebaseService.),
         '/settings': (context) => SettingsScreen(),
         '/postvideo': (context) => PostForm(),
       }),

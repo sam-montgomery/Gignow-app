@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gignow/ui/chats/chats_screen.dart';
+import 'package:gignow/widgets/video_post_list.dart';
 import '../../artist_cards/swipe_feed_page.dart';
 import '../../net/firebase_service.dart';
 import '../../net/firebase_service.dart';
@@ -24,7 +26,7 @@ class _VNavBarState extends State<VenueNavbar> {
       Center(child: Text('Home Video Feed')),
       Center(child: Text('Events Page')),
       //Center(child: _firebaseService.getEventsVenueView(auth.currentUser.uid)),
-      Center(child: Text('Connections')),
+      Center(child: _firebaseService.getChatsScreenView(auth.currentUser.uid)),
       Center(child: _firebaseService.getFirstView(auth.currentUser.uid))
     ];
     return Scaffold(
