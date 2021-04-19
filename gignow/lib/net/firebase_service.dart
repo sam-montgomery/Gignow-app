@@ -75,20 +75,19 @@ class FirebaseService {
     return user;
   }
 
-  FutureBuilder<DocumentSnapshot> getFirstView(String uid) {
-    return FutureBuilder<DocumentSnapshot>(
-        future: users.doc(uid).get(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+  FutureBuilder<UserModel> getFirstView(String uid) {
+    return FutureBuilder<UserModel>(
+        future: getUser(uid),
+        builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
           try {
             if (snapshot.hasError) {
               return Loading();
             }
             if (snapshot.connectionState == ConnectionState.done) {
               try {
-                Map<String, dynamic> data = snapshot.data.data();
-                if (data != null) {
-                  return UserAccountScreen(data);
+                if (snapshot.hasData) {
+                  UserModel user = snapshot.data;
+                  return UserAccountScreen(user);
                 } else {
                   return CreateProfileScreen();
                 }

@@ -3,6 +3,7 @@ import 'package:gignow/model/user.dart';
 import 'package:gignow/model/video_post.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/loading.dart';
+import 'package:gignow/ui/profile_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 
@@ -62,13 +63,22 @@ class _VideoPostWidgetState extends State<VideoPostWidget> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: <Widget>[
-                                  CircleAvatar(
-                                    backgroundColor: Colors.white70,
-                                    minRadius: 10.0,
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProfileScreen(user)));
+                                    },
                                     child: CircleAvatar(
-                                      radius: 20.0,
-                                      backgroundImage:
-                                          NetworkImage(user.profilePictureUrl),
+                                      backgroundColor: Colors.white70,
+                                      minRadius: 10.0,
+                                      child: CircleAvatar(
+                                        radius: 20.0,
+                                        backgroundImage: NetworkImage(
+                                            user.profilePictureUrl),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(

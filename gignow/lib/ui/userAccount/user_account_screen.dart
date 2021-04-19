@@ -14,7 +14,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 //Profile UI https://medium.com/@palmeiro.leonardo/simple-profile-screen-with-flutter-fe2f1f7cfaf5
 class UserAccountScreen extends StatefulWidget {
-  final Map<String, dynamic> profile;
+  final UserModel profile;
   UserAccountScreen(this.profile);
   @override
   UserAccountScreenState createState() => UserAccountScreenState();
@@ -26,21 +26,8 @@ class UserAccountScreenState extends State<UserAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel dummyUser = UserModel(
-        auth.currentUser.uid,
-        "Test Name",
-        "Pop",
-        "07889922331",
-        "@testuser",
-        "https://firebasestorage.googleapis.com/v0/b/gignow-402c6.appspot.com/o/profile_pictures%2Fprofile_picture_HouyUStDx1VIzmvH5zcrCviloow1?alt=media&token=a6310648-e9b1-4107-8b26-da5d6dce0698",
-        false);
-    VideoPost dummyPost = VideoPost("1", dummyUser.uid,
-        Timestamp.fromDate(DateTime.now()), "Test Post", "videoURL");
-    bool venue = (widget.profile['venueName'] != null ? true : false);
-    bool hasUsername = (widget.profile['username'] != null ? true : false);
-    String name =
-        (venue ? widget.profile["venueName"] : widget.profile["name"]);
-    String handle = widget.profile["handle"];
+    String name = widget.profile.name;
+    String handle = widget.profile.handle;
     return Scaffold(
       body: ListView(
         children: <Widget>[
@@ -67,7 +54,7 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                       child: CircleAvatar(
                         radius: 80.0,
                         backgroundImage:
-                            NetworkImage(widget.profile["profile_picture_url"]),
+                            NetworkImage(widget.profile.profilePictureUrl),
                       ),
                     ),
                   ],
@@ -106,9 +93,7 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                 children: [
                   IconButton(
                       icon: Icon(Icons.edit, color: Colors.grey),
-                      onPressed: () async {
-                        firebaseService.getVideoPosts();
-                      }),
+                      onPressed: () {}),
                   Text("Edit Profile")
                 ],
               ),

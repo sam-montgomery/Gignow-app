@@ -92,6 +92,13 @@ class _PostFormState extends State<PostForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: IconButton(
+        icon: Icon(Icons.close),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       body: Column(
         children: [
           SizedBox(height: 100),
