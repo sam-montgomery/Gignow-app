@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -189,6 +190,24 @@ class FirebaseService {
     return res.reasonPhrase;
   }
 
+  Future uploadVideoPHP(String newPath) async {
+    var uri =
+        Uri.parse("https://gignow.student.davecutting.uk/upload_file.php");
+    var request = new http.MultipartRequest("POST", uri);
+
+    var multipartFile = await http.MultipartFile.fromPath("video", newPath);
+    request.files.add(multipartFile);
+    http.StreamedResponse response = await request.send();
+    response.stream.transform(utf8.decoder).listen((value) {
+      print(value);
+    });
+    if (response.statusCode == 200) {
+      print("Video uploaded");
+    } else {
+      print("Video upload failed");
+    }
+  }
+
   void createVideoPost(File video, DateTime date, String desc) {
     final user = auth.currentUser;
     firestoreInstance.collection("VideoPosts").add({
@@ -199,8 +218,9 @@ class FirebaseService {
       String dir = path.dirname(video.path);
       String newPath = path.join(dir, "${docRef.id}.mp4");
       video.renameSync(newPath);
-      uploadVideo(
-          docRef.id, newPath, "https://gignow-310714.ew.r.appspot.com/upload");
+      // uploadVideo(
+      //     docRef.id, newPath, "https://gignow-310714.ew.r.appspot.com/upload");
+      uploadVideoPHP(newPath);
     });
   }
 
