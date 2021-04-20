@@ -9,6 +9,7 @@ import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/home_view.dart';
 import 'package:gignow/ui/loading.dart';
 
+import 'components/chat_room_list_tile.dart';
 import 'conversation_screen.dart';
 
 class ChatsScreen extends StatefulWidget {
@@ -22,7 +23,8 @@ class ChatScreenState extends State<ChatsScreen> {
   bool isSearching = false;
   Stream usersStream;
   Stream chatRoomsStream;
-  String myName, myProfilePic, myHandle;
+  Stream connectionsStream;
+  String myName, myProfilePic, myHandle, myUID;
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseService firebaseService = FirebaseService();
 
@@ -37,7 +39,7 @@ class ChatScreenState extends State<ChatsScreen> {
 
   onScreenLoaded() async {
     await getInfoFromSharedPreferences();
-    getChatRooms(myHandle);
+    getChatRooms(myUID);
   }
 
   onSearchButtonClick() async {
@@ -48,84 +50,18 @@ class ChatScreenState extends State<ChatsScreen> {
     setState(() {});
   }
 
-  getChatRoomIDByHandle(String idA, String idB) {
-    if (idA.substring(0, 1).codeUnitAt(0) >=
-        idB.substring(0, 1).codeUnitAt(0)) {
-      return "$idB\_$idA";
-    } else {
-      return "$idA\_$idB";
-    }
-  }
-
   getInfoFromSharedPreferences() {
     myName = widget.profile.name;
     myProfilePic = widget.profile.profilePictureUrl;
     myHandle = widget.profile.handle;
+    myUID = widget.profile.uid;
   }
 
-  getChatRooms(String handle) async {
-    chatRoomsStream = await DatabaseMethods().getChatRooms(handle);
+  getChatRooms(String uid) async {
+    connectionsStream =
+        await DatabaseMethods().getConnections(widget.profile.uid);
+    chatRoomsStream = await DatabaseMethods().getChatRooms(uid);
     setState(() {});
-  }
-
-  Widget userTile(String uid, String profileURL, String name, String handle) {
-    return GestureDetector(
-      onTap: () {
-        var chatRoomID =
-            DatabaseMethods().getChatRoomIDByHandle(handle, myHandle);
-        Map<String, dynamic> chatRoomInfoMap = {
-          "users": [myHandle, handle]
-        };
-
-        DatabaseMethods().createChatRoom(chatRoomID, chatRoomInfoMap);
-
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ConversationScreen(widget.profile, name, handle)));
-      },
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: Image.network(
-              profileURL,
-              height: 50,
-              width: 50,
-            ),
-          ),
-          SizedBox(
-            width: 12,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Text(name), Text(handle)],
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget searchUsersList() {
-    return StreamBuilder(
-      stream: usersStream,
-      builder: (context, snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot ds = snapshot.data.docs[index];
-                  return userTile(ds["userUid"], ds["profile_picture_url"],
-                      ds["name"], ds["handle"]);
-                },
-              )
-            : Center(
-                child: CircularProgressIndicator(),
-              );
-      },
-    );
   }
 
   Widget chatRoomsList() {
@@ -152,12 +88,70 @@ class ChatScreenState extends State<ChatsScreen> {
         });
   }
 
+  Widget searchUsersList() {
+    return StreamBuilder(
+      stream: usersStream,
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: snapshot.data.docs.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot ds = snapshot.data.docs[index];
+                  return userTile(ds["userUid"], ds["profile_picture_url"],
+                      ds["name"], ds["handle"]);
+                },
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              );
+      },
+    );
+  }
+
+  Widget userTile(String uid, String profileURL, String name, String handle) {
+    return GestureDetector(
+      onTap: () {
+        var chatRoomID = DatabaseMethods().getChatRoomIDByHandle(uid, myUID);
+        Map<String, dynamic> chatRoomInfoMap = {
+          "users": [myHandle, handle]
+        };
+
+        DatabaseMethods().createChatRoom(chatRoomID, chatRoomInfoMap);
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ConversationScreen(widget.profile, name, uid)));
+      },
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Image.network(
+              profileURL,
+              height: 50,
+              width: 50,
+            ),
+          ),
+          SizedBox(
+            width: 12,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [Text(name), Text(handle)],
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text("Chats"),
-          actions: [IconButton(icon: Icon(Icons.search), onPressed: () {})],
         ),
         body: Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
@@ -214,84 +208,5 @@ class ChatScreenState extends State<ChatsScreen> {
                 isSearching ? searchUsersList() : chatRoomsList()
               ],
             )));
-  }
-}
-
-class ChatRoomListTile extends StatefulWidget {
-  final String lastMessage, chatRoomID, myHandle;
-  final UserModel profile;
-  ChatRoomListTile(
-      this.lastMessage, this.chatRoomID, this.myHandle, this.profile);
-  @override
-  ChatRoomListTileState createState() => ChatRoomListTileState();
-}
-
-class ChatRoomListTileState extends State<ChatRoomListTile> {
-  String recieverProfilePictureURL, recieverName, recieverHandle;
-  QuerySnapshot recieverProfile;
-
-  getThisUserInfo() async {
-    recieverHandle = widget.chatRoomID
-        .replaceAll(widget.profile.handle, "")
-        .replaceAll("_", "");
-    recieverProfile =
-        await DatabaseMethods().getUserByUserHandle(recieverHandle);
-    // QuerySnapshot querySnapshot =
-    //     await DatabaseMethods().getUserInfoByHandle(widget.myHandle);
-    //print("something ${querySnapshot.docs[0].id}");
-    recieverName = recieverProfile.docs[0]["name"];
-    //name = querySnapshot.docs[0]["name"];
-    //profilePictureURL = querySnapshot.docs[0]["profile_picture_url"];
-    recieverProfilePictureURL = recieverProfile.docs[0]["profile_picture_url"];
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    getThisUserInfo();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return recieverProfilePictureURL != ""
-        ? GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ConversationScreen(
-                          widget.profile, recieverName, recieverHandle)));
-            },
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(60),
-                  child: Image.network(
-                    recieverProfilePictureURL,
-                    height: 60,
-                    width: 60,
-                  ),
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      recieverName,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(
-                      height: 3,
-                    ),
-                    Text(widget.lastMessage)
-                  ],
-                )
-              ],
-            ),
-          )
-        : Container();
   }
 }

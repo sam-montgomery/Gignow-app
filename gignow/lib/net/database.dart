@@ -13,10 +13,10 @@ class DatabaseMethods {
         .snapshots();
   }
 
-  Future<QuerySnapshot> getUserByUserHandle(String handle) async {
+  Future<QuerySnapshot> getUserByUserUID(String uid) async {
     return FirebaseFirestore.instance
         .collection("Users")
-        .where("handle", isEqualTo: handle)
+        .where("userUid", isEqualTo: uid)
         .get();
   }
 
@@ -61,11 +61,18 @@ class DatabaseMethods {
         .snapshots();
   }
 
-  Future<Stream<QuerySnapshot>> getChatRooms(String handle) async {
+  Future<Stream<QuerySnapshot>> getChatRooms(String uid) async {
     return FirebaseFirestore.instance
         .collection("chatRooms")
         .orderBy("lastMessageSentTimeStamp", descending: true)
-        .where("users", arrayContains: handle)
+        .where("users", arrayContains: uid)
+        .snapshots();
+  }
+
+  Future<Stream<QuerySnapshot>> getConnections(String uid) async {
+    return FirebaseFirestore.instance
+        .collection("Connections")
+        .where("users", arrayContains: "/Users/" + uid)
         .snapshots();
   }
 

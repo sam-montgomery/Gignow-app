@@ -10,39 +10,31 @@ import 'package:gignow/net/firebase_service.dart';
 import 'package:random_string/random_string.dart';
 
 class ConversationScreen extends StatefulWidget {
-  final String chatWithName, chatWithHandle;
-  final UserModel profile;
-  ConversationScreen(this.profile, this.chatWithName, this.chatWithHandle);
+  final String chatWithName, chatWithUID;
+  final UserModel senderProfile;
+  ConversationScreen(this.senderProfile, this.chatWithName, this.chatWithUID);
   @override
   ConversationScreenState createState() => ConversationScreenState();
 }
 
 class ConversationScreenState extends State<ConversationScreen> {
   String chatRoomID, messageID = "";
-  String myName, myProfilePic, myHandle;
+  String myName, myProfilePic, myHandle, myUID;
   Stream messageStream;
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseService firebaseService = FirebaseService();
   TextEditingController messageTextEditingController = TextEditingController();
 
   getInfoFromSharedPreferences() {
-    myName = widget.profile.name;
-    myProfilePic = widget.profile.profilePictureUrl;
-    myHandle = widget.profile.handle;
+    myName = widget.senderProfile.name;
+    myProfilePic = widget.senderProfile.profilePictureUrl;
+    myHandle = widget.senderProfile.handle;
+    myUID = widget.senderProfile.uid;
     String chatName = widget.chatWithName;
     print("Testing $chatName");
 
-    chatRoomID = DatabaseMethods()
-        .getChatRoomIDByHandle(widget.chatWithHandle, myHandle);
-  }
-
-  getChatRoomIDByHandle(String handleA, String handleB) {
-    if (handleA.substring(0, 1).codeUnitAt(0) >=
-        handleB.substring(0, 1).codeUnitAt(0)) {
-      return "$handleB\_$handleA";
-    } else {
-      return "$handleA\_$handleB";
-    }
+    chatRoomID =
+        DatabaseMethods().getChatRoomIDByHandle(widget.chatWithUID, myUID);
   }
 
   addMessage() {
