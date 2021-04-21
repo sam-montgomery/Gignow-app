@@ -69,12 +69,12 @@ class DatabaseMethods {
         .snapshots();
   }
 
-  Future<Stream<QuerySnapshot>> getConnections(String uid) async {
-    return FirebaseFirestore.instance
-        .collection("Connections")
-        .where("users", arrayContains: "/Users/" + uid)
-        .snapshots();
-  }
+  // Future<Stream<QuerySnapshot>> getConnections(String uid) async {
+  //   return FirebaseFirestore.instance
+  //       .collection("Connections")
+  //       .where("users", arrayContains: "/Users/" + uid)
+  //       .snapshots();
+  // }
 
   // Future<UserModel> getUserInfoByHandle(String handle) async {
   //   return await FirebaseFirestore.instance
@@ -83,7 +83,22 @@ class DatabaseMethods {
   //       .get();
   // }
 
-  createChatRoom(String chatRoomID, Map chatRoomInfoMap) async {
+  createChatRoom(String chatRoomID, String userUidA, String userUidB) async {
+    // Map<String, dynamic> lastMessageInfoMap = {
+    //   "lastMessage": "message",
+    //   "lastMessageSentTimeStamp": "timeStamp",
+    //   "lastMessageSentBy": "sentBy"
+    // };
+    Map<String, dynamic> messageInfoMap = {
+      "message": null,
+      "sentBy": null,
+      "timeStamp": DateTime.now(),
+      "imgUrl": null
+    };
+    //print("reached!!");
+
+    chatRoomID = getChatRoomIDByHandle(userUidA, userUidB);
+
     final snapShot = await FirebaseFirestore.instance
         .collection("chatRooms")
         .doc(chatRoomID)
@@ -93,11 +108,19 @@ class DatabaseMethods {
       //chat room already exists
       return true;
     } else {
+      //print("reached!!");
+
       //create chat room
-      return FirebaseFirestore.instance
-          .collection("chatRooms")
-          .doc(chatRoomID)
-          .set(chatRoomInfoMap);
+      FirebaseFirestore.instance.collection("chatRooms").doc(chatRoomID).set({
+        "users": [userUidA, userUidB]
+      });
+      addMessage(chatRoomID, messageInfoMap);
     }
   }
+
+  // String getChatRoomIDs(String uid) {
+  //   return FirebaseFirestore.instance
+  //       .collection("chatRooms")
+  //       .where("users", arrayContains: uid);
+  // }
 }

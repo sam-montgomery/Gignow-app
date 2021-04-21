@@ -30,11 +30,11 @@ class ConversationScreenState extends State<ConversationScreen> {
     myProfilePic = widget.senderProfile.profilePictureUrl;
     myHandle = widget.senderProfile.handle;
     myUID = widget.senderProfile.uid;
-    String chatName = widget.chatWithName;
-    print("Testing $chatName");
+    //String chatName = widget.chatWithName;
+    //print("Testing $chatName");
 
     chatRoomID =
-        DatabaseMethods().getChatRoomIDByHandle(widget.chatWithUID, myUID);
+        DatabaseMethods().getChatRoomIDByHandle(myUID, widget.chatWithUID);
   }
 
   addMessage() {
@@ -44,7 +44,7 @@ class ConversationScreenState extends State<ConversationScreen> {
 
       Map<String, dynamic> messageInfoMap = {
         "message": message,
-        "sentBy": myName,
+        "sentBy": myUID,
         "timeStamp": lastMessageTimeStamp,
         "imgUrl": myProfilePic
       };
@@ -58,9 +58,8 @@ class ConversationScreenState extends State<ConversationScreen> {
         Map<String, dynamic> lastMessageInfoMap = {
           "lastMessage": message,
           "lastMessageSentTimeStamp": lastMessageTimeStamp,
-          "lastMessageSentBy": myName
+          "lastMessageSentBy": myUID
         };
-        // DatabaseMethods().updateLastMessageSent(chatRoomID, lastMessageInfoMap);
         messageTextEditingController.text = "";
       });
     }
@@ -119,7 +118,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                 reverse: true,
                 itemBuilder: (context, index) {
                   DocumentSnapshot ds = snapshot.data.docs[index];
-                  return messageTile(ds["message"], myName == ds["sentBy"]);
+                  return messageTile(ds["message"], myUID == ds["sentBy"]);
                 })
             : Center(
                 child: CircularProgressIndicator(),
@@ -133,6 +132,7 @@ class ConversationScreenState extends State<ConversationScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.chatWithName)),
       body: Container(
+        color: Colors.white,
         child: Stack(
           children: [
             messages(),
@@ -153,6 +153,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                     GestureDetector(
                         onTap: () {
                           addMessage();
+                          messageTextEditingController.text = "";
                         },
                         child: Icon(Icons.send))
                   ],

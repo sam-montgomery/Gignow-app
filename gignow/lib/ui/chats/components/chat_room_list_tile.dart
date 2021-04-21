@@ -12,10 +12,10 @@ import 'package:gignow/ui/loading.dart';
 import '../conversation_screen.dart';
 
 class ChatRoomListTile extends StatefulWidget {
-  final String lastMessage, chatRoomID, myHandle;
-  final UserModel profile;
+  final String lastMessage, chatRoomID, senderHandle;
+  final UserModel senderProfile;
   ChatRoomListTile(
-      this.lastMessage, this.chatRoomID, this.myHandle, this.profile);
+      this.lastMessage, this.chatRoomID, this.senderHandle, this.senderProfile);
   @override
   ChatRoomListTileState createState() => ChatRoomListTileState();
 }
@@ -26,7 +26,7 @@ class ChatRoomListTileState extends State<ChatRoomListTile> {
 
   getThisUserInfo() async {
     recieverUID = widget.chatRoomID
-        .replaceAll(widget.profile.uid, "")
+        .replaceAll(widget.senderProfile.uid, "")
         .replaceAll("_", "");
     recieverProfile = await DatabaseMethods().getUserByUserUID(recieverUID);
     recieverName = recieverProfile.docs[0]["name"];
@@ -49,7 +49,7 @@ class ChatRoomListTileState extends State<ChatRoomListTile> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => ConversationScreen(
-                          widget.profile, recieverName, recieverUID)));
+                          widget.senderProfile, recieverName, recieverUID)));
             },
             child: Row(
               children: [
@@ -74,7 +74,9 @@ class ChatRoomListTileState extends State<ChatRoomListTile> {
                     SizedBox(
                       height: 3,
                     ),
-                    Text(widget.lastMessage)
+                    widget.lastMessage != null
+                        ? Text(widget.lastMessage)
+                        : Text("Say hello to your new connection!")
                   ],
                 )
               ],

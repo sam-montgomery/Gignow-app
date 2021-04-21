@@ -23,7 +23,7 @@ class ChatScreenState extends State<ChatsScreen> {
   bool isSearching = false;
   Stream usersStream;
   Stream chatRoomsStream;
-  Stream connectionsStream;
+  //Stream connectionsStream;
   String myName, myProfilePic, myHandle, myUID;
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseService firebaseService = FirebaseService();
@@ -58,8 +58,8 @@ class ChatScreenState extends State<ChatsScreen> {
   }
 
   getChatRooms(String uid) async {
-    connectionsStream =
-        await DatabaseMethods().getConnections(widget.profile.uid);
+    // connectionsStream =
+    //     await DatabaseMethods().getConnections(widget.profile.uid);
     chatRoomsStream = await DatabaseMethods().getChatRooms(uid);
     setState(() {});
   }
@@ -98,8 +98,12 @@ class ChatScreenState extends State<ChatsScreen> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   DocumentSnapshot ds = snapshot.data.docs[index];
-                  return userTile(ds["userUid"], ds["profile_picture_url"],
-                      ds["name"], ds["handle"]);
+                  // String chatRoomID =
+                  //     DatabaseMethods().getChatRoomsIDs(ds["userUid"]);
+                  return ChatRoomListTile(null, ds["userUid"] + "_" + myUID,
+                      widget.profile.handle, widget.profile);
+                  // return userTile(ds["userUid"], ds["profile_picture_url"],
+                  //     ds["name"], ds["handle"]);
                 },
               )
             : Center(
@@ -109,43 +113,43 @@ class ChatScreenState extends State<ChatsScreen> {
     );
   }
 
-  Widget userTile(String uid, String profileURL, String name, String handle) {
-    return GestureDetector(
-      onTap: () {
-        var chatRoomID = DatabaseMethods().getChatRoomIDByHandle(uid, myUID);
-        Map<String, dynamic> chatRoomInfoMap = {
-          "users": [myHandle, handle]
-        };
+  // Widget userTile(String uid, String profileURL, String name, String handle) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       var chatRoomID = DatabaseMethods().getChatRoomIDByHandle(uid, myUID);
+  //       Map<String, dynamic> chatRoomInfoMap = {
+  //         "users": [myHandle, handle]
+  //       };
 
-        DatabaseMethods().createChatRoom(chatRoomID, chatRoomInfoMap);
+  //       DatabaseMethods().createChatRoom(chatRoomID, chatRoomInfoMap);
 
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ConversationScreen(widget.profile, name, uid)));
-      },
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: Image.network(
-              profileURL,
-              height: 50,
-              width: 50,
-            ),
-          ),
-          SizedBox(
-            width: 12,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Text(name), Text(handle)],
-          )
-        ],
-      ),
-    );
-  }
+  //       Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //               builder: (context) =>
+  //                   ConversationScreen(widget.profile, name, uid)));
+  //     },
+  //     child: Row(
+  //       children: [
+  //         ClipRRect(
+  //           borderRadius: BorderRadius.circular(30),
+  //           child: Image.network(
+  //             profileURL,
+  //             height: 50,
+  //             width: 50,
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           width: 12,
+  //         ),
+  //         Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [Text(name), Text(handle)],
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

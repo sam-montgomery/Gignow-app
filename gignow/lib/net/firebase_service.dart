@@ -18,6 +18,8 @@ import '../model/user.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
 
+import 'database.dart';
+
 class FirebaseService {
   final firestoreInstance = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -351,6 +353,7 @@ class FirebaseService {
     firestoreInstance.collection("Connections").doc(_id).set({
       "users": [refA, refB]
     });
+    DatabaseMethods().createChatRoom(_id, userUidA, userUidB);
   }
 
   FirebaseService();
