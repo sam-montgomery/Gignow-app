@@ -153,64 +153,72 @@ class ChatScreenState extends State<ChatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Chats"),
-        ),
-        body: Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                Row(
+    try {
+      return Scaffold(
+          appBar: AppBar(
+            title: Text("Chats"),
+          ),
+          body: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              child: Expanded(
+                child: ListView(
+                  shrinkWrap: true,
                   children: [
-                    isSearching
-                        ? GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isSearching = false;
-                                searchUserNameEditingController.text = "";
-                              });
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 12),
-                              child: Icon(Icons.arrow_back),
-                            ),
-                          )
-                        : Container(),
-                    Expanded(
-                      child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 16),
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1.4,
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(24)),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  child: TextField(
-                                controller: searchUserNameEditingController,
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Search for people"),
+                    Row(
+                      children: [
+                        isSearching
+                            ? GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isSearching = false;
+                                    searchUserNameEditingController.text = "";
+                                  });
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: 12),
+                                  child: Icon(Icons.arrow_back),
+                                ),
+                              )
+                            : Container(),
+                        Expanded(
+                          child: Container(
+                              margin: EdgeInsets.symmetric(vertical: 16),
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey,
+                                      width: 1.4,
+                                      style: BorderStyle.solid),
+                                  borderRadius: BorderRadius.circular(24)),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      child: TextField(
+                                    controller: searchUserNameEditingController,
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        hintText: "Search for people"),
+                                  )),
+                                  GestureDetector(
+                                      onTap: () {
+                                        if (searchUserNameEditingController
+                                                .text !=
+                                            "") {
+                                          onSearchButtonClick();
+                                        }
+                                      },
+                                      child: Icon(Icons.search))
+                                ],
                               )),
-                              GestureDetector(
-                                  onTap: () {
-                                    if (searchUserNameEditingController.text !=
-                                        "") {
-                                      onSearchButtonClick();
-                                    }
-                                  },
-                                  child: Icon(Icons.search))
-                            ],
-                          )),
+                        ),
+                      ],
                     ),
+                    isSearching ? searchUsersList() : chatRoomsList()
                   ],
                 ),
-                isSearching ? searchUsersList() : chatRoomsList()
-              ],
-            )));
+              )));
+    } catch (e) {
+      return Loading();
+    }
   }
 }

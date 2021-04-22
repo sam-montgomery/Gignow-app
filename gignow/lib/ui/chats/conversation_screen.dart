@@ -118,7 +118,9 @@ class ConversationScreenState extends State<ConversationScreen> {
                 reverse: true,
                 itemBuilder: (context, index) {
                   DocumentSnapshot ds = snapshot.data.docs[index];
-                  return messageTile(ds["message"], myUID == ds["sentBy"]);
+                  if (ds['message'] != null) {
+                    return messageTile(ds["message"], myUID == ds["sentBy"]);
+                  }
                 })
             : Center(
                 child: CircularProgressIndicator(),

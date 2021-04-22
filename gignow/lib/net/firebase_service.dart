@@ -53,9 +53,6 @@ class FirebaseService {
             print(x[item]);
             socials.addAll({item: x[item]});
           });
-          // x.values.forEach((item) {
-          //   print(item);
-          // });
         }
         user = UserModel(
             snapshot.get('userUid').toString(),
@@ -77,9 +74,14 @@ class FirebaseService {
     UserModel user;
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
-        Map<String, String> socials = {};
+        Map<String, String> socials = new Map<String, String>();
         if (snapshot.data().containsKey("socials")) {
-          socials = snapshot.get('socials');
+          var x = snapshot.get('socials');
+          x.keys.forEach((item) {
+            print(item);
+            print(x[item]);
+            socials.addAll({item: x[item]});
+          });
         }
         user = UserModel(
             snapshot.get('userUid').toString(),
@@ -352,9 +354,14 @@ class FirebaseService {
       // DocumentReference ref = element['user'];
       // String userUid = ref.id;
 
-      Map<String, String> socials = {};
+      Map<String, String> socials = new Map<String, String>();
       if (element.data().containsKey("socials")) {
-        socials = element['socials'];
+        var x = element.get('socials');
+        x.keys.forEach((item) {
+          print(item);
+          print(x[item]);
+          socials.addAll({item: x[item]});
+        });
       }
       UserModel card = UserModel(
           element.id,
