@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../model/user.dart';
 import '../net/firebase_service.dart';
 import '../ui/loading.dart';
+import '../ui/loading.dart';
 import 'profile_view.dart';
 
 class ProfileCardAlignment extends StatefulWidget {
@@ -10,6 +11,7 @@ class ProfileCardAlignment extends StatefulWidget {
   bool isCard = true;
   UserModel artist;
   ProfileCardAlignment(this.artist);
+  ProfileCardAlignment.emptyCard();
   @override
   _ProfileCardAlignementState createState() => _ProfileCardAlignementState();
 }
@@ -21,6 +23,49 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
 
   @override
   Widget build(BuildContext context) {
+    UserModel artist = widget.artist;
+    if (artist != null)
+      return artistCard();
+    else
+      return blankCard();
+  }
+
+  Widget blankCard() {
+    return Card(
+      child: Stack(
+        children: <Widget>[
+          SizedBox.expand(
+            child: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Colors.transparent, Colors.black54],
+                      begin: Alignment.center,
+                      end: Alignment.bottomCenter)),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Container(
+                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text("No more artists in search",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w700)),
+                    Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                  ],
+                )),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget artistCard() {
     UserModel artist = widget.artist;
     return Column(
       children: [
@@ -99,6 +144,7 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
       ],
     );
   }
+
   // return FutureBuilder(
   //     future: firebaseService.getArtistAccounts(),
   //     //firebaseService.getUser("08KWaAMZsuamtPY2B4GgKBqsBmp1"),

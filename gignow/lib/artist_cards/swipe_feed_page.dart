@@ -3,6 +3,7 @@ import 'package:gignow/model/user.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/loading.dart';
 import 'cards_section_alignment.dart';
+import 'cards_section_alignment.dart';
 
 class SwipeFeedPage extends StatefulWidget {
   @override
@@ -35,7 +36,7 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
               backgroundColor: Colors.white,
               body: Column(children: <Widget>[
                 CardsSectionAlignment(artists, context),
-                buttonsRow()
+                buttonsRow(),
               ]),
             );
           } else {

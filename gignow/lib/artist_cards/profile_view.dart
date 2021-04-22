@@ -78,11 +78,7 @@ class _ProfileViewState extends State<ProfileView> {
                 widget.artist.genres,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              Text(
-                'Artist description',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -98,23 +94,15 @@ class _ProfileViewState extends State<ProfileView> {
             : Stack(
                 alignment: Alignment.center,
                 children: [
-                  Ink.image(
-                    image: AssetImage('res/portrait.jpeg'),
-                    colorFilter: ColorFilter.linearToSrgbGamma(),
-                    child: InkWell(
-                      onTap: () {},
-                    ),
-                    height: 240,
-                    fit: BoxFit.cover,
-                  ),
                   Text(
-                    'Video post here',
+                    'No video post available',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 24,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black,
+                      fontSize: 20,
                     ),
                   ),
+                  const SizedBox(height: 240),
                 ],
               ),
       );
