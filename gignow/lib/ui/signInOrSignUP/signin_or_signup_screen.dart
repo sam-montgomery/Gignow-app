@@ -24,17 +24,6 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
   bool invalidRegister = false;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
-  String validatePassword(String value) {
-    if (value.isEmpty) {
-      return "* Required";
-    } else if (value.length < 6) {
-      return "Password should be at least 6 characters";
-    } else if (value.length > 15) {
-      return "Password should not be greater than 15 characters";
-    } else
-      return null;
-  }
-
   //https://github.com/putraxor/flutter-login-ui
   @override
   Widget build(BuildContext context) {

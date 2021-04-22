@@ -9,6 +9,9 @@ import 'package:gignow/model/video_post.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:gignow/net/globals.dart';
+import 'package:gignow/ui/chats/conversation_screen.dart';
+import 'package:gignow/ui/userProfile/socials_screen.dart';
 import 'package:gignow/widgets/video_post_list.dart';
 import 'package:gignow/widgets/video_post_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -21,28 +24,42 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  FirebaseService firebaseService = FirebaseService();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  Global global = Global();
+
   @override
   Widget build(BuildContext context) {
+    UserModel currentUser = global.currentUserModel;
     String name = widget.profile.name;
     String handle = widget.profile.handle;
     return Scaffold(
-      floatingActionButton: IconButton(
-        icon: Icon(Icons.close),
-        onPressed: () {
-          Navigator.pop(context);
-        },
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: Text(
+          handle,
+          style: TextStyle(color: Colors.black),
+        ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      // floatingActionButton: IconButton(
+      //   icon: Icon(Icons.close),
+      //   onPressed: () {
+      //     Navigator.pop(context);
+      //   },
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       body: ListView(
         children: <Widget>[
           SizedBox(
             height: 10,
           ),
-          Center(
-              child: Text(
-            handle,
-            style: TextStyle(fontSize: 20),
-          )),
+          // Center(
+          //     child: Text(
+          //   handle,
+          //   style: TextStyle(fontSize: 20),
+          // )),
           Container(
             height: 250,
             child: Column(
@@ -77,45 +94,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //   children: [
-          //     Column(
-          //       children: [
-          //         IconButton(
-          //             icon: Icon(
-          //               Icons.settings,
-          //               color: Colors.grey,
-          //             ),
-          //             onPressed: () {
-          //               Navigator.pushNamed(context, '/settings');
-          //             }),
-          //         Text("Settings")
-          //       ],
-          //     ),
-          //     Column(
-          //       children: [
-          //         IconButton(
-          //             icon: Icon(Icons.edit, color: Colors.grey),
-          //             onPressed: () {}),
-          //         Text("Edit Profile")
-          //       ],
-          //     ),
-          //   ],
-          // ),
-          // Center(
-          //   child: Column(
-          //     children: [
-          //       IconButton(
-          //           icon: Icon(Icons.camera_alt_outlined,
-          //               size: 30, color: Colors.red[300]),
-          //           onPressed: () {
-          //             Navigator.pushNamed(context, '/postvideo');
-          //           }),
-          //       Text("Add Media")
-          //     ],
-          //   ),
-          // ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Column(
+                children: [
+                  IconButton(
+                      icon: Icon(Icons.message_rounded,
+                          size: 30, color: Colors.red[300]),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ConversationScreen(
+                                    currentUser,
+                                    widget.profile.name,
+                                    widget.profile.uid)));
+                      }),
+                  Text("Message")
+                ],
+              ),
+              Column(
+                children: [
+                  IconButton(
+                      icon: Icon(Icons.insert_link_rounded,
+                          color: Colors.red[300]),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SocialsScreen(widget.profile)));
+                      }),
+                  Text("Socials")
+                ],
+              ),
+            ],
+          ),
           SizedBox(
             height: 20,
           ),

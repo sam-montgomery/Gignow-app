@@ -3,7 +3,7 @@ import 'package:gignow/model/user.dart';
 import 'package:gignow/model/video_post.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/loading.dart';
-import 'package:gignow/ui/profile_screen.dart';
+import 'package:gignow/ui/userProfile/profile_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 
@@ -26,10 +26,11 @@ class _VideoPostWidgetState extends State<VideoPostWidget> {
     super.initState();
     _controller = VideoPlayerController.network(post.videoURL);
     _controller.addListener(() {
-      setState(() {});
+      // setState(() {});
     });
     _controller.setLooping(true);
-    _controller.initialize().then((_) => setState(() {}));
+    // _controller.initialize().then((_) => setState(() {}));
+    _controller.initialize();
     //_controller.play();
   }
 

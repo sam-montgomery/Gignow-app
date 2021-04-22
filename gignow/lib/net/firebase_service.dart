@@ -45,6 +45,18 @@ class FirebaseService {
     UserModel user;
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
+        Map<String, String> socials = new Map<String, String>();
+        if (snapshot.data().containsKey("socials")) {
+          var x = snapshot.get('socials');
+          x.keys.forEach((item) {
+            print(item);
+            print(x[item]);
+            socials.addAll({item: x[item]});
+          });
+          // x.values.forEach((item) {
+          //   print(item);
+          // });
+        }
         user = UserModel(
             snapshot.get('userUid').toString(),
             snapshot.get('name').toString(),
@@ -52,6 +64,7 @@ class FirebaseService {
             snapshot.get('phoneNumber').toString(),
             snapshot.get('handle').toString(),
             snapshot.get('profile_picture_url').toString(),
+            socials,
             snapshot.get('venue'));
       }
     });
@@ -64,6 +77,10 @@ class FirebaseService {
     UserModel user;
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
+        Map<String, String> socials = {};
+        if (snapshot.data().containsKey("socials")) {
+          socials = snapshot.get('socials');
+        }
         user = UserModel(
             snapshot.get('userUid').toString(),
             snapshot.get('name').toString(),
@@ -71,6 +88,7 @@ class FirebaseService {
             snapshot.get('phoneNumber').toString(),
             snapshot.get('handle').toString(),
             snapshot.get('profile_picture_url').toString(),
+            socials,
             snapshot.get('venue'));
       }
     });
@@ -333,6 +351,11 @@ class FirebaseService {
     result.docs.forEach((element) async {
       // DocumentReference ref = element['user'];
       // String userUid = ref.id;
+
+      Map<String, String> socials = {};
+      if (element.data().containsKey("socials")) {
+        socials = element['socials'];
+      }
       UserModel card = UserModel(
           element.id,
           element['name'],
@@ -340,6 +363,7 @@ class FirebaseService {
           element['phoneNumber'],
           element['handle'],
           element['profile_picture_url'],
+          socials,
           element['venue']);
       artistsCards.add(card);
     });
@@ -354,6 +378,10 @@ class FirebaseService {
       "users": [refA, refB]
     });
     DatabaseMethods().createChatRoom(_id, userUidA, userUidB);
+  }
+
+  void updateSocials(String userUid, Map<String, String> socials) {
+    users.doc(userUid).update({"socials": socials});
   }
 
   FirebaseService();

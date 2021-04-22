@@ -8,6 +8,7 @@ import 'package:gignow/model/video_post.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:gignow/ui/userAccount/edit_socials_screen.dart';
 import 'package:gignow/widgets/video_post_list.dart';
 import 'package:gignow/widgets/video_post_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -93,7 +94,13 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                 children: [
                   IconButton(
                       icon: Icon(Icons.edit, color: Colors.grey),
-                      onPressed: () {}),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditSocialsScreen(widget.profile)));
+                      }),
                   Text("Edit Profile")
                 ],
               ),
