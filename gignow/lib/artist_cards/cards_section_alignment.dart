@@ -5,8 +5,11 @@ import '../model/user.dart';
 import '../model/user.dart';
 import '../net/firebase_service.dart';
 import '../net/firebase_service.dart';
+import '../ui/loading.dart';
 import 'profile_card_alignment.dart';
 import 'dart:math';
+import 'profile_card_alignment.dart';
+import 'profile_card_alignment.dart';
 import 'profile_view.dart';
 
 List<Alignment> cardsAlign = [
@@ -35,6 +38,7 @@ class CardsSectionAlignment extends StatefulWidget {
 class _CardsSectionState extends State<CardsSectionAlignment>
     with SingleTickerProviderStateMixin {
   int cardsCounter;
+  bool noArtistsLeft = false;
 
   UserModel user;
   _CardsSectionState(user);
@@ -62,7 +66,6 @@ class _CardsSectionState extends State<CardsSectionAlignment>
     // }
     for (cardsCounter = 0; cardsCounter < 3; cardsCounter++) {
       cards.add(ProfileCardAlignment(artists[cardsCounter]));
-      //profileIndex++;
     }
 
     frontCardAlign = cardsAlign[2];
@@ -111,11 +114,12 @@ class _CardsSectionState extends State<CardsSectionAlignment>
                 onPanEnd: (_) {
                   // If the front card was swiped far enough to count as swiped
                   if (frontCardAlign.x > 3.0) {
-                    firebaseService.createConnection(
-                        auth.currentUser.uid, cards[0].artist.uid);
-                    animateCards();
+                    if (!noArtistsLeft) {
+                      createConnection();
+                      animateCards();
+                    }
                   } else if (frontCardAlign.x < -3.0) {
-                    animateCards();
+                    if (!noArtistsLeft) animateCards();
                   } else {
                     // Return to the initial rotation and alignment
                     setState(() {
@@ -128,73 +132,6 @@ class _CardsSectionState extends State<CardsSectionAlignment>
             : Container(),
       ],
     ));
-    // return FutureBuilder(
-    //     future: firebaseService.getArtistAccounts(),
-    //     builder: (context, snapshot) {
-    //       if (snapshot.hasData) {
-    //         artists = snapshot.data;
-    //         // artists.forEach((element) {
-    //         //   cards.add(ProfileCardAlignment(cardNum, artists))
-    //         // });
-    //         for (cardsCounter = 0; cardsCounter < 3; cardsCounter++) {
-    //           cards.add(ProfileCardAlignment(artists[cardsCounter]));
-    //           //profileIndex++;
-    //         }
-    //         return Expanded(
-    //             child: Stack(
-    //           children: <Widget>[
-    //             backCard(),
-    //             middleCard(),
-    //             frontCard(),
-
-    //             // Prevent swiping if the cards are animating
-    //             _controller.status != AnimationStatus.forward
-    //                 ? SizedBox.expand(
-    //                     child: GestureDetector(
-    //                     // While dragging the first card
-    //                     onPanUpdate: (DragUpdateDetails details) {
-    //                       // Add what the user swiped in the last frame to the alignment of the card
-    //                       setState(() {
-    //                         // 20 is the "speed" at which moves the card
-    //                         frontCardAlign = Alignment(
-    //                             frontCardAlign.x +
-    //                                 20 *
-    //                                     details.delta.dx /
-    //                                     MediaQuery.of(context).size.width,
-    //                             frontCardAlign.y +
-    //                                 40 *
-    //                                     details.delta.dy /
-    //                                     MediaQuery.of(context).size.height);
-
-    //                         frontCardRot =
-    //                             frontCardAlign.x; // * rotation speed;
-    //                       });
-    //                     },
-    //                     // When releasing the first card
-    //                     onPanEnd: (_) {
-    //                       // If the front card was swiped far enough to count as swiped
-    //                       if (frontCardAlign.x > 3.0) {
-    //                         firebaseService.createConnection(
-    //                             auth.currentUser.uid, cards[0].artist.uid);
-    //                         animateCards();
-    //                       } else if (frontCardAlign.x < -3.0) {
-    //                         animateCards();
-    //                       } else {
-    //                         // Return to the initial rotation and alignment
-    //                         setState(() {
-    //                           frontCardAlign = defaultFrontCardAlign;
-    //                           frontCardRot = 0.0;
-    //                         });
-    //                       }
-    //                     },
-    //                   ))
-    //                 : Container(),
-    //           ],
-    //         ));
-    //       } else {
-    //         return Loading();
-    //       }
-    //     });
   }
 
   Widget backCard() {
@@ -236,19 +173,68 @@ class _CardsSectionState extends State<CardsSectionAlignment>
         ));
   }
 
+  Widget noArtists() {
+    return Expanded(
+      child: Card(
+        child: Stack(
+          children: <Widget>[
+            SizedBox.expand(
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [Colors.transparent, Colors.black54],
+                        begin: Alignment.center,
+                        end: Alignment.bottomCenter)),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text("No more artists in search",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w700)),
+                      Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                    ],
+                  )),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   void changeCardsOrder() {
     setState(() {
       // Swap cards (back card becomes the middle card; middle card becomes the front card, front card becomes a  bottom card)
-      var temp = cards[0];
+      //var temp = cards[0];
+      var next;
+      //cardsCounter++;
+      if (cardsCounter >= artists.length + 2) {
+        setState(() {
+          noArtistsLeft = true;
+        });
+      }
+      if (cardsCounter >= artists.length) {
+        next = ProfileCardAlignment.emptyCard();
+      } else
+        next = ProfileCardAlignment(artists[cardsCounter]);
+
       cards[0] = cards[1];
       cards[1] = cards[2];
-      cards[2] = temp;
-
+      cards[2] = next;
       //cards[2] = ProfileCardAlignment(artists[cardsCounter]);
-      cardsCounter++;
 
       frontCardAlign = defaultFrontCardAlign;
       frontCardRot = 0.0;
+      cardsCounter++;
     });
   }
 
@@ -256,6 +242,11 @@ class _CardsSectionState extends State<CardsSectionAlignment>
     _controller.stop();
     _controller.value = 0.0;
     _controller.forward();
+    //changeCardsOrder();
+  }
+
+  void createConnection() {
+    firebaseService.createConnection(auth.currentUser.uid, cards[0].artist.uid);
   }
 }
 
