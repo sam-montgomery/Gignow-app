@@ -44,43 +44,48 @@ class ChatRoomListTileState extends State<ChatRoomListTile> {
   Widget build(BuildContext context) {
     try {
       return recieverProfilePictureURL != ""
-          ? GestureDetector(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ConversationScreen(
-                            widget.senderProfile, recieverName, recieverUID)));
-              },
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(60),
-                    child: Image.network(
-                      recieverProfilePictureURL,
-                      height: 60,
-                      width: 60,
+          ? Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ConversationScreen(
+                              widget.senderProfile,
+                              recieverName,
+                              recieverUID)));
+                },
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(60),
+                      child: Image.network(
+                        recieverProfilePictureURL,
+                        height: 60,
+                        width: 60,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        recieverName,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      SizedBox(
-                        height: 3,
-                      ),
-                      widget.lastMessage != null
-                          ? Text(widget.lastMessage)
-                          : Text("Say hello to your new connection!")
-                    ],
-                  )
-                ],
+                    SizedBox(
+                      width: 12,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          recieverName,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(
+                          height: 3,
+                        ),
+                        widget.lastMessage != null
+                            ? Text(widget.lastMessage)
+                            : Text("Say hello to your new connection!")
+                      ],
+                    )
+                  ],
+                ),
               ),
             )
           : Container();

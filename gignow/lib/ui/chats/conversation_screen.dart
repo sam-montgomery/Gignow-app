@@ -96,7 +96,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                   topRight: Radius.circular(24),
                   bottomLeft:
                       sentByMe ? Radius.circular(24) : Radius.circular(0)),
-              color: sentByMe ? Colors.blue : Colors.grey),
+              color: sentByMe ? Colors.lightBlueAccent : Colors.grey[400]),
           padding: EdgeInsets.all(16),
           child: Text(
             message,
@@ -132,7 +132,14 @@ class ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.chatWithName)),
+      appBar: AppBar(
+        title: Text(
+          widget.chatWithName,
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
       body: Container(
         color: Colors.white,
         child: Stack(

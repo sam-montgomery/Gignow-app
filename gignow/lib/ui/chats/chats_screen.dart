@@ -113,50 +113,17 @@ class ChatScreenState extends State<ChatsScreen> {
     );
   }
 
-  // Widget userTile(String uid, String profileURL, String name, String handle) {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       var chatRoomID = DatabaseMethods().getChatRoomIDByHandle(uid, myUID);
-  //       Map<String, dynamic> chatRoomInfoMap = {
-  //         "users": [myHandle, handle]
-  //       };
-
-  //       DatabaseMethods().createChatRoom(chatRoomID, chatRoomInfoMap);
-
-  //       Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //               builder: (context) =>
-  //                   ConversationScreen(widget.profile, name, uid)));
-  //     },
-  //     child: Row(
-  //       children: [
-  //         ClipRRect(
-  //           borderRadius: BorderRadius.circular(30),
-  //           child: Image.network(
-  //             profileURL,
-  //             height: 50,
-  //             width: 50,
-  //           ),
-  //         ),
-  //         SizedBox(
-  //           width: 12,
-  //         ),
-  //         Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [Text(name), Text(handle)],
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     try {
       return Scaffold(
           appBar: AppBar(
-            title: Text("Chats"),
+            title: Text(
+              "Chats",
+              style: TextStyle(color: Colors.black),
+            ),
+            backgroundColor: Colors.white,
+            centerTitle: true,
           ),
           body: Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
