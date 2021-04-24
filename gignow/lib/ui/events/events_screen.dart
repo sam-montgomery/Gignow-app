@@ -95,8 +95,7 @@ class EventsScreenState extends State<EventsScreen> {
                               onPressed: () {
                                 DatePicker.showDateTimePicker(context,
                                     showTitleActions: true,
-                                    minTime:
-                                        eventStart,
+                                    minTime: eventStart,
                                     maxTime:
                                         DateTime.now().add(Duration(days: 7)),
                                     onChanged: (date) {}, onConfirm: (date) {
@@ -124,7 +123,10 @@ class EventsScreenState extends State<EventsScreen> {
                           ((returnNextInc()).toString())),
                       eventStart,
                       eventEnd,
-                      widget.profile['userUid'], [], "", false);
+                      widget.profile['userUid'],
+                      [],
+                      "",
+                      false);
                   firebaseService.createEvent(newEvent);
                   await getVenuesEvents();
                   Navigator.of(context).pop();
@@ -150,31 +152,49 @@ class EventsScreenState extends State<EventsScreen> {
     return Scaffold(
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         SizedBox(height: 20),
-        Center(
+        Container(
+          decoration: BoxDecoration(
+            color: kButtonBackgroundColour,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
                   width: MediaQuery.of(context).size.width * 0.50,
                   child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          openPage = true;
-                        });
-                      },
+                    onPressed: () {
+                      setState(() {
+                        openPage = true;
+                      });
+                    },
+                    child: Center(
                       child: Text("Open Event Applications",
-                          textDirection: TextDirection.rtl,
-                          style: openPage ? activeScreen : inActiveScreen))),
+                          //textDirection: TextDirection.rtl,
+                          textAlign: TextAlign.center,
+                          style: openPage ? activeScreen : inActiveScreen),
+                    ),
+                  )),
               SizedBox(
                   width: MediaQuery.of(context).size.width * 0.50,
                   child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          openPage = false;
-                        });
-                      },
+                    onPressed: () {
+                      setState(() {
+                        openPage = false;
+                      });
+                    },
+                    child: Center(
                       child: Text("Upcoming Events",
-                          style: openPage ? inActiveScreen : activeScreen)))
+                          style: openPage ? inActiveScreen : activeScreen),
+                    ),
+                  ))
             ],
           ),
         ),
@@ -187,14 +207,16 @@ class EventsScreenState extends State<EventsScreen> {
                 : Expanded(child: ArtistsUpcomingEventList(user))
       ]),
       floatingActionButton: openPage
-          ? user.venue ? FloatingActionButton(
-              splashColor: kButtonBackgroundColour,
-              child: Icon(Icons.add),
-              onPressed: () async {
-                await showAddEventDialog(context);
-                //await showApplicantsDialog(context, um);
-              },
-            ) : null
+          ? user.venue
+              ? FloatingActionButton(
+                  splashColor: kButtonBackgroundColour,
+                  child: Icon(Icons.add),
+                  onPressed: () async {
+                    await showAddEventDialog(context);
+                    //await showApplicantsDialog(context, um);
+                  },
+                )
+              : null
           : null,
     );
   }

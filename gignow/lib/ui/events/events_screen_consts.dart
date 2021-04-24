@@ -22,10 +22,10 @@ final List<String> moty = [
   'DEC'
 ];
 
-final TextStyle activeScreen =
-    TextStyle(fontSize: 18, decoration: TextDecoration.underline);
+final TextStyle activeScreen = TextStyle(
+    fontSize: 18, decoration: TextDecoration.underline, color: Colors.white);
 
-final TextStyle inActiveScreen = TextStyle(fontSize: 18);
+final TextStyle inActiveScreen = TextStyle(fontSize: 18, color: Colors.white);
 
 final TextStyle monthStyle =
     TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold);
