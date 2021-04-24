@@ -124,7 +124,7 @@ class EventsScreenState extends State<EventsScreen> {
                           ((returnNextInc()).toString())),
                       eventStart,
                       eventEnd,
-                      widget.profile['userUid']);
+                      widget.profile['userUid'], [], "", false);
                   firebaseService.createEvent(newEvent);
                   await getVenuesEvents();
                   Navigator.of(context).pop();
@@ -187,14 +187,14 @@ class EventsScreenState extends State<EventsScreen> {
                 : Expanded(child: ArtistsUpcomingEventList(user))
       ]),
       floatingActionButton: openPage
-          ? FloatingActionButton(
+          ? user.venue ? FloatingActionButton(
               splashColor: kButtonBackgroundColour,
               child: Icon(Icons.add),
               onPressed: () async {
                 await showAddEventDialog(context);
                 //await showApplicantsDialog(context, um);
               },
-            )
+            ) : null
           : null,
     );
   }

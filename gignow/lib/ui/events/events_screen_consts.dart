@@ -331,9 +331,7 @@ Container generateOpenEventTile(
             padding: const EdgeInsets.all(8.0),
             child: Container(
               alignment: Alignment.center,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: ListView(
                 children: [
                   Text(
                     moty[event.eventStartTime.month - 1],
