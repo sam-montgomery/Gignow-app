@@ -21,7 +21,7 @@ class _ANavBarState extends State<ArtistNavbar> {
   Widget build(BuildContext context) {
     final tabs = [
       Center(child: VideoPostList()),
-      Center(child: Text('Events')),
+      Center(child: _firebaseService.getEventsPage(auth.currentUser.uid)),
       Center(child: Text('New post')),
       Center(child: _firebaseService.getChatsScreenView(auth.currentUser.uid)),
       Center(child: _firebaseService.getFirstView(auth.currentUser.uid))

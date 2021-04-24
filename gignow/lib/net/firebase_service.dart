@@ -40,6 +40,17 @@ class FirebaseService {
     return url;
   }
 
+  Future<int> getIncrForVenue(String uid) async {
+    List<Event> events = await getAllEventsForVenue(uid);
+    int highestI = 0;
+    for (Event e in events) {
+      int inc = int.parse(e.eventId.split('-')[1]);
+      if (inc > highestI) highestI = inc;
+    }
+    print(highestI);
+    return highestI;
+  }
+
   Future<UserModel> getUser(String userUid) async {
     DocumentReference docRef = users.doc(userUid);
     UserModel user;
@@ -126,7 +137,7 @@ class FirebaseService {
         });
   }
 
-  FutureBuilder<DocumentSnapshot> getVenueEventsPage(String uid) {
+  FutureBuilder<DocumentSnapshot> getEventsPage(String uid) {
     return FutureBuilder<DocumentSnapshot>(
         future: users.doc(uid).get(),
         builder:
@@ -246,14 +257,71 @@ class FirebaseService {
     });
   }
 
-  void createEvent(String name, String phone, String handle, String genres) {
+  void createEvent(Event newEvent) {
     final user = auth.currentUser;
-    firestoreInstance.collection("Events").doc(auth.currentUser.uid).set({
-      "eventId": user.uid,
-      "venueName": name,
-      "phoneNumber": phone,
-      "handle": handle,
-      "genres": genres
+    firestoreInstance.collection("Events").doc(newEvent.eventId).set({
+      "eventId": newEvent.eventId,
+      "eventStartTime": newEvent.eventStartTime.toString(),
+      "eventFinishTime": newEvent.eventFinishTime.toString(),
+      "venueId": newEvent.venueId,
+      "applicants": "",
+      "acceptedUid": newEvent.acceptedUid,
+      "confirmed": newEvent.confirmed
+    });
+  }
+
+  void applyForEvent(Event event, String applicantUid) {
+    if (event.applicants == null) {
+      event.applicants = [];
+    }
+    if (!event.applicants.contains(applicantUid)) {
+      event.applicants.add(applicantUid);
+      firestoreInstance.collection("Events").doc(event.eventId).set({
+        "eventId": event.eventId,
+        "eventStartTime": event.eventStartTime.toString(),
+        "eventFinishTime": event.eventFinishTime.toString(),
+        "venueId": event.venueId,
+        "applicants": event.applicants.join(','),
+        "acceptedUid": event.acceptedUid,
+        "confirmed": event.confirmed
+      });
+    }
+  }
+
+  void acceptApplicant(Event event, String applicantUid) {
+    events.doc(event.eventId).set({
+      "eventId": event.eventId,
+      "eventStartTime": event.eventStartTime.toString(),
+      "eventFinishTime": event.eventFinishTime.toString(),
+      "venueId": event.venueId,
+      "applicants": event.applicants.join(','),
+      "acceptedUid": applicantUid,
+      "confirmed": event.confirmed
+    });
+  }
+
+  void rejectApplicant(Event event, String applicantUid) {
+    event.applicants.remove(applicantUid);
+    events.doc(event.eventId).set({
+      "eventId": event.eventId,
+      "eventStartTime": event.eventStartTime.toString(),
+      "eventFinishTime": event.eventFinishTime.toString(),
+      "venueId": event.venueId,
+      "applicants": event.applicants.join(','),
+      "acceptedUid": null,
+      "confirmed": event.confirmed
+    });
+  }
+
+  void confirmEvent(Event event) {
+    firestoreInstance.collection("Events").doc(event.eventId).set({
+      "eventId": event.eventId,
+      "eventStartTime": event.eventStartTime.toString(),
+      "eventFinishTime": event.eventFinishTime.toString(),
+      "venueId": event.venueId,
+      "applicants": event.applicants.join(','),
+      "acceptedUid": event.acceptedUid,
+      "confirmed": true
     });
   }
 
@@ -285,50 +353,272 @@ class FirebaseService {
   }
 
   Future<Event> getEvent(String eventId) async {
-    firestoreInstance.collection("Events").doc(eventId).get().then((value) {
+    await events.doc(eventId).get().then((value) {
+      List<String> applicants;
+      String acceptedUid;
+      bool confirmed;
+      try {
+        applicants = value.data()['applicants'].split(',') ?? null;
+      } on Error catch (_) {}
+      try {
+        acceptedUid = value.data()['acceptedUid'] ?? null;
+      } on Error catch (_) {}
+      try {
+        confirmed = value.data()['confirmed'] ?? false;
+      } on Error catch (_) {}
+
       Event event = Event(
           value.data()['eventId'],
           DateTime.parse(value.data()['eventStartTime']),
           DateTime.parse(value.data()['eventFinishTime']),
-          value.data()['venueId']);
+          value.data()['venueId'],
+          applicants,
+          acceptedUid,
+          confirmed);
       return event;
     });
   }
 
-  Future<List<Event>> getAllEvents() async {
-    List<Event> returned = [];
-    events.get().then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        print(doc['eventId']);
-        Event newEvent = Event(
-            doc['eventId'],
-            DateTime.parse(doc['eventStartTime']),
-            DateTime.parse(doc['eventFinishTime']),
-            doc['venueId']);
-        returned.add(newEvent);
-      });
-      print("All events: " + returned.toString());
-      return returned;
+  Future<List<UserModel>> getEventApplicants(String eventId) async {
+    DocumentReference docRef = events.doc(eventId);
+    List<String> applicantUids;
+    List<UserModel> applicants = [];
+
+    await docRef.get().then((snapshot) {
+      try {
+        applicantUids = snapshot.get('applicants').split(',') ?? null;
+      } on Error catch (_) {}
     });
+    if (applicantUids != null) {
+      for (String uid in applicantUids) {
+        if (uid.isNotEmpty) {
+          UserModel applicant = await getUser(uid);
+          applicants.add(applicant);
+        }
+      }
+    }
+
+    return applicants;
   }
 
-  Future<List<Event>> getAllEventsForVenue(String venueId) async {
+  Future<UserModel> getSelectedApplicant(String eventId) async {
+    DocumentReference docRef = events.doc(eventId);
+    String acceptedUid;
+    UserModel applicant;
+    await docRef.get().then((snapshot) {
+      try {
+        acceptedUid = snapshot.get('acceptedUid') ?? null;
+      } on Error catch (_) {}
+    });
+    if (acceptedUid != null) {
+      applicant = await getUser(acceptedUid);
+    }
+
+    return applicant;
+  }
+
+  Future<List<Event>> getAllEvents() async {
     List<Event> returned = [];
-    FirebaseFirestore.instance
-        .collection('Events')
-        .where('venueId', isEqualTo: venueId)
-        .get()
-        .then((QuerySnapshot querySnapshot) {
+    await events.get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
+        List<String> applicants = null;
+        String acceptedUid = null;
+        bool confirmed = null;
+        try {
+          applicants = doc['applicants'].split(',') ?? null;
+        } on Error catch (_) {}
+        try {
+          acceptedUid = doc['acceptedUid'] ?? null;
+        } on Error catch (_) {}
+        try {
+          confirmed = doc['confirmed'] ?? false;
+        } on Error catch (_) {}
+
         returned.add(Event(
             doc['eventId'],
             DateTime.parse(doc['eventStartTime']),
             DateTime.parse(doc['eventFinishTime']),
-            doc['venueId']));
+            doc['venueId'],
+            applicants,
+            acceptedUid,
+            confirmed));
+      });
+      print("All events: " + returned.toString());
+    });
+    return returned;
+  }
+
+  Future<List<Event>> getOpenEvents() async {
+    List<Event> returned = [];
+    await events
+        .where('confirmed', isEqualTo: false)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        List<String> applicants = null;
+        String acceptedUid = null;
+        bool confirmed = null;
+        try {
+          applicants = doc['applicants'].split(',') ?? null;
+        } on Error catch (_) {}
+        try {
+          acceptedUid = doc['acceptedUid'] ?? null;
+        } on Error catch (_) {}
+        try {
+          confirmed = doc['confirmed'] ?? false;
+        } on Error catch (_) {}
+
+        returned.add(Event(
+            doc['eventId'],
+            DateTime.parse(doc['eventStartTime']),
+            DateTime.parse(doc['eventFinishTime']),
+            doc['venueId'],
+            applicants,
+            acceptedUid,
+            confirmed));
+      });
+      print("All events: " + returned.toString());
+    });
+    return returned;
+  }
+
+  Future<List<Event>> getAllEventsForVenue(String venueId) async {
+    List<Event> returned = [];
+    await events
+        .where('venueId', isEqualTo: venueId)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        List<String> applicants = null;
+        String acceptedUid = null;
+        bool confirmed = null;
+        try {
+          applicants = doc['applicants'].split(',') ?? null;
+        } on Error catch (_) {}
+        try {
+          acceptedUid = doc['acceptedUid'] ?? null;
+        } on Error catch (_) {}
+        try {
+          confirmed = doc['confirmed'] ?? false;
+        } on Error catch (_) {}
+
+        returned.add(Event(
+            doc['eventId'],
+            DateTime.parse(doc['eventStartTime']),
+            DateTime.parse(doc['eventFinishTime']),
+            doc['venueId'],
+            applicants,
+            acceptedUid,
+            confirmed));
       });
       print("All events for venue: $venueId:" + returned.toString());
-      return returned;
     });
+    return returned;
+  }
+
+  Future<List<Event>> getOpenEventsForVenue(String venueId) async {
+    List<Event> returned = [];
+    await events
+        .where('venueId', isEqualTo: venueId)
+        .where('confirmed', isEqualTo: false)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        List<String> applicants = null;
+        String acceptedUid = null;
+        bool confirmed = null;
+        try {
+          applicants = doc['applicants'].split(',') ?? null;
+        } on Error catch (_) {}
+        try {
+          acceptedUid = doc['acceptedUid'] ?? null;
+        } on Error catch (_) {}
+        try {
+          confirmed = doc['confirmed'] ?? false;
+        } on Error catch (_) {}
+
+        returned.add(Event(
+            doc['eventId'],
+            DateTime.parse(doc['eventStartTime']),
+            DateTime.parse(doc['eventFinishTime']),
+            doc['venueId'],
+            applicants,
+            acceptedUid,
+            confirmed));
+      });
+      print("All open events for venue: $venueId:" + returned.toString());
+    });
+    return returned;
+  }
+
+  Future<List<Event>> getUpcomingEventsForVenue(String venueId) async {
+    List<Event> returned = [];
+    await events
+        .where('venueId', isEqualTo: venueId)
+        .where('confirmed', isEqualTo: true)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        List<String> applicants = null;
+        String acceptedUid = null;
+        bool confirmed = null;
+        try {
+          applicants = doc['applicants'].split(',') ?? null;
+        } on Error catch (_) {}
+        try {
+          acceptedUid = doc['acceptedUid'] ?? null;
+        } on Error catch (_) {}
+        try {
+          confirmed = doc['confirmed'] ?? false;
+        } on Error catch (_) {}
+
+        returned.add(Event(
+            doc['eventId'],
+            DateTime.parse(doc['eventStartTime']),
+            DateTime.parse(doc['eventFinishTime']),
+            doc['venueId'],
+            applicants,
+            acceptedUid,
+            confirmed));
+      });
+      print("Upcoming events for venue: $venueId:" + returned.toString());
+    });
+    return returned;
+  }
+
+  Future<List<Event>> getUpcomingEventsForArtist(String artistId) async {
+    List<Event> returned = [];
+    await events
+        .where('acceptedUid', isEqualTo: artistId)
+        .where('confirmed', isEqualTo: true)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        List<String> applicants = null;
+        String acceptedUid = null;
+        bool confirmed = null;
+        try {
+          applicants = doc['applicants'].split(',') ?? null;
+        } on Error catch (_) {}
+        try {
+          acceptedUid = doc['acceptedUid'] ?? null;
+        } on Error catch (_) {}
+        try {
+          confirmed = doc['confirmed'] ?? false;
+        } on Error catch (_) {}
+
+        returned.add(Event(
+            doc['eventId'],
+            DateTime.parse(doc['eventStartTime']),
+            DateTime.parse(doc['eventFinishTime']),
+            doc['venueId'],
+            applicants,
+            acceptedUid,
+            confirmed));
+      });
+      print("Upcoming events for artist: $artistId:" + returned.toString());
+    });
+    return returned;
   }
 
   Future<List<VideoPost>> getUsersVideoPosts(String uid) async {
@@ -389,6 +679,11 @@ class FirebaseService {
 
   void updateSocials(String userUid, Map<String, String> socials) {
     users.doc(userUid).update({"socials": socials});
+  }
+
+  Future<UserModel> deleteEvent(Event event) async {
+    DocumentReference docRef = events.doc(event.eventId);
+    await docRef.delete();
   }
 
   FirebaseService();

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gignow/constants.dart';
 import 'package:gignow/main.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/net/firebase_service.dart';
@@ -10,10 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/widgets.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/foundation.dart';
-import 'package:gignow/constants.dart';
-import 'package:gignow/ui/createProfile/create_profile_consts.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class CreateProfileScreen extends StatefulWidget {
@@ -141,27 +138,9 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
             selectedGenres.toList().join(","),
             value,
             (_accountType == "Venue"));
-        // if (_accountType == "Venue") {
-        //   firebaseService.createProfile(_nameCont.text, _phoneCont.text,
-        //       _handleCont.text, selectedGenres.toList().join(","), value, true);
-        // } else if (_accountType == "Artist") {
-        //   firebaseService.createProfile(
-        //       _nameCont.text,
-        //       _phoneCont.text,
-        //       _handleCont.text,
-        //       selectedGenres.toList().join(","),
-        //       value,
-        //       (_accountType =="Venue"));
-        // }
         cleanControllers();
       },
     );
-    // Navigator.pushNamed(context, '/');
-    // Navigator.pushAndRemoveUntil(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => AuthenticationWrapper()),
-    //   (Route<dynamic> route) => false,
-    // );
   }
 
   final logo = Hero(

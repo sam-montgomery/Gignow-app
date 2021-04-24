@@ -6,7 +6,7 @@ class Event {
   DateTime eventStartTime; //Scheduled start time of event
   DateTime eventFinishTime; //Scheduled end time of the event
   String venueId; //Venue organising event
-  List<String> applicants; //Users (artists) who have applied
+  List<String> applicants = []; //Users (artists) who have applied
   String acceptedUid; //Uid of accepted applicant
   bool confirmed = false; //Confirmation by applicant
 

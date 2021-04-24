@@ -24,8 +24,7 @@ class _VNavBarState extends State<VenueNavbar> {
     final tabs = [
       Center(child: SwipeFeedPage()),
       Center(child: VideoPostList()),
-      Center(child: Text('Events Page')),
-      //Center(child: _firebaseService.getEventsVenueView(auth.currentUser.uid)),
+      Center(child: _firebaseService.getEventsPage(auth.currentUser.uid)),
       Center(child: _firebaseService.getChatsScreenView(auth.currentUser.uid)),
       Center(child: _firebaseService.getFirstView(auth.currentUser.uid))
     ];
