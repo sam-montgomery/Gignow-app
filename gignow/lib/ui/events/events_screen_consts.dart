@@ -149,7 +149,7 @@ Future<void> showApplicantsDialog(BuildContext context, Event event) async {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
+                    applicants.length != 0 ? Container(
                         height: MediaQuery.of(context).size.height *
                             (0.12 * applicants.length),
                         width: MediaQuery.of(context).size.width * 0.9,
@@ -163,7 +163,11 @@ Future<void> showApplicantsDialog(BuildContext context, Event event) async {
                                 child: generateApplicantTile(
                                     context, event, applicant),
                               );
-                            }))
+                            })) : Container(
+                        height: MediaQuery.of(context).size.height *
+                            (0.12),
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child : Column( mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children :[Text("No applicants yet!")]))
                   ],
                 );
               } else {
@@ -301,7 +305,7 @@ Container generateOpenEventTile(
   bool venue = um.venue;
   bool applied = false;
   bool accepted = false;
-  if (event.applicants.contains(um.uid) || event.acceptedUid != null) {
+  if (event.applicants.contains(um.uid) || event.acceptedUid.isNotEmpty) {
     applied = true;
   }
   if (event.acceptedUid == um.uid) {

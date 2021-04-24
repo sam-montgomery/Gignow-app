@@ -139,6 +139,7 @@ class EventsScreenState extends State<EventsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    getVenuesEvents();
     HashMap eventApplicantMap = new HashMap<Event, UserModel>();
     UserModel user = UserModel(
         widget.profile['userUid'].toString(),
