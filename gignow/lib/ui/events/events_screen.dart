@@ -96,7 +96,7 @@ class EventsScreenState extends State<EventsScreen> {
                                 DatePicker.showDateTimePicker(context,
                                     showTitleActions: true,
                                     minTime:
-                                        DateTime.now().add(Duration(hours: 1)),
+                                        eventStart,
                                     maxTime:
                                         DateTime.now().add(Duration(days: 7)),
                                     onChanged: (date) {}, onConfirm: (date) {
