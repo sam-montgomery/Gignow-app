@@ -4,6 +4,7 @@ import 'package:gignow/model/video_post.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/ui/userProfile/profile_screen.dart';
+import 'package:gignow/widgets/video_player_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
 
@@ -39,6 +40,14 @@ class _VideoPostWidgetState extends State<VideoPostWidget> {
     //VideoPost post = widget.post;
 
     return Container(
+        decoration: new BoxDecoration(
+          boxShadow: [
+            new BoxShadow(
+                color: Colors.black,
+                blurRadius: 5.0,
+                offset: Offset(0.0, 0.75)),
+          ],
+        ),
         child: FutureBuilder<UserModel>(
             future: firebaseService.getUser(post.userUID),
             builder: (BuildContext context, AsyncSnapshot<UserModel> snapshot) {
@@ -46,81 +55,82 @@ class _VideoPostWidgetState extends State<VideoPostWidget> {
                 UserModel user = snapshot.data;
                 return Card(
                     color: Colors.grey[200],
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40)),
+                    // shape: RoundedRectangleBorder(
+                    //     borderRadius: BorderRadius.circular(40)),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                //Profile Picture
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ProfileScreen(user)));
-                                    },
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.white70,
-                                      minRadius: 10.0,
-                                      child: CircleAvatar(
-                                        radius: 20.0,
-                                        backgroundImage: NetworkImage(
-                                            user.profilePictureUrl),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(user.name),
-                                ],
-                              ),
-                              Text(DateFormat("yyyy-MM-dd").format(
-                                  DateTime.fromMicrosecondsSinceEpoch(
-                                      post.postDate.microsecondsSinceEpoch)))
-                            ],
-                          ),
-                          Divider(
-                            thickness: 2,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            post.postDescription,
-                            textAlign: TextAlign.start,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            child: AspectRatio(
-                              aspectRatio: _controller.value.aspectRatio,
-                              child: Stack(
-                                alignment: Alignment.bottomCenter,
-                                children: <Widget>[
-                                  VideoPlayer(_controller),
-                                  _ControlsOverlay(controller: _controller),
-                                  VideoProgressIndicator(_controller,
-                                      allowScrubbing: true),
-                                ],
-                              ),
-                            ),
-                          ),
+                          // SizedBox(
+                          //   height: 20,
+                          // ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     Row(
+                          //       //Profile Picture
+                          //       mainAxisAlignment:
+                          //           MainAxisAlignment.spaceAround,
+                          //       children: <Widget>[
+                          //         GestureDetector(
+                          //           onTap: () {
+                          //             Navigator.push(
+                          //                 context,
+                          //                 MaterialPageRoute(
+                          //                     builder: (context) =>
+                          //                         ProfileScreen(user)));
+                          //           },
+                          //           child: CircleAvatar(
+                          //             backgroundColor: Colors.white70,
+                          //             minRadius: 10.0,
+                          //             child: CircleAvatar(
+                          //               radius: 20.0,
+                          //               backgroundImage: NetworkImage(
+                          //                   user.profilePictureUrl),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         SizedBox(
+                          //           width: 5,
+                          //         ),
+                          //         Text(user.name),
+                          //       ],
+                          //     ),
+                          //     Text(DateFormat("yyyy-MM-dd").format(
+                          //         DateTime.fromMicrosecondsSinceEpoch(
+                          //             post.postDate.microsecondsSinceEpoch)))
+                          //   ],
+                          // ),
+                          // Divider(
+                          //   thickness: 2,
+                          // ),
+                          // SizedBox(
+                          //   height: 10,
+                          // ),
+                          // Text(
+                          //   post.postDescription,
+                          //   textAlign: TextAlign.start,
+                          // ),
+                          // SizedBox(
+                          //   height: 10,
+                          // ),
+                          VideoPlayerWidget(post, user)
+                          // Container(
+                          //   padding: const EdgeInsets.all(20),
+                          //   child: AspectRatio(
+                          //     aspectRatio: _controller.value.aspectRatio,
+                          //     child: Stack(
+                          //       alignment: Alignment.bottomCenter,
+                          //       children: <Widget>[
+                          //         VideoPlayer(_controller),
+                          //         _ControlsOverlay(controller: _controller),
+                          //         VideoProgressIndicator(_controller,
+                          //             allowScrubbing: true),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                           // Center(
                           //   child: Image(
                           //       width: MediaQuery.of(context).size.width * 0.65,
