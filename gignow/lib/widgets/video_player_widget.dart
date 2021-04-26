@@ -35,7 +35,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 9 / 16,
+      aspectRatio: MediaQuery.of(context).size.width /
+          (MediaQuery.of(context).size.height * 0.90),
       //padding: const EdgeInsets.all(20),
       child: AspectRatio(
         aspectRatio: _controller.value.aspectRatio,
@@ -127,21 +128,22 @@ class _ControlsOverlay extends StatelessWidget {
     return Stack(
       children: <Widget>[
         AnimatedSwitcher(
-          duration: Duration(milliseconds: 50),
-          reverseDuration: Duration(milliseconds: 200),
-          child: controller.value.isPlaying
-              ? SizedBox.shrink()
-              : Container(
-                  color: Colors.black26,
-                  child: Center(
-                    child: Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 100.0,
-                    ),
-                  ),
-                ),
-        ),
+            duration: Duration(milliseconds: 50),
+            reverseDuration: Duration(milliseconds: 200),
+            child: SizedBox.shrink()
+            // child: controller.value.isPlaying
+            //     ? SizedBox.shrink()
+            //     : Container(
+            //         color: Colors.black26,
+            //         child: Center(
+            //           child: Icon(
+            //             Icons.play_arrow,
+            //             color: Colors.white,
+            //             size: 100.0,
+            //           ),
+            //         ),
+            //       ),
+            ),
         GestureDetector(
           onTap: () {
             controller.value.isPlaying ? controller.pause() : controller.play();
