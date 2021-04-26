@@ -5,22 +5,26 @@ import 'package:gignow/ui/chats/chats_screen.dart';
 import 'package:gignow/widgets/video_post_list.dart';
 import '../../artist_cards/swipe_feed_page.dart';
 import '../../net/firebase_service.dart';
-import '../../net/firebase_service.dart';
+import '../../net/globals.dart';
 import '../userAccount/user_account_screen.dart';
 
 class VenueNavbar extends StatefulWidget {
+  int prev = 0;
+
+  VenueNavbar(int previous) {
+    prev = previous;
+  }
   @override
   _VNavBarState createState() => _VNavBarState();
 }
 
 class _VNavBarState extends State<VenueNavbar> {
-  int _currentIndex = 0;
-
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseService _firebaseService = FirebaseService();
 
   @override
   Widget build(BuildContext context) {
+    int _currentIndex = widget.prev;
     final tabs = [
       Center(child: SwipeFeedPage()),
       Center(child: VideoPostList()),
@@ -58,6 +62,7 @@ class _VNavBarState extends State<VenueNavbar> {
           onTap: (index) {
             setState(() {
               _currentIndex = index;
+              widget.prev = index;
             });
           }),
     );

@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:gignow/constants.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/net/firebase_service.dart';
+import 'package:gignow/ui/events/events_screen.dart';
 import 'package:gignow/ui/loading.dart';
+import 'package:gignow/ui/navBar/artist_nav_bar.dart';
+import 'package:gignow/ui/navBar/venue_nav_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:gignow/model/event.dart';
+import 'dart:convert';
 
 final List<String> moty = [
   'JAN',
@@ -149,25 +153,29 @@ Future<void> showApplicantsDialog(BuildContext context, Event event) async {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    applicants.length != 0 ? Container(
-                        height: MediaQuery.of(context).size.height *
-                            (0.12 * applicants.length),
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: applicants.length,
-                            itemBuilder: (context, index) {
-                              UserModel applicant = applicants[index];
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: generateApplicantTile(
-                                    context, event, applicant),
-                              );
-                            })) : Container(
-                        height: MediaQuery.of(context).size.height *
-                            (0.12),
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        child : Column( mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children :[Text("No applicants yet!")]))
+                    applicants.length != 0
+                        ? Container(
+                            height: MediaQuery.of(context).size.height *
+                                (0.12 * applicants.length),
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: applicants.length,
+                                itemBuilder: (context, index) {
+                                  UserModel applicant = applicants[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: generateApplicantTile(
+                                        context, event, applicant),
+                                  );
+                                }))
+                        : Container(
+                            height: MediaQuery.of(context).size.height * (0.12),
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [Text("No applicants yet!")]))
                   ],
                 );
               } else {
@@ -429,6 +437,11 @@ Container generateOpenEventTile(
                                 color: Colors.lightBlue,
                                 onPressed: () {
                                   FirebaseService().confirmEvent(event);
+                                  Navigator.of(context).push(
+                                      new MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                    return new ArtistNavbar(1);
+                                  }));
                                 },
                               ),
                             ],
@@ -444,8 +457,15 @@ Container generateOpenEventTile(
                                 child: Text(applied ? 'Applied' : 'Apply'),
                                 color: Colors.lightBlue,
                                 onPressed: () {
-                                  applyForEvent(event, um.uid);
-                                  applied = true;
+                                  if (!applied) {
+                                    applyForEvent(event, um.uid);
+                                    applied = true;
+                                    Navigator.of(context).push(
+                                        new MaterialPageRoute(
+                                            builder: (BuildContext context) {
+                                      return new ArtistNavbar(1);
+                                    }));
+                                  }
                                 },
                               ),
                             ],
@@ -455,6 +475,10 @@ Container generateOpenEventTile(
                   ? PopupMenuButton(
                       onSelected: (value) {
                         deleteEvent(event);
+                        Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (BuildContext context) {
+                          return new VenueNavbar(2);
+                        }));
                       },
                       child: Icon(Icons.more_vert),
                       itemBuilder: (context) => [

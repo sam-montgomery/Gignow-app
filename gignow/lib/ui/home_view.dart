@@ -31,9 +31,9 @@ class _HomeViewState extends State<HomeView> {
           if (snapshot.hasData) {
             UserModel user = snapshot.data;
             if (user.venue) {
-              return VenueNavbar();
+              return VenueNavbar(0);
             } else {
-              return ArtistNavbar();
+              return ArtistNavbar(0);
             }
           } else {
             return CreateProfileScreen();

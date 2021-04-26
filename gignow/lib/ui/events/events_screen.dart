@@ -140,7 +140,6 @@ class EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     getVenuesEvents();
-    HashMap eventApplicantMap = new HashMap<Event, UserModel>();
     UserModel user = UserModel(
         widget.profile['userUid'].toString(),
         widget.profile['name'].toString(),
@@ -214,7 +213,6 @@ class EventsScreenState extends State<EventsScreen> {
                   child: Icon(Icons.add),
                   onPressed: () async {
                     await showAddEventDialog(context);
-                    //await showApplicantsDialog(context, um);
                   },
                 )
               : null

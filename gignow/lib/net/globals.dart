@@ -7,6 +7,7 @@ class Global {
 
   Global._internal() {
     _userModel = UserModel.empty();
+    previousSelection = 0;
   }
 
   UserModel _userModel;
@@ -15,5 +16,13 @@ class Global {
 
   set currentUserModel(UserModel userModel) {
     _userModel = userModel;
+  }
+
+  int prevSelection;
+
+  int get previousSelection => prevSelection;
+
+  set previousSelection(int selection) {
+    prevSelection = selection;
   }
 }

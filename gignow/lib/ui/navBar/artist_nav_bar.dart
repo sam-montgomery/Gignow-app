@@ -8,18 +8,23 @@ import '../../artist_cards/swipe_feed_page.dart';
 import '../../net/firebase_service.dart';
 
 class ArtistNavbar extends StatefulWidget {
+  int prev;
+
+  ArtistNavbar(int i) {
+    prev = i;
+  }
+
   @override
   _ANavBarState createState() => _ANavBarState();
 }
 
 class _ANavBarState extends State<ArtistNavbar> {
-  int _currentIndex = 0;
-
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseService _firebaseService = FirebaseService();
 
   @override
   Widget build(BuildContext context) {
+    int _currentIndex = widget.prev;
     final tabs = [
       Center(child: VideoPostList()),
       Center(child: _firebaseService.getEventsPage(auth.currentUser.uid)),
@@ -57,6 +62,7 @@ class _ANavBarState extends State<ArtistNavbar> {
           onTap: (index) {
             setState(() {
               _currentIndex = index;
+              widget.prev = index;
             });
           }),
     );

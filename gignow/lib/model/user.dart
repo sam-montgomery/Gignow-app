@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class UserModel {
   String uid;
   String name;
@@ -20,6 +22,17 @@ class UserModel {
     this.socials = socials;
     this.venue = venue;
   }
+
+  Map<String, dynamic> toJson() => {
+        'userUid': uid,
+        'name': name,
+        'genres': genres,
+        'phoneNumber': phone,
+        'handle': handle,
+        'profile_picture_url': profilePictureUrl,
+        'socials': socials,
+        'venue': venue
+      };
 
   UserModel.empty();
 }
