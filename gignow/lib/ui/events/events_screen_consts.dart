@@ -11,6 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:gignow/model/event.dart';
 import 'dart:convert';
 
+import '../userProfile/profile_screen.dart';
+
 final List<String> moty = [
   'JAN',
   'FEB',
@@ -30,6 +32,7 @@ final TextStyle activeScreen = TextStyle(
     fontSize: 18, decoration: TextDecoration.underline, color: Colors.white);
 
 final TextStyle inActiveScreen = TextStyle(fontSize: 18, color: Colors.white);
+final TextStyle eventTitle = TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold);
 
 final TextStyle monthStyle =
     TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold);
@@ -74,14 +77,22 @@ Container generateApplicantTile(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                backgroundColor: Colors.white70,
-                minRadius: 30.0,
-                child: CircleAvatar(
-                  radius: 30.0,
-                  backgroundImage: NetworkImage(applicant.profilePictureUrl),
-                ),
-              ),
+              GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(applicant)));
+                        },
+                        child: CircleAvatar(
+                            backgroundColor: Colors.white70,
+                            minRadius: 10.0,
+                            child: CircleAvatar(
+                              radius: 30.0,
+                              backgroundImage:
+                                  NetworkImage(applicant.profilePictureUrl),
+                            )),
+                      ),
               SizedBox(height: 15, width: 15),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,6 +119,10 @@ Container generateApplicantTile(
                           break;
                       }
                       Navigator.of(context).pop();
+                        Navigator.of(context).push(new MaterialPageRoute(
+                            builder: (BuildContext context) {
+                          return new VenueNavbar(2);
+                        }));
                     },
                     child: Icon(Icons.more_vert),
                     itemBuilder: (context) => [
@@ -230,22 +245,25 @@ FutureBuilder generateUpcomingEventTile(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white70,
-                        minRadius: 30.0,
-                        child: CircleAvatar(
-                          radius: 30.0,
-                          backgroundImage:
-                              NetworkImage(applicant.profilePictureUrl),
-                        ),
+                SizedBox(
+                        width: 10,
                       ),
-                      height: MediaQuery.of(context).size.height * 0.08,
-                      width: MediaQuery.of(context).size.height * 0.08,
-                    )),
+                GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(applicant)));
+                        },
+                        child: CircleAvatar(
+                            backgroundColor: Colors.white70,
+                            minRadius: 10.0,
+                            child: CircleAvatar(
+                              radius: 30.0,
+                              backgroundImage:
+                                  NetworkImage(applicant.profilePictureUrl),
+                            )),
+                      ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -254,8 +272,13 @@ FutureBuilder generateUpcomingEventTile(
                     children: [
                       Text(
                         applicant.name,
-                        textAlign: TextAlign.center,
-                        style: dayStyle,
+                        textAlign: TextAlign.left,
+                        style: eventTitle,
+                      ),
+                      Text(
+                        "@ " + event.venue['name'],
+                        textAlign: TextAlign.left,
+                        style: eventTitle,
                       ),
                       Text(
                         "$date $startingTime - $finishingTime",
@@ -339,7 +362,7 @@ Container generateOpenEventTile(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Padding(
+        venue ? Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
               alignment: Alignment.center,
@@ -362,6 +385,23 @@ Container generateOpenEventTile(
               decoration: BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.all(Radius.circular(15))),
+            )) : Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              alignment: Alignment.center,
+              child: CircleAvatar(
+                        backgroundColor: Colors.white70,
+                        minRadius: 30.0,
+                        child: CircleAvatar(
+                          radius: 30.0,
+                          backgroundImage:
+                              NetworkImage(event.venue['profile_picture_url']),
+                        ),
+                      ),
+              height: MediaQuery.of(context).size.height * 0.08,
+              width: MediaQuery.of(context).size.height * 0.08,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
             )),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -369,11 +409,15 @@ Container generateOpenEventTile(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              venue ? Text(
                 DateFormat('EEEE').format(event.eventStartTime),
                 textAlign: TextAlign.center,
                 style: dayStyle,
-              ),
+              ) : Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [Text (event.venue['name'], textAlign: TextAlign.left, style: eventTitle),Text(
+                DateFormat('EEEE').format(event.eventStartTime) + " - " + moty[event.eventStartTime.month - 1] + " " + event.eventStartTime.day.toString(),
+                textAlign: TextAlign.left,
+                style: inActiveScreen,
+              )]),
               Text(
                 "$startingTime - $finishingTime",
                 textAlign: TextAlign.left,
@@ -382,9 +426,9 @@ Container generateOpenEventTile(
             ],
           ),
         ),
-        SizedBox(
+        venue ? SizedBox(
           width: MediaQuery.of(context).size.width * 0.05,
-        ),
+        ) : SizedBox(width:0),
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,

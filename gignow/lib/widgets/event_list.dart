@@ -28,7 +28,7 @@ class _VenuesEventListState extends State<VenuesEventList> {
     String uid = widget.user.uid;
     List<Event> events = [];
     return FutureBuilder(
-        future: FirebaseService().getAllEventsForVenue(uid),
+        future: FirebaseService().getOpenEventsForVenue(uid),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             events = (snapshot.data.length > 0 ? snapshot.data : events);

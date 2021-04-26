@@ -264,6 +264,7 @@ class FirebaseService {
       "eventStartTime": newEvent.eventStartTime.toString(),
       "eventFinishTime": newEvent.eventFinishTime.toString(),
       "venueId": newEvent.venueId,
+      "venue": newEvent.venue,
       "applicants": "",
       "acceptedUid": newEvent.acceptedUid,
       "confirmed": newEvent.confirmed
@@ -281,6 +282,7 @@ class FirebaseService {
         "eventStartTime": event.eventStartTime.toString(),
         "eventFinishTime": event.eventFinishTime.toString(),
         "venueId": event.venueId,
+      "venue": event.venue,
         "applicants": event.applicants.join(','),
         "acceptedUid": event.acceptedUid,
         "confirmed": event.confirmed
@@ -294,6 +296,7 @@ class FirebaseService {
       "eventStartTime": event.eventStartTime.toString(),
       "eventFinishTime": event.eventFinishTime.toString(),
       "venueId": event.venueId,
+      "venue": event.venue,
       "applicants": event.applicants.join(','),
       "acceptedUid": applicantUid,
       "confirmed": event.confirmed
@@ -307,6 +310,7 @@ class FirebaseService {
       "eventStartTime": event.eventStartTime.toString(),
       "eventFinishTime": event.eventFinishTime.toString(),
       "venueId": event.venueId,
+      "venue": event.venue,
       "applicants": event.applicants.join(','),
       "acceptedUid": null,
       "confirmed": event.confirmed
@@ -319,6 +323,7 @@ class FirebaseService {
       "eventStartTime": event.eventStartTime.toString(),
       "eventFinishTime": event.eventFinishTime.toString(),
       "venueId": event.venueId,
+      "venue": event.venue,
       "applicants": event.applicants.join(','),
       "acceptedUid": event.acceptedUid,
       "confirmed": true
@@ -372,6 +377,7 @@ class FirebaseService {
           DateTime.parse(value.data()['eventStartTime']),
           DateTime.parse(value.data()['eventFinishTime']),
           value.data()['venueId'],
+          value.data()['venue'],
           applicants,
           acceptedUid,
           confirmed);
@@ -439,6 +445,7 @@ class FirebaseService {
             DateTime.parse(doc['eventStartTime']),
             DateTime.parse(doc['eventFinishTime']),
             doc['venueId'],
+            doc['venue'],
             applicants,
             acceptedUid,
             confirmed));
@@ -473,6 +480,7 @@ class FirebaseService {
             DateTime.parse(doc['eventStartTime']),
             DateTime.parse(doc['eventFinishTime']),
             doc['venueId'],
+            doc['venue'],
             applicants,
             acceptedUid,
             confirmed));
@@ -507,6 +515,7 @@ class FirebaseService {
             DateTime.parse(doc['eventStartTime']),
             DateTime.parse(doc['eventFinishTime']),
             doc['venueId'],
+            doc['venue'],
             applicants,
             acceptedUid,
             confirmed));
@@ -542,6 +551,7 @@ class FirebaseService {
             DateTime.parse(doc['eventStartTime']),
             DateTime.parse(doc['eventFinishTime']),
             doc['venueId'],
+            doc['venue'],
             applicants,
             acceptedUid,
             confirmed));
@@ -577,6 +587,7 @@ class FirebaseService {
             DateTime.parse(doc['eventStartTime']),
             DateTime.parse(doc['eventFinishTime']),
             doc['venueId'],
+            doc['venue'],
             applicants,
             acceptedUid,
             confirmed));
@@ -612,6 +623,7 @@ class FirebaseService {
             DateTime.parse(doc['eventStartTime']),
             DateTime.parse(doc['eventFinishTime']),
             doc['venueId'],
+            doc['venue'],
             applicants,
             acceptedUid,
             confirmed));
