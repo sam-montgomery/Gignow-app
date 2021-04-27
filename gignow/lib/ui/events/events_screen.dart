@@ -15,10 +15,11 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/widgets/event_list.dart';
 
+import '../../model/user.dart';
 import '../navBar/venue_nav_bar.dart';
 
 class EventsScreen extends StatefulWidget {
-  final Map<String, dynamic> profile;
+  final UserModel profile;
   EventsScreen(this.profile);
   @override
   EventsScreenState createState() => EventsScreenState();
@@ -43,8 +44,7 @@ class EventsScreenState extends State<EventsScreen> {
   //TextEditingController
 
   Future<void> getVenuesEvents() async {
-    events =
-        await FirebaseService().getAllEventsForVenue(widget.profile['userUid']);
+    events = await FirebaseService().getAllEventsForVenue(widget.profile.uid);
 
     for (Event e in events) {
       e.confirmed ? upcomingEvents.add(e) : openEvents.add(e);
@@ -62,15 +62,16 @@ class EventsScreenState extends State<EventsScreen> {
   }
 
   Future<void> showAddEventDialog(BuildContext context) async {
-    UserModel user = UserModel(
-        widget.profile['userUid'].toString(),
-        widget.profile['name'].toString(),
-        widget.profile['genres'].toString(),
-        widget.profile['phoneNumber'].toString(),
-        widget.profile['handle'].toString(),
-        widget.profile['profile_picture_url'].toString(),
-        widget.profile['socials'],
-        widget.profile['venue']);
+    // UserModel user = UserModel(
+    //     widget.profile['userUid'].toString(),
+    //     widget.profile['name'].toString(),
+    //     widget.profile['genres'].toString(),
+    //     widget.profile['phoneNumber'].toString(),
+    //     widget.profile['handle'].toString(),
+    //     widget.profile['profile_picture_url'].toString(),
+    //     widget.profile['socials'],
+    //     widget.profile['venue']);
+    UserModel user = widget.profile;
     DateTime eventStart;
     DateTime eventEnd;
     await showDialog(
@@ -129,12 +130,12 @@ class EventsScreenState extends State<EventsScreen> {
                 child: Text('Create Event'),
                 onPressed: () async {
                   Event newEvent = Event(
-                      (widget.profile['userUid'] +
+                      (widget.profile.uid +
                           '-' +
                           ((returnNextInc()).toString())),
                       eventStart,
                       eventEnd,
-                      widget.profile['userUid'],
+                      widget.profile.uid,
                       user.toJson(),
                       [],
                       "",
@@ -142,10 +143,10 @@ class EventsScreenState extends State<EventsScreen> {
                   firebaseService.createEvent(newEvent);
                   await getVenuesEvents();
                   Navigator.of(context).pop();
-                        Navigator.of(context).push(new MaterialPageRoute(
-                            builder: (BuildContext context) {
-                          return new VenueNavbar(2);
-                        }));
+                  Navigator.of(context).push(
+                      new MaterialPageRoute(builder: (BuildContext context) {
+                    return new VenueNavbar(2);
+                  }));
                 },
               ),
             ]);
@@ -156,15 +157,16 @@ class EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     getVenuesEvents();
-    UserModel user = UserModel(
-        widget.profile['userUid'].toString(),
-        widget.profile['name'].toString(),
-        widget.profile['genres'].toString(),
-        widget.profile['phoneNumber'].toString(),
-        widget.profile['handle'].toString(),
-        widget.profile['profile_picture_url'].toString(),
-        widget.profile['socials'],
-        widget.profile['venue']);
+    // UserModel user = UserModel(
+    //     widget.profile['userUid'].toString(),
+    //     widget.profile['name'].toString(),
+    //     widget.profile['genres'].toString(),
+    //     widget.profile['phoneNumber'].toString(),
+    //     widget.profile['handle'].toString(),
+    //     widget.profile['profile_picture_url'].toString(),
+    //     widget.profile['socials'],
+    //     widget.profile['venue']);
+    UserModel user = widget.profile;
     return Scaffold(
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         SizedBox(height: 20),

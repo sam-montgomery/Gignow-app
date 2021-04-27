@@ -18,6 +18,8 @@ import '../model/user.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
 
+import '../model/user.dart';
+import '../model/user.dart';
 import 'database.dart';
 
 class FirebaseService {
@@ -137,11 +139,40 @@ class FirebaseService {
         });
   }
 
-  FutureBuilder<DocumentSnapshot> getEventsPage(String uid) {
-    return FutureBuilder<DocumentSnapshot>(
-        future: users.doc(uid).get(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+  // FutureBuilder<DocumentSnapshot> getEventsPage(String uid) {
+  //   return FutureBuilder<DocumentSnapshot>(
+  //       future: users.doc(uid).get(),
+  //       builder:
+  //           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+  //         try {
+  //           if (snapshot.hasError) {
+  //             return Loading();
+  //           }
+
+  //           if (snapshot.connectionState == ConnectionState.done) {
+  //             try {
+  //               Map<String, dynamic> data = snapshot.data.data();
+  //               if (data != null) {
+  //                 return EventsScreen(data);
+  //               } else {
+  //                 return CreateProfileScreen();
+  //               }
+  //             } catch (e) {
+  //               return Loading();
+  //             }
+  //           }
+
+  //           return Loading();
+  //         } catch (e) {
+  //           return Loading();
+  //         }
+  //       });
+  // }
+
+  FutureBuilder<UserModel> getEventsPage(String uid) {
+    return FutureBuilder<UserModel>(
+        future: getUser(uid),
+        builder: (context, snapshot) {
           try {
             if (snapshot.hasError) {
               return Loading();
@@ -149,7 +180,7 @@ class FirebaseService {
 
             if (snapshot.connectionState == ConnectionState.done) {
               try {
-                Map<String, dynamic> data = snapshot.data.data();
+                UserModel data = snapshot.data;
                 if (data != null) {
                   return EventsScreen(data);
                 } else {
@@ -282,7 +313,7 @@ class FirebaseService {
         "eventStartTime": event.eventStartTime.toString(),
         "eventFinishTime": event.eventFinishTime.toString(),
         "venueId": event.venueId,
-      "venue": event.venue,
+        "venue": event.venue,
         "applicants": event.applicants.join(','),
         "acceptedUid": event.acceptedUid,
         "confirmed": event.confirmed

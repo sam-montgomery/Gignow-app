@@ -32,7 +32,8 @@ final TextStyle activeScreen = TextStyle(
     fontSize: 18, decoration: TextDecoration.underline, color: Colors.white);
 
 final TextStyle inActiveScreen = TextStyle(fontSize: 18, color: Colors.white);
-final TextStyle eventTitle = TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold);
+final TextStyle eventTitle =
+    TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold);
 
 final TextStyle monthStyle =
     TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold);
@@ -78,21 +79,21 @@ Container generateApplicantTile(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(applicant)));
-                        },
-                        child: CircleAvatar(
-                            backgroundColor: Colors.white70,
-                            minRadius: 10.0,
-                            child: CircleAvatar(
-                              radius: 30.0,
-                              backgroundImage:
-                                  NetworkImage(applicant.profilePictureUrl),
-                            )),
-                      ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProfileScreen(applicant)));
+                },
+                child: CircleAvatar(
+                    backgroundColor: Colors.white70,
+                    minRadius: 10.0,
+                    child: CircleAvatar(
+                      radius: 30.0,
+                      backgroundImage:
+                          NetworkImage(applicant.profilePictureUrl),
+                    )),
+              ),
               SizedBox(height: 15, width: 15),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,10 +120,10 @@ Container generateApplicantTile(
                           break;
                       }
                       Navigator.of(context).pop();
-                        Navigator.of(context).push(new MaterialPageRoute(
-                            builder: (BuildContext context) {
-                          return new VenueNavbar(2);
-                        }));
+                      Navigator.of(context).push(new MaterialPageRoute(
+                          builder: (BuildContext context) {
+                        return new VenueNavbar(2);
+                      }));
                     },
                     child: Icon(Icons.more_vert),
                     itemBuilder: (context) => [
@@ -246,24 +247,24 @@ FutureBuilder generateUpcomingEventTile(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                        width: 10,
-                      ),
+                  width: 10,
+                ),
                 GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(applicant)));
-                        },
-                        child: CircleAvatar(
-                            backgroundColor: Colors.white70,
-                            minRadius: 10.0,
-                            child: CircleAvatar(
-                              radius: 30.0,
-                              backgroundImage:
-                                  NetworkImage(applicant.profilePictureUrl),
-                            )),
-                      ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileScreen(applicant)));
+                  },
+                  child: CircleAvatar(
+                      backgroundColor: Colors.white70,
+                      minRadius: 10.0,
+                      child: CircleAvatar(
+                        radius: 30.0,
+                        backgroundImage:
+                            NetworkImage(applicant.profilePictureUrl),
+                      )),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -362,73 +363,93 @@ Container generateOpenEventTile(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        venue ? Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              alignment: Alignment.center,
-              child: ListView(
-                children: [
-                  Text(
-                    moty[event.eventStartTime.month - 1],
-                    textAlign: TextAlign.center,
-                    style: monthStyle,
-                  ),
-                  Text(
-                    event.eventStartTime.day.toString(),
-                    textAlign: TextAlign.center,
-                    style: dateStyle,
-                  ),
-                ],
-              ),
-              height: MediaQuery.of(context).size.height * 0.08,
-              width: MediaQuery.of(context).size.height * 0.08,
-              decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.all(Radius.circular(15))),
-            )) : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              alignment: Alignment.center,
-              child: CircleAvatar(
-                        backgroundColor: Colors.white70,
-                        minRadius: 30.0,
-                        child: CircleAvatar(
-                          radius: 30.0,
-                          backgroundImage:
-                              NetworkImage(event.venue['profile_picture_url']),
-                        ),
+        venue
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: ListView(
+                    children: [
+                      Text(
+                        moty[event.eventStartTime.month - 1],
+                        textAlign: TextAlign.center,
+                        style: monthStyle,
                       ),
-              height: MediaQuery.of(context).size.height * 0.08,
-              width: MediaQuery.of(context).size.height * 0.08,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(15))),
-            )),
+                      Text(
+                        event.eventStartTime.day.toString(),
+                        textAlign: TextAlign.center,
+                        style: dateStyle,
+                      ),
+                    ],
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  width: MediaQuery.of(context).size.height * 0.07,
+                  decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.all(Radius.circular(15))),
+                ))
+            : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white70,
+                    minRadius: 30.0,
+                    child: CircleAvatar(
+                      radius: 30.0,
+                      backgroundImage:
+                          NetworkImage(event.venue['profile_picture_url']),
+                    ),
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  width: MediaQuery.of(context).size.height * 0.07,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(15))),
+                )),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              venue ? Text(
-                DateFormat('EEEE').format(event.eventStartTime),
-                textAlign: TextAlign.center,
-                style: dayStyle,
-              ) : Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [Text (event.venue['name'], textAlign: TextAlign.left, style: eventTitle),Text(
-                DateFormat('EEEE').format(event.eventStartTime) + " - " + moty[event.eventStartTime.month - 1] + " " + event.eventStartTime.day.toString(),
-                textAlign: TextAlign.left,
-                style: inActiveScreen,
-              )]),
-              Text(
-                "$startingTime - $finishingTime",
-                textAlign: TextAlign.left,
-                style: timeStyle,
-              )
-            ],
+          padding: const EdgeInsets.all(6.0),
+          child: Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                venue
+                    ? Text(
+                        DateFormat('EEEE').format(event.eventStartTime),
+                        textAlign: TextAlign.center,
+                        style: dayStyle,
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                            Text(event.venue['name'],
+                                textAlign: TextAlign.left, style: eventTitle),
+                            Text(
+                              DateFormat('EEEE').format(event.eventStartTime) +
+                                  " - " +
+                                  moty[event.eventStartTime.month - 1] +
+                                  " " +
+                                  event.eventStartTime.day.toString(),
+                              textAlign: TextAlign.left,
+                              style: inActiveScreen,
+                            )
+                          ]),
+                Text(
+                  "$startingTime - $finishingTime",
+                  textAlign: TextAlign.left,
+                  style: timeStyle,
+                )
+              ],
+            ),
           ),
         ),
-        venue ? SizedBox(
-          width: MediaQuery.of(context).size.width * 0.05,
-        ) : SizedBox(width:0),
+        venue
+            ? SizedBox(
+                width: MediaQuery.of(context).size.width * 0.05,
+              )
+            : SizedBox(width: 0),
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
