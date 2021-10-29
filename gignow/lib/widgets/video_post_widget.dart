@@ -7,6 +7,7 @@ import 'package:gignow/ui/userProfile/profile_screen.dart';
 import 'package:gignow/widgets/video_player_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:video_player/video_player.dart';
+//import 'package:cached_video_player/cached_video_player.dart';
 
 class VideoPostWidget extends StatefulWidget {
   VideoPost post;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/model/video_post.dart';
+import 'package:gignow/ui/loading.dart';
 import 'package:gignow/ui/userProfile/profile_screen.dart';
 import 'package:video_player/video_player.dart';
 
@@ -38,70 +40,91 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       aspectRatio: MediaQuery.of(context).size.width /
           (MediaQuery.of(context).size.height * 0.90),
       //padding: const EdgeInsets.all(20),
-      child: AspectRatio(
-        aspectRatio: _controller.value.aspectRatio,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: <Widget>[
-            VideoPlayer(_controller),
-            _ControlsOverlay(controller: _controller),
-            VideoProgressIndicator(_controller, allowScrubbing: true),
-            Container(
-              alignment: Alignment.bottomLeft,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 10,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(user)));
-                        },
-                        child: CircleAvatar(
-                            backgroundColor: Colors.white70,
-                            minRadius: 10.0,
-                            child: CircleAvatar(
-                              radius: 20.0,
-                              backgroundImage:
-                                  NetworkImage(user.profilePictureUrl),
-                            )),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(user.handle,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20)),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(videoPost.postDescription,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
+      child: FutureBuilder(
+        future: DefaultCacheManager().getSingleFile(videoPost.videoURL),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            print("Video Loaded from ${snapshot.data.toString()}");
+            _controller = VideoPlayerController.file(snapshot.data);
+            _controller.addListener(() {
+              // setState(() {});
+            });
+            _controller.setLooping(true);
+            _controller.initialize();
+            return AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  VideoPlayer(_controller),
+                  _ControlsOverlay(controller: _controller),
+                  VideoProgressIndicator(_controller, allowScrubbing: true),
+                  Container(
+                    alignment: Alignment.bottomLeft,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProfileScreen(user)));
+                              },
+                              child: CircleAvatar(
+                                  backgroundColor: Colors.white70,
+                                  minRadius: 10.0,
+                                  child: CircleAvatar(
+                                    radius: 20.0,
+                                    backgroundImage:
+                                        NetworkImage(user.profilePictureUrl),
+                                  )),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(user.handle,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20)),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(videoPost.postDescription,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(color: Colors.white)),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),
-            )
-          ],
-        ),
+            );
+          } else {
+            return AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: <Widget>[Loading()]));
+          }
+        },
       ),
     );
   }

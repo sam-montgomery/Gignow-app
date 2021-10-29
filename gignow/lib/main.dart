@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:gignow/cache_test.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/net/globals.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
                 context.read<AuthenticationService>().authStateChanges),
       ],
       child: MaterialApp(title: 'Flutter Demo', initialRoute: '/', routes: {
+        //'/': (context) => CacheTest(),
         '/': (context) => AuthenticationWrapper(),
         //'/chat': (context) => ChatsScreen(_firebaseService.),
         '/settings': (context) => SettingsScreen(),

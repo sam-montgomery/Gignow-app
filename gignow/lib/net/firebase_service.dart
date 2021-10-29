@@ -272,19 +272,20 @@ class FirebaseService {
     }
   }
 
-  void createVideoPost(File video, DateTime date, String desc) {
+  void createVideoPost(DateTime date, String desc, String url) {
     final user = auth.currentUser;
     firestoreInstance.collection("VideoPosts").add({
       "user": users.doc(user.uid),
       "postDate": date,
       "postDescription": desc,
+      "videoURL": url,
     }).then((docRef) {
-      String dir = path.dirname(video.path);
-      String newPath = path.join(dir, "${docRef.id}.mp4");
-      video.renameSync(newPath);
-      // uploadVideo(
-      //     docRef.id, newPath, "https://gignow-310714.ew.r.appspot.com/upload");
-      uploadVideoPHP(newPath);
+      // String dir = path.dirname(video.path);
+      // String newPath = path.join(dir, "${docRef.id}.mp4");
+      // video.renameSync(newPath);
+      // // uploadVideo(
+      // //     docRef.id, newPath, "https://gignow-310714.ew.r.appspot.com/upload");
+      // uploadVideoPHP(newPath);
     });
   }
 

@@ -60,7 +60,7 @@ class _PostFormState extends State<PostForm> {
   String state = "";
 
   Future createPost() async {
-    firebaseService.createVideoPost(_videoFile, DateTime.now(), _desc.text);
+    // firebaseService.createVideoPost(_videoFile, DateTime.now(), _desc.text);
     // String dir = path.dirname(_videoFile.path);
     // String newPath = path.join(dir, "$videoPostId.mp4");
     // _videoFile.renameSync(newPath);
@@ -70,23 +70,25 @@ class _PostFormState extends State<PostForm> {
     //   state = res;
     //   print(res);
     // });
-    // var now = DateTime.now();
-    // String fileName = "video-" + now.toString();
-    // firebase_storage.Reference firebaseStorageRef = firebase_storage
-    //     .FirebaseStorage.instance
-    //     .ref()
-    //     .child('videos/$fileName');
-    // firebase_storage.UploadTask uploadTask =
-    //     firebaseStorageRef.putFile(_videoFile);
-    // firebase_storage.TaskSnapshot taskSnapshot =
-    //     await uploadTask.whenComplete(() => null);
-    // taskSnapshot.ref.getDownloadURL().then((value) {
-    //   print("Done: $value");
+    var now = DateTime.now();
+    String fileName = "video-" + now.toString();
+    firebase_storage.Reference firebaseStorageRef = firebase_storage
+        .FirebaseStorage.instance
+        .ref()
+        .child('videos/$fileName');
+    firebase_storage.UploadTask uploadTask =
+        firebaseStorageRef.putFile(_videoFile);
+    firebase_storage.TaskSnapshot taskSnapshot =
+        await uploadTask.whenComplete(() {});
+    taskSnapshot.ref.getDownloadURL().then((value) {
+      print("Done: $value");
+      firebaseService.createVideoPost(now, _desc.text, value);
 
-    //   firebaseService.createVideoPost(
-    //       "testemail", "testname", now, _desc.text, value);
-    // });
-    Navigator.pushNamed(context, '/');
+      //   firebaseService.createVideoPost(
+      //       "testemail", "testname", now, _desc.text, value);
+      // });
+      Navigator.pushNamed(context, '/');
+    });
   }
 
   @override
