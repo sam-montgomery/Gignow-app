@@ -5,6 +5,7 @@ import 'package:gignow/model/video_post.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/ui/userProfile/profile_screen.dart';
 import 'package:video_player/video_player.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   VideoPost videoPost;
@@ -79,11 +80,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                               },
                               child: CircleAvatar(
                                   backgroundColor: Colors.white70,
-                                  minRadius: 10.0,
+                                  minRadius: 24.0,
                                   child: CircleAvatar(
                                     radius: 20.0,
-                                    backgroundImage:
-                                        NetworkImage(user.profilePictureUrl),
+                                    backgroundImage: CachedNetworkImageProvider(
+                                      user.profilePictureUrl,
+                                    ),
                                   )),
                             ),
                             SizedBox(

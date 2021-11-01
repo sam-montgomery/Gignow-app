@@ -7,6 +7,7 @@ import 'package:gignow/net/firebase_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:http/http.dart' as http;
+import 'package:video_compress/video_compress.dart';
 
 class PostForm extends StatefulWidget {
   // UserModel currentUser;
@@ -27,6 +28,9 @@ class _PostFormState extends State<PostForm> {
     setState(() {
       _videoFile = File(pickedFile.path);
     });
+    print("Original Size: ${_videoFile.lengthSync()}");
+    await compressVideo(_videoFile);
+    print("Compressed Size: ${_videoFile.lengthSync()}");
     // if (pickedFile != null) {
     //   var now = DateTime.now();
     //   String fileName = "video-" + now.toString();
@@ -44,6 +48,23 @@ class _PostFormState extends State<PostForm> {
     // } else {
     //   print('No video selected.');
     // }
+  }
+
+  void compressVideo(File video) async {
+    await VideoCompress.setLogLevel(0);
+    final MediaInfo info = await VideoCompress.compressVideo(
+      video.path,
+      quality: VideoQuality.MediumQuality,
+      deleteOrigin: false,
+      includeAudio: true,
+    );
+    //print("Compressed Size: ${info.filesize}}");
+    if (info != null) {
+      setState(() {
+        _videoFile = info.file;
+        //_counter = info.path!;
+      });
+    }
   }
 
   Future<String> uploadVideo(filename, url) async {
@@ -94,12 +115,6 @@ class _PostFormState extends State<PostForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: IconButton(
-        icon: Icon(Icons.close),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       body: Column(
         children: [
