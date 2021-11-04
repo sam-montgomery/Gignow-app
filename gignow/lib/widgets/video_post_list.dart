@@ -10,20 +10,63 @@ class VideoPostList extends StatefulWidget {
 }
 
 class _VideoPostListState extends State<VideoPostList> {
+  int vidIndex = 0;
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: FirebaseService().getVideoPosts(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData &&
+            snapshot.connectionState == ConnectionState.done) {
           List<VideoPost> posts = snapshot.data;
-          return ListView.builder(
-              shrinkWrap: true,
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                VideoPost post = posts[index];
-                return VideoPostWidget(post);
-              });
+          VideoPostWidget curVid = VideoPostWidget(posts[vidIndex]);
+          return Stack(
+            children: [
+              curVid,
+              //VideoPostWidget(posts[vidIndex]),
+              Column(children: [
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    MaterialButton(
+                      color: Colors.white,
+                      child: Text("Previous"),
+                      onPressed: () {
+                        if (vidIndex > 0) {
+                          setState(() {
+                            vidIndex--;
+                          });
+                        }
+                        //widget.createState();
+                      },
+                    ),
+                    MaterialButton(
+                      color: Colors.white,
+                      child: Text("Next"),
+                      onPressed: () {
+                        if (vidIndex < posts.length - 1) {
+                          setState(() {
+                            vidIndex++;
+                          });
+                        }
+                        //widget.createState();
+                      },
+                    ),
+                  ],
+                ),
+              ])
+            ],
+          );
+          // return ListView.builder(
+          //     shrinkWrap: true,
+          //     itemCount: posts.length,
+          //     itemBuilder: (context, index) {
+          //       VideoPost post = posts[index];
+          //       return VideoPostWidget(post);
+          //     });
         } else {
           return Loading();
         }
