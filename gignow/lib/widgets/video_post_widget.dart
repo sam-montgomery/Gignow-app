@@ -26,13 +26,13 @@ class _VideoPostWidgetState extends State<VideoPostWidget> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(post.videoURL);
-    _controller.addListener(() {
-      // setState(() {});
-    });
-    _controller.setLooping(true);
-    // _controller.initialize().then((_) => setState(() {}));
-    _controller.initialize();
+    // _controller = VideoPlayerController.network(post.videoURL);
+    // _controller.addListener(() {
+    //   // setState(() {});
+    // });
+    // _controller.setLooping(true);
+    // // _controller.initialize().then((_) => setState(() {}));
+    // _controller.initialize();
     //_controller.play();
   }
 

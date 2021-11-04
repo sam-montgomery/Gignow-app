@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -54,8 +55,8 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                       minRadius: 60.0,
                       child: CircleAvatar(
                         radius: 80.0,
-                        backgroundImage:
-                            NetworkImage(widget.profile.profilePictureUrl),
+                        backgroundImage: CachedNetworkImageProvider(
+                            widget.profile.profilePictureUrl),
                       ),
                     ),
                   ],

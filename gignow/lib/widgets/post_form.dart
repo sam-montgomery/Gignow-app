@@ -28,9 +28,7 @@ class _PostFormState extends State<PostForm> {
     setState(() {
       _videoFile = File(pickedFile.path);
     });
-    print("Original Size: ${_videoFile.lengthSync()}");
-    await compressVideo(_videoFile);
-    print("Compressed Size: ${_videoFile.lengthSync()}");
+
     // if (pickedFile != null) {
     //   var now = DateTime.now();
     //   String fileName = "video-" + now.toString();
@@ -97,12 +95,16 @@ class _PostFormState extends State<PostForm> {
         .FirebaseStorage.instance
         .ref()
         .child('videos/$fileName');
+    print("Original Size: ${_videoFile.lengthSync()}");
+    await compressVideo(_videoFile);
+    print("Compressed Size: ${_videoFile.lengthSync()}");
+    print("Uploading Video");
     firebase_storage.UploadTask uploadTask =
         firebaseStorageRef.putFile(_videoFile);
     firebase_storage.TaskSnapshot taskSnapshot =
         await uploadTask.whenComplete(() {});
     taskSnapshot.ref.getDownloadURL().then((value) {
-      print("Done: $value");
+      print("Video Uploaded to $value");
       firebaseService.createVideoPost(now, _desc.text, value);
 
       //   firebaseService.createVideoPost(

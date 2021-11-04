@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/model/video_post.dart';
+import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/ui/userProfile/profile_screen.dart';
 import 'package:video_player/video_player.dart';
@@ -20,115 +21,181 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   VideoPost videoPost;
   UserModel user;
   _VideoPlayerWidgetState(this.videoPost, this.user);
+  //bool isLiked = false;
 
   VideoPlayerController _controller;
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(videoPost.videoURL);
-    _controller.addListener(() {
-      // setState(() {});
-    });
-    _controller.setLooping(true);
-    // _controller.initialize().then((_) => setState(() {}));
-    _controller.initialize();
+    // _controller = VideoPlayerController.network(videoPost.videoURL);
+    // _controller.addListener(() {
+    //   // setState(() {});
+    // });
+    // _controller.setLooping(true);
+    // // _controller.initialize().then((_) => setState(() {}));
+    // _controller.initialize();
     //_controller.play();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: MediaQuery.of(context).size.width /
-          (MediaQuery.of(context).size.height * 0.90),
-      //padding: const EdgeInsets.all(20),
-      child: FutureBuilder(
-        future: DefaultCacheManager().getSingleFile(videoPost.videoURL),
+    double playerWidth = MediaQuery.of(context).size.width;
+    double playerHeight = (MediaQuery.of(context).size.height * 0.90);
+    return FutureBuilder(
+        future: FirebaseService().getIsLikedAndNumLikes(videoPost),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            print("Video Loaded from ${snapshot.data.toString()}");
-            _controller = VideoPlayerController.file(snapshot.data);
-            _controller.addListener(() {
-              // setState(() {});
-            });
-            _controller.setLooping(true);
-            _controller.initialize();
+            bool isLiked = snapshot.data['isLiked'];
+            var numLikes = snapshot.data['numLikes'];
             return AspectRatio(
-              aspectRatio: _controller.value.aspectRatio,
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: <Widget>[
-                  VideoPlayer(_controller),
-                  _ControlsOverlay(controller: _controller),
-                  VideoProgressIndicator(_controller, allowScrubbing: true),
-                  Container(
-                    alignment: Alignment.bottomLeft,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              width: 10,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ProfileScreen(user)));
-                              },
-                              child: CircleAvatar(
-                                  backgroundColor: Colors.white70,
-                                  minRadius: 24.0,
-                                  child: CircleAvatar(
-                                    radius: 20.0,
-                                    backgroundImage: CachedNetworkImageProvider(
-                                      user.profilePictureUrl,
+              aspectRatio: playerWidth / playerHeight,
+              //padding: const EdgeInsets.all(20),
+              child: FutureBuilder(
+                future: DefaultCacheManager().getSingleFile(videoPost.videoURL),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    print("Video Loaded from ${snapshot.data.toString()}");
+                    _controller = VideoPlayerController.file(snapshot.data);
+                    _controller.addListener(() {
+                      // setState(() {});
+                    });
+                    _controller.setLooping(true);
+                    // _controller.initialize().then((_) => setState(() {}));
+                    _controller.initialize();
+                    return AspectRatio(
+                      aspectRatio: _controller.value.aspectRatio,
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: <Widget>[
+                          VideoPlayer(_controller),
+                          _ControlsOverlay(controller: _controller),
+                          VideoProgressIndicator(_controller,
+                              allowScrubbing: true),
+                          Container(
+                            alignment: Alignment.bottomLeft,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ProfileScreen(user)));
+                                          },
+                                          child: CircleAvatar(
+                                              backgroundColor: Colors.white70,
+                                              minRadius: 24.0,
+                                              child: CircleAvatar(
+                                                radius: 20.0,
+                                                backgroundImage:
+                                                    CachedNetworkImageProvider(
+                                                  user.profilePictureUrl,
+                                                ),
+                                              )),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(user.handle,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20)),
+                                      ],
                                     ),
-                                  )),
+                                    Column(
+                                      //mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        MaterialButton(
+                                          shape: CircleBorder(),
+                                          onPressed: () async {
+                                            // setState(() {
+                                            //   isLiked = !isLiked;
+                                            // });
+                                            FirebaseService()
+                                                .likeUnlikeVideo(videoPost);
+                                            setState(() {
+                                              isLiked = !isLiked;
+                                              //numLikes = numLikes - 1;
+                                            });
+                                          },
+                                          child: Icon(Icons.favorite,
+                                              color: isLiked
+                                                  ? Colors.red
+                                                  : Colors.white,
+                                              size: playerWidth * 0.08),
+                                        ),
+                                        Text("${numLikes.toString()}",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            )),
+                                        MaterialButton(
+                                          shape: CircleBorder(),
+                                          onPressed: () {
+                                            print('1');
+                                          },
+                                          //height: playerHeight * 0.03,
+                                          child: Icon(Icons.share,
+                                              color: Colors.white,
+                                              size: playerWidth * 0.08),
+                                        ),
+                                        //SizedBox(width: playerWidth * 0.05)
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(videoPost.postDescription,
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(color: Colors.white)),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                )
+                              ],
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(user.handle,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20)),
-                          ],
-                        ),
-                        SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(videoPost.postDescription,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        )
-                      ],
-                    ),
-                  )
-                ],
+                          )
+                        ],
+                      ),
+                    );
+                  } else {
+                    return AspectRatio(
+                        aspectRatio: MediaQuery.of(context).size.width /
+                            (MediaQuery.of(context).size.height * 0.90),
+                        child: Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: <Widget>[Loading()]));
+                  }
+                },
               ),
             );
           } else {
             return AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
+                aspectRatio: MediaQuery.of(context).size.width /
+                    (MediaQuery.of(context).size.height * 0.90),
                 child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: <Widget>[Loading()]));
           }
-        },
-      ),
-    );
+        });
   }
 }
 

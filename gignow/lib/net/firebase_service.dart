@@ -289,6 +289,56 @@ class FirebaseService {
     });
   }
 
+  Future<Map> getIsLikedAndNumLikes(VideoPost videoPost) async {
+    final user = auth.currentUser;
+    bool isLiked = false;
+    var doc = await firestoreInstance
+        .collection("VideoPostLikes")
+        .doc("${videoPost.postID}_${user.uid}")
+        .get();
+    if (doc.exists) {
+      isLiked = true;
+    }
+    var res = await firestoreInstance
+        .collection("VideoPostLikes")
+        .where("videoPost", isEqualTo: videoPosts.doc(videoPost.postID))
+        .get();
+    Map map = {'isLiked': isLiked, 'numLikes': res.size};
+    return map;
+  }
+
+  void likeVideo(VideoPost videoPost) {
+    final user = auth.currentUser;
+    firestoreInstance
+        .collection("VideoPostLikes")
+        .doc("${videoPost.postID}_${user.uid}")
+        .set({
+      "user": users.doc(user.uid),
+      "videoPost": videoPosts.doc(videoPost.postID),
+    });
+  }
+
+  void likeUnlikeVideo(VideoPost videoPost) async {
+    final user = auth.currentUser;
+    var doc = await firestoreInstance
+        .collection("VideoPostLikes")
+        .doc("${videoPost.postID}_${user.uid}")
+        .get();
+    if (doc.exists) {
+      unLikeVideo(videoPost);
+    } else {
+      likeVideo(videoPost);
+    }
+  }
+
+  void unLikeVideo(VideoPost videoPost) {
+    final user = auth.currentUser;
+    firestoreInstance
+        .collection("VideoPostLikes")
+        .doc("${videoPost.postID}_${user.uid}")
+        .delete();
+  }
+
   void createEvent(Event newEvent) {
     final user = auth.currentUser;
     firestoreInstance.collection("Events").doc(newEvent.eventId).set({

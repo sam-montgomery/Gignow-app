@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:gignow/model/user.dart';
 import 'dart:async';
@@ -74,8 +75,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       minRadius: 60.0,
                       child: CircleAvatar(
                         radius: 80.0,
-                        backgroundImage:
-                            NetworkImage(widget.profile.profilePictureUrl),
+                        backgroundImage: CachedNetworkImageProvider(
+                            widget.profile.profilePictureUrl),
                       ),
                     ),
                   ],
