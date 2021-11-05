@@ -12,6 +12,7 @@ import 'package:gignow/ui/chats/chats_screen.dart';
 import 'package:gignow/ui/chats/conversation_screen.dart';
 import 'package:gignow/ui/createProfile/create_profile_screen.dart';
 import 'package:gignow/ui/events/events_screen.dart';
+import 'package:gignow/ui/events/new_events_screen.dart';
 import 'package:gignow/ui/userAccount/user_account_screen.dart';
 import 'package:gignow/ui/loading.dart';
 import '../model/user.dart';

@@ -12,6 +12,7 @@ import 'package:gignow/net/firebase_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:gignow/ui/events/events_screen_consts.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:gignow/ui/events/new_events_screen.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/widgets/event_list.dart';
 
@@ -83,10 +84,22 @@ class EventsScreenState extends State<EventsScreen> {
             content: Builder(
               builder: (context) {
                 return Container(
-                  height: MediaQuery.of(context).size.height * 0.1,
+                  padding: const EdgeInsets.all(0),
+                  height: MediaQuery.of(context).size.height * 0.95,
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  alignment: new AlignmentDirectional(
+                      MediaQuery.of(context).size.width * 0.5,
+                      MediaQuery.of(context).size.height),
                   child: Column(
                     children: [
-                      Row(
+                      SizedBox(
+                        child: Image(
+                            image:
+                                NetworkImage(widget.profile.profilePictureUrl)),
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                      )
+                      /*Row(
                         children: [
                           TextButton(
                               onPressed: () {
@@ -119,7 +132,7 @@ class EventsScreenState extends State<EventsScreen> {
                               },
                               child: Text('Event End Time'))
                         ],
-                      )
+                      )*/
                     ],
                   ),
                 );
@@ -229,8 +242,12 @@ class EventsScreenState extends State<EventsScreen> {
               ? FloatingActionButton(
                   splashColor: kButtonBackgroundColour,
                   child: Icon(Icons.add),
-                  onPressed: () async {
-                    await showAddEventDialog(context);
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                NewEventScreen(widget.profile)));
                   },
                 )
               : null
