@@ -15,6 +15,7 @@ import 'package:gignow/ui/events/events_screen.dart';
 import 'package:gignow/ui/events/new_events_screen.dart';
 import 'package:gignow/ui/userAccount/user_account_screen.dart';
 import 'package:gignow/ui/loading.dart';
+import 'package:gignow/widgets/video_post_widget.dart';
 import '../model/user.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
@@ -63,8 +64,8 @@ class FirebaseService {
         if (snapshot.data().containsKey("socials")) {
           var x = snapshot.get('socials');
           x.keys.forEach((item) {
-            print(item);
-            print(x[item]);
+            // print(item);
+            // print(x[item]);
             socials.addAll({item: x[item]});
           });
         }
@@ -440,6 +441,22 @@ class FirebaseService {
     return posts;
   }
 
+  Future<List<VideoPostWidget>> getVideoPostWidgets() async {
+    List<VideoPostWidget> posts = new List<VideoPostWidget>();
+    var result = await videoPosts.get();
+    result.docs.forEach((element) async {
+      if (element.data().containsKey('videoURL')) {
+        DocumentReference ref = element['user'];
+        String userUid = ref.id;
+        VideoPost post = VideoPost(element.id, userUid, element['postDate'],
+            element['postDescription'], element['videoURL']);
+        VideoPostWidget postWidget = VideoPostWidget(post);
+        posts.add(postWidget);
+      }
+    });
+    return posts;
+  }
+
   Future<Event> getEvent(String eventId) async {
     await events.doc(eventId).get().then((value) {
       List<String> applicants;
@@ -743,8 +760,8 @@ class FirebaseService {
       if (element.data().containsKey("socials")) {
         var x = element.get('socials');
         x.keys.forEach((item) {
-          print(item);
-          print(x[item]);
+          // print(item);
+          // print(x[item]);
           socials.addAll({item: x[item]});
         });
       }

@@ -47,6 +47,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   video_compress: ^3.1.0
   cached_network_image: ^3.1.0
+  tiktoklikescroller: ^0.1.8
 
 dev_dependencies:
   flutter_test:
