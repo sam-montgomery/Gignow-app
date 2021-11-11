@@ -29,7 +29,8 @@ class NewEventScreen extends StatefulWidget {
 class NewEventScreenState extends State<NewEventScreen> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseService firebaseService = FirebaseService();
-
+  bool genreOffer = false;
+  bool proxOffer = false;
   void initState() {
     super.initState();
   }
@@ -77,18 +78,6 @@ class NewEventScreenState extends State<NewEventScreen> {
 
     List<String> selectedGenres;
 
-    Color getColor(Set<MaterialState> states) {
-      const Set<MaterialState> interactiveStates = <MaterialState>{
-        MaterialState.pressed,
-        MaterialState.hovered,
-        MaterialState.focused,
-      };
-      if (states.any(interactiveStates.contains)) {
-        return Colors.blue;
-      }
-      return Colors.white;
-    }
-
     final genreSelector = MultiSelectChipField(
       items: _genres
           .map((genre) => MultiSelectItem<String>(genre, genre))
@@ -104,23 +93,58 @@ class NewEventScreenState extends State<NewEventScreen> {
         selectedGenres = values;
       },
     );
-    bool genreOffer = false;
+
+    Container disabledGS = new Container(
+      child: genreSelector,
+      foregroundDecoration: BoxDecoration(
+        color: Colors.grey,
+        backgroundBlendMode: BlendMode.saturation,
+      ),
+    );
 
     Container offersCont = new Container(
       child: Column(
         children: [
           Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Checkbox(
-                  value: genreOffer,
-                  checkColor: Colors.white,
-                  fillColor: MaterialStateProperty.resolveWith(getColor),
-                  onChanged: (bool newValue) {
-                    setState(() {
-                      genreOffer = newValue;
-                      print(genreOffer);
-                    });
-                  })),
+            padding: EdgeInsets.all(8.0),
+            child: SwitchListTile(
+              title: const Text("Send event offers based on genres:"),
+              value: genreOffer,
+              onChanged: (offer) {
+                setState(() {
+                  genreOffer = offer;
+                  print(genreOffer);
+                });
+              },
+              activeTrackColor: Colors.grey,
+              activeColor: Colors.blue,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Visibility(
+              child: genreSelector,
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: genreOffer,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: SwitchListTile(
+              title: const Text("Send event offers based on genres:"),
+              value: proxOffer,
+              onChanged: (prox) {
+                setState(() {
+                  genreOffer = prox;
+                  print(genreOffer);
+                });
+              },
+              activeTrackColor: Colors.grey,
+              activeColor: Colors.blue,
+            ),
+          ),
         ],
       ),
     );
