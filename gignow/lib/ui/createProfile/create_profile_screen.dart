@@ -50,7 +50,25 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
   //   Genre(id: 4, genre: "Accoustic"),
   //   Genre(id: 5, genre: "Folk")
   // ];
-  static List<String> _genres = ["Pop", "Rock", "Metal", "Accoustic", "Folk"];
+  static List<String> _genres = [
+    "Pop",
+    "Rock",
+    "Metal",
+    "Accoustic",
+    "Folk",
+    "Country",
+    "Hip Hop",
+    "Jazz",
+    "Musical Theatre",
+    "Punk Rock",
+    "Heavy Metal",
+    "Electronic",
+    "Funk",
+    "House",
+    "Disco",
+    "EDM",
+    "Orchestra"
+  ];
 
   static List<String> selectedGenres;
 

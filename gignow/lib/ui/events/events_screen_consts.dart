@@ -37,8 +37,12 @@ final TextStyle eventTitle =
 
 final TextStyle monthStyle =
     TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold);
+final TextStyle monthDisplayStyle =
+    TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold);
 final TextStyle dateStyle =
     TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold);
+final TextStyle dateDisplayStyle =
+    TextStyle(fontSize: 42, color: Colors.white, fontWeight: FontWeight.bold);
 final TextStyle dayStyle =
     TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold);
 final TextStyle timeStyle = TextStyle(fontSize: 16, color: Colors.white);

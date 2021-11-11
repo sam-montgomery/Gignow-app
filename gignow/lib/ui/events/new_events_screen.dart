@@ -14,6 +14,7 @@ import 'package:gignow/ui/events/events_screen_consts.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/widgets/event_list.dart';
+import 'package:intl/intl.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:duration_picker/duration_picker.dart';
@@ -35,16 +36,21 @@ class NewEventScreenState extends State<NewEventScreen> {
     super.initState();
   }
 
+  DateTime eventStart = DateTime.now();
+  bool timePicked = false;
+  Duration _duration = Duration(hours: 0, minutes: 0);
+  bool durationPicked = false;
+
   @override
   Widget build(BuildContext context) {
-    DateTime eventStart;
-    Duration _duration = Duration(hours: 0, minutes: 0);
-
     Container detailsCont = new Container(
-      child: Column(
+        child: Column(children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(12.0),
             child: TextButton(
                 onPressed: () {
                   DatePicker.showDateTimePicker(context,
@@ -53,18 +59,23 @@ class NewEventScreenState extends State<NewEventScreen> {
                       maxTime: DateTime.now().add(Duration(days: 7)),
                       onChanged: (eventStart) {}, onConfirm: (eventStart) {
                     print('confirm $eventStart');
+                    timePicked = true;
+                    setState(() {
+                      timePicked = true;
+                    });
                   }, currentTime: DateTime.now(), locale: LocaleType.en);
                 },
                 child: Text('Event Start Time')),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(12.0),
             child: TextButton(
                 onPressed: () async {
                   _duration = await showDurationPicker(
                     context: context,
                     initialTime: Duration(hours: 1),
                   );
+                  durationPicked = true;
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Duration: $_duration')));
                 },
@@ -72,9 +83,88 @@ class NewEventScreenState extends State<NewEventScreen> {
           ),
         ],
       ),
-    );
+      SizedBox(height: 10),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(12.0),
+            child: Visibility(
+              child: Row(
+                children: [
+                  Container(
+                    alignment: Alignment.topCenter,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 3),
+                        Text(
+                          moty[eventStart.month - 1],
+                          textAlign: TextAlign.center,
+                          style: monthDisplayStyle,
+                        ),
+                        Text(
+                          eventStart.day.toString(),
+                          textAlign: TextAlign.center,
+                          style: dateDisplayStyle,
+                        ),
+                      ],
+                    ),
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    width: MediaQuery.of(context).size.height * 0.1,
+                    decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.all(Radius.circular(15))),
+                  ),
+                  Text(
+                    DateFormat('EEEE').format(eventStart) +
+                        " - " +
+                        moty[eventStart.month - 1] +
+                        " " +
+                        eventStart.day.toString(),
+                    textAlign: TextAlign.left,
+                    style: inActiveScreen,
+                  )
+                ],
+              ),
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: timePicked,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(12.0),
+            child: Visibility(
+              child: Container(),
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: durationPicked,
+            ),
+          )
+        ],
+      )
+    ]));
 
-    List<String> _genres = ["Pop", "Rock", "Metal", "Accoustic", "Folk"];
+    List<String> _genres = [
+      "Pop",
+      "Rock",
+      "Metal",
+      "Accoustic",
+      "Folk",
+      "Country",
+      "Hip Hop",
+      "Jazz",
+      "Musical Theatre",
+      "Punk Rock",
+      "Heavy Metal",
+      "Electronic",
+      "Funk",
+      "House",
+      "Disco",
+      "EDM",
+      "Orchestra"
+    ];
 
     List<String> selectedGenres;
 
@@ -94,14 +184,6 @@ class NewEventScreenState extends State<NewEventScreen> {
       },
     );
 
-    Container disabledGS = new Container(
-      child: genreSelector,
-      foregroundDecoration: BoxDecoration(
-        color: Colors.grey,
-        backgroundBlendMode: BlendMode.saturation,
-      ),
-    );
-
     Container offersCont = new Container(
       child: Column(
         children: [
@@ -113,13 +195,13 @@ class NewEventScreenState extends State<NewEventScreen> {
               onChanged: (offer) {
                 setState(() {
                   genreOffer = offer;
-                  print(genreOffer);
                 });
               },
               activeTrackColor: Colors.grey,
               activeColor: Colors.blue,
             ),
           ),
+          SizedBox(height: 10),
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Visibility(
@@ -130,21 +212,20 @@ class NewEventScreenState extends State<NewEventScreen> {
               visible: genreOffer,
             ),
           ),
-          Padding(
+          /*  Padding(
             padding: EdgeInsets.all(8.0),
             child: SwitchListTile(
-              title: const Text("Send event offers based on genres:"),
+              title: const Text("Send event offers based on location:"),
               value: proxOffer,
               onChanged: (prox) {
                 setState(() {
-                  genreOffer = prox;
-                  print(genreOffer);
+                  proxOffer = prox;
                 });
               },
               activeTrackColor: Colors.grey,
               activeColor: Colors.blue,
             ),
-          ),
+          ), */
         ],
       ),
     );
@@ -175,7 +256,7 @@ class NewEventScreenState extends State<NewEventScreen> {
             Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  height: (MediaQuery.of(context).size.height * 0.55),
+                  height: (MediaQuery.of(context).size.height * 0.35),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                       color: Colors.blue[100],
@@ -192,7 +273,6 @@ class NewEventScreenState extends State<NewEventScreen> {
                       )
                     ],
                     views: [detailsCont, offersCont],
-                    onChange: (index) => print(index),
                   ),
                 )),
           ],
