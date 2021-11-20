@@ -115,12 +115,14 @@ class NewEventScreenState extends State<NewEventScreen> {
                         color: Colors.grey,
                         borderRadius: BorderRadius.all(Radius.circular(15))),
                   ),
+                  SizedBox(width: 10),
                   Text(
                     DateFormat('EEEE').format(eventStart) +
                         " - " +
-                        moty[eventStart.month - 1] +
-                        " " +
-                        eventStart.day.toString(),
+                        eventStart.hour.toString() +
+                        ":" +
+                        eventStart.minute.toString() +
+                        " ",
                     textAlign: TextAlign.left,
                     style: inActiveScreen,
                   )
