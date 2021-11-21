@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,10 @@ import 'package:gignow/net/firebase_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:gignow/ui/events/events_screen_consts.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/widgets/event_list.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
@@ -32,6 +35,8 @@ class NewEventScreenState extends State<NewEventScreen> {
   FirebaseService firebaseService = FirebaseService();
   bool genreOffer = false;
   bool proxOffer = false;
+  final picker = ImagePicker();
+  File newImage;
   void initState() {
     super.initState();
   }
@@ -40,6 +45,22 @@ class NewEventScreenState extends State<NewEventScreen> {
   bool timePicked = false;
   Duration _duration = Duration(hours: 0, minutes: 0);
   bool durationPicked = false;
+
+  bool imagePicked = false;
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        newImage = File(pickedFile.path);
+        imagePicked = true;
+        print(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -239,13 +260,29 @@ class NewEventScreenState extends State<NewEventScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            SizedBox(height: 50),
             SizedBox(
                 height: (MediaQuery.of(context).size.height * 0.25),
                 child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Image(
-                      image: NetworkImage(currentImgUrl),
-                    ))),
+                        image: imagePicked
+                            ? FileImage(newImage)
+                            : NetworkImage(currentImgUrl)))),
+            Row(
+              children: [
+                IconButton(
+                  iconSize: 35,
+                  icon: const Icon(Icons.add_a_photo_outlined),
+                  onPressed: () async {
+                    getImage();
+                    setState(() {});
+                  },
+                ),
+                SizedBox(width: 25)
+              ],
+              mainAxisAlignment: MainAxisAlignment.end,
+            ),
             Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
