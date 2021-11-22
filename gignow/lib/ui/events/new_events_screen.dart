@@ -15,6 +15,7 @@ import 'package:gignow/ui/events/events_screen_consts.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:gignow/ui/loading.dart';
+import 'package:gignow/ui/events/events_screen.dart';
 import 'package:gignow/widgets/event_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -41,7 +42,7 @@ class NewEventScreenState extends State<NewEventScreen> {
     super.initState();
   }
 
-  DateTime eventStart = DateTime.now();
+  DateTime eventStartTime = DateTime.now();
   bool timePicked = false;
   Duration _duration = Duration(hours: 0, minutes: 0);
   bool durationPicked = false;
@@ -64,6 +65,68 @@ class NewEventScreenState extends State<NewEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Row timeGraphic = new Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: EdgeInsets.all(12.0),
+          child: timePicked
+              ? Row(
+                  children: [
+                    Container(
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 3),
+                          Text(
+                            moty[eventStartTime.month - 1],
+                            textAlign: TextAlign.center,
+                            style: monthDisplayStyle,
+                          ),
+                          Text(
+                            eventStartTime.day.toString(),
+                            textAlign: TextAlign.center,
+                            style: dateDisplayStyle,
+                          ),
+                        ],
+                      ),
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      width: MediaQuery.of(context).size.height * 0.1,
+                      decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.all(Radius.circular(15))),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      DateFormat('EEEE').format(eventStartTime) +
+                          " - " +
+                          (eventStartTime.hour == 0
+                              ? "00"
+                              : eventStartTime.hour.toString()) +
+                          ":" +
+                          (eventStartTime.minute == 0
+                              ? "00"
+                              : eventStartTime.minute.toString()) +
+                          " to " +
+                          (eventStartTime.add(_duration).hour == 0
+                              ? "00"
+                              : eventStartTime.add(_duration).hour.toString()) +
+                          ":" +
+                          (eventStartTime.add(_duration).minute == 0
+                              ? "00"
+                              : eventStartTime
+                                  .add(_duration)
+                                  .minute
+                                  .toString()),
+                      textAlign: TextAlign.left,
+                      style: inActiveScreen,
+                    )
+                  ],
+                )
+              : null,
+        ),
+      ],
+    );
     Container detailsCont = new Container(
         child: Column(children: [
       Row(
@@ -83,6 +146,7 @@ class NewEventScreenState extends State<NewEventScreen> {
                     timePicked = true;
                     setState(() {
                       timePicked = true;
+                      eventStartTime = eventStart;
                     });
                   }, currentTime: DateTime.now(), locale: LocaleType.en);
                 },
@@ -105,68 +169,7 @@ class NewEventScreenState extends State<NewEventScreen> {
         ],
       ),
       SizedBox(height: 10),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(12.0),
-            child: Visibility(
-              child: Row(
-                children: [
-                  Container(
-                    alignment: Alignment.topCenter,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 3),
-                        Text(
-                          moty[eventStart.month - 1],
-                          textAlign: TextAlign.center,
-                          style: monthDisplayStyle,
-                        ),
-                        Text(
-                          eventStart.day.toString(),
-                          textAlign: TextAlign.center,
-                          style: dateDisplayStyle,
-                        ),
-                      ],
-                    ),
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.height * 0.1,
-                    decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.all(Radius.circular(15))),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    DateFormat('EEEE').format(eventStart) +
-                        " - " +
-                        eventStart.hour.toString() +
-                        ":" +
-                        eventStart.minute.toString() +
-                        " ",
-                    textAlign: TextAlign.left,
-                    style: inActiveScreen,
-                  )
-                ],
-              ),
-              maintainSize: true,
-              maintainAnimation: true,
-              maintainState: true,
-              visible: timePicked,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(12.0),
-            child: Visibility(
-              child: Container(),
-              maintainSize: true,
-              maintainAnimation: true,
-              maintainState: true,
-              visible: durationPicked,
-            ),
-          )
-        ],
-      )
+      timeGraphic,
     ]));
 
     List<String> _genres = [
@@ -261,16 +264,31 @@ class NewEventScreenState extends State<NewEventScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(height: 50),
-            SizedBox(
-                height: (MediaQuery.of(context).size.height * 0.25),
-                child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image(
-                        image: imagePicked
-                            ? FileImage(newImage)
-                            : NetworkImage(currentImgUrl)))),
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: (MediaQuery.of(context).size.height * 0.35),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image(
+                          image: imagePicked
+                              ? FileImage(newImage)
+                              : NetworkImage(currentImgUrl))),
+                )),
             Row(
               children: [
+                SizedBox(width: 10),
+                Expanded(
+                    child: TextFormField(
+                  decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: 'Enter an event title.',
+                  ),
+                )),
                 IconButton(
                   iconSize: 35,
                   icon: const Icon(Icons.add_a_photo_outlined),
@@ -279,18 +297,9 @@ class NewEventScreenState extends State<NewEventScreen> {
                     setState(() {});
                   },
                 ),
-                SizedBox(width: 25)
               ],
               mainAxisAlignment: MainAxisAlignment.end,
             ),
-            Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Enter an event title.',
-                  ),
-                )),
             SizedBox(height: (MediaQuery.of(context).size.height * 0.01)),
             Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -314,6 +323,15 @@ class NewEventScreenState extends State<NewEventScreen> {
                     views: [detailsCont, offersCont],
                   ),
                 )),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 18),
+                      primary: Colors.blue[150]),
+                  onPressed: () {},
+                  child: const Text("Create Event")),
+            )
           ],
         ),
       ),

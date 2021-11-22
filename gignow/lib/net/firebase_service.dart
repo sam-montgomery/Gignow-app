@@ -346,7 +346,9 @@ class FirebaseService {
     firestoreInstance.collection("Events").doc(newEvent.eventId).set({
       "eventId": newEvent.eventId,
       "eventStartTime": newEvent.eventStartTime.toString(),
-      "eventFinishTime": newEvent.eventFinishTime.toString(),
+      "eventDuration": newEvent.eventDuration.toString(),
+      "eventPhotoURL": newEvent.eventPhotoURL,
+      "genres": newEvent.genres,
       "venueId": newEvent.venueId,
       "venue": newEvent.venue,
       "applicants": "",
@@ -364,7 +366,9 @@ class FirebaseService {
       firestoreInstance.collection("Events").doc(event.eventId).set({
         "eventId": event.eventId,
         "eventStartTime": event.eventStartTime.toString(),
-        "eventFinishTime": event.eventFinishTime.toString(),
+        "eventDuration": event.eventDuration.toString(),
+        "eventPhotoURL": event.eventPhotoURL,
+        "genres": event.genres,
         "venueId": event.venueId,
         "venue": event.venue,
         "applicants": event.applicants.join(','),
@@ -378,7 +382,9 @@ class FirebaseService {
     events.doc(event.eventId).set({
       "eventId": event.eventId,
       "eventStartTime": event.eventStartTime.toString(),
-      "eventFinishTime": event.eventFinishTime.toString(),
+      "eventDuration": event.eventDuration.toString(),
+      "eventPhotoURL": event.eventPhotoURL,
+      "genres": event.genres,
       "venueId": event.venueId,
       "venue": event.venue,
       "applicants": event.applicants.join(','),
@@ -392,7 +398,9 @@ class FirebaseService {
     events.doc(event.eventId).set({
       "eventId": event.eventId,
       "eventStartTime": event.eventStartTime.toString(),
-      "eventFinishTime": event.eventFinishTime.toString(),
+      "eventDuration": event.eventDuration.toString(),
+      "eventPhotoURL": event.eventPhotoURL,
+      "genres": event.genres,
       "venueId": event.venueId,
       "venue": event.venue,
       "applicants": event.applicants.join(','),
@@ -405,7 +413,9 @@ class FirebaseService {
     firestoreInstance.collection("Events").doc(event.eventId).set({
       "eventId": event.eventId,
       "eventStartTime": event.eventStartTime.toString(),
-      "eventFinishTime": event.eventFinishTime.toString(),
+      "eventDuration": event.eventDuration.toString(),
+      "eventPhotoURL": event.eventPhotoURL,
+      "genres": event.genres,
       "venueId": event.venueId,
       "venue": event.venue,
       "applicants": event.applicants.join(','),
@@ -474,9 +484,12 @@ class FirebaseService {
 
       Event event = Event(
           value.data()['eventId'],
+          value.data()['eventName'],
           DateTime.parse(value.data()['eventStartTime']),
-          DateTime.parse(value.data()['eventFinishTime']),
+          parseDuration(value.data()['eventDuration']),
+          value.data()['eventPhotoURL'],
           value.data()['venueId'],
+          value.data()['genres'],
           value.data()['venue'],
           applicants,
           acceptedUid,
@@ -542,9 +555,12 @@ class FirebaseService {
 
         returned.add(Event(
             doc['eventId'],
+            doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            DateTime.parse(doc['eventFinishTime']),
+            parseDuration(doc['eventFinishTime']),
+            doc['eventPhotoURL'],
             doc['venueId'],
+            doc['genres'],
             doc['venue'],
             applicants,
             acceptedUid,
@@ -577,9 +593,12 @@ class FirebaseService {
 
         returned.add(Event(
             doc['eventId'],
+            doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            DateTime.parse(doc['eventFinishTime']),
+            parseDuration(doc['eventFinishTime']),
+            doc['eventPhotoURL'],
             doc['venueId'],
+            doc['genres'],
             doc['venue'],
             applicants,
             acceptedUid,
@@ -612,9 +631,12 @@ class FirebaseService {
 
         returned.add(Event(
             doc['eventId'],
+            doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            DateTime.parse(doc['eventFinishTime']),
+            parseDuration(doc['eventFinishTime']),
+            doc['eventPhotoURL'],
             doc['venueId'],
+            doc['genres'],
             doc['venue'],
             applicants,
             acceptedUid,
@@ -648,9 +670,12 @@ class FirebaseService {
 
         returned.add(Event(
             doc['eventId'],
+            doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            DateTime.parse(doc['eventFinishTime']),
+            parseDuration(doc['eventFinishTime']),
+            doc['eventPhotoURL'],
             doc['venueId'],
+            doc['genres'],
             doc['venue'],
             applicants,
             acceptedUid,
@@ -684,9 +709,12 @@ class FirebaseService {
 
         returned.add(Event(
             doc['eventId'],
+            doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            DateTime.parse(doc['eventFinishTime']),
+            parseDuration(doc['eventFinishTime']),
+            doc['eventPhotoURL'],
             doc['venueId'],
+            doc['genres'],
             doc['venue'],
             applicants,
             acceptedUid,
@@ -720,9 +748,12 @@ class FirebaseService {
 
         returned.add(Event(
             doc['eventId'],
+            doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            DateTime.parse(doc['eventFinishTime']),
+            parseDuration(doc['eventFinishTime']),
+            doc['eventPhotoURL'],
             doc['venueId'],
+            doc['genres'],
             doc['venue'],
             applicants,
             acceptedUid,
@@ -796,6 +827,22 @@ class FirebaseService {
   Future<UserModel> deleteEvent(Event event) async {
     DocumentReference docRef = events.doc(event.eventId);
     await docRef.delete();
+  }
+
+  //Ref - https://stackoverflow.com/questions/54852585/how-to-convert-a-duration-like-string-to-a-real-duration-in-flutter
+  Duration parseDuration(String s) {
+    int hours = 0;
+    int minutes = 0;
+    int micros;
+    List<String> parts = s.split(':');
+    if (parts.length > 2) {
+      hours = int.parse(parts[parts.length - 3]);
+    }
+    if (parts.length > 1) {
+      minutes = int.parse(parts[parts.length - 2]);
+    }
+    micros = (double.parse(parts[parts.length - 1]) * 1000000).round();
+    return Duration(hours: hours, minutes: minutes, microseconds: micros);
   }
 
   FirebaseService();

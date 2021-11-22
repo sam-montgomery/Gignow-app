@@ -44,15 +44,6 @@ class EventsScreenState extends State<EventsScreen> {
 
   //TextEditingController
 
-  Future<void> getVenuesEvents() async {
-    events = await FirebaseService().getAllEventsForVenue(widget.profile.uid);
-
-    for (Event e in events) {
-      e.confirmed ? upcomingEvents.add(e) : openEvents.add(e);
-    }
-    updated = true;
-  }
-
   int returnNextInc() {
     int highestI = 0;
     for (Event e in events) {
@@ -62,7 +53,16 @@ class EventsScreenState extends State<EventsScreen> {
     return highestI + 1;
   }
 
-  Future<void> showAddEventDialog(BuildContext context) async {
+  Future<void> getVenuesEvents() async {
+    events = await FirebaseService().getAllEventsForVenue(widget.profile.uid);
+
+    for (Event e in events) {
+      e.confirmed ? upcomingEvents.add(e) : openEvents.add(e);
+    }
+    updated = true;
+  }
+
+  /* Future<void> showAddEventDialog(BuildContext context) async {
     // UserModel user = UserModel(
     //     widget.profile['userUid'].toString(),
     //     widget.profile['name'].toString(),
@@ -166,19 +166,11 @@ class EventsScreenState extends State<EventsScreen> {
       },
     );
   }
-
+ */
   @override
   Widget build(BuildContext context) {
     getVenuesEvents();
-    // UserModel user = UserModel(
-    //     widget.profile['userUid'].toString(),
-    //     widget.profile['name'].toString(),
-    //     widget.profile['genres'].toString(),
-    //     widget.profile['phoneNumber'].toString(),
-    //     widget.profile['handle'].toString(),
-    //     widget.profile['profile_picture_url'].toString(),
-    //     widget.profile['socials'],
-    //     widget.profile['venue']);
+    int nextInc = returnNextInc();
     UserModel user = widget.profile;
     return Scaffold(
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [

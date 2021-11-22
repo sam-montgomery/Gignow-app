@@ -222,11 +222,10 @@ FutureBuilder generateUpcomingEventTile(
       (event.eventStartTime.minute == 0
           ? "00"
           : event.eventStartTime.minute.toString());
-  String finishingTime = event.eventFinishTime.hour.toString() +
+  DateTime eventFinishTime = event.eventStartTime.add(event.eventDuration);
+  String finishingTime = eventFinishTime.hour.toString() +
       ':' +
-      (event.eventFinishTime.minute == 0
-          ? "00"
-          : event.eventFinishTime.minute.toString());
+      (eventFinishTime.minute == 0 ? "00" : eventFinishTime.minute.toString());
 
   String date = DateFormat('EEEE').format(event.eventStartTime).toString() +
       ' ' +
@@ -352,11 +351,12 @@ Container generateOpenEventTile(
       (event.eventStartTime.minute == 0
           ? "00"
           : event.eventStartTime.minute.toString());
-  String finishingTime = event.eventFinishTime.hour.toString() +
+  DateTime eventFinishTime = event.eventStartTime.add(event.eventDuration);
+  String finishingTime = eventFinishTime.hour.toString() +
       ':' +
-      (event.eventFinishTime.minute == 0
+      (eventFinishTime.minute == 0
           ? "00"
-          : event.eventFinishTime.minute.toString());
+          : eventFinishTime.minute.toString());
   return Container(
     height: MediaQuery.of(context).size.height * 0.1,
     width: MediaQuery.of(context).size.height * 0.1,
