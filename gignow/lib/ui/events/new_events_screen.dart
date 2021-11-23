@@ -34,6 +34,8 @@ class NewEventScreen extends StatefulWidget {
 class NewEventScreenState extends State<NewEventScreen> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseService firebaseService = FirebaseService();
+  String eventID = "";
+
   bool genreOffer = false;
   bool proxOffer = false;
   final picker = ImagePicker();
@@ -42,12 +44,30 @@ class NewEventScreenState extends State<NewEventScreen> {
     super.initState();
   }
 
+  List<Event> events = [];
+
   DateTime eventStartTime = DateTime.now();
   bool timePicked = false;
   Duration _duration = Duration(hours: 0, minutes: 0);
   bool durationPicked = false;
 
   bool imagePicked = false;
+  String uploadedImage;
+
+  
+
+  Future<void> getVenuesEvents() async {
+    events = await FirebaseService().getAllEventsForVenue(widget.profile.uid);
+
+    int highestI = 0;
+    for (Event e in events) {
+      int inc = int.parse(e.eventId.split('-')[1]);
+      if (inc > highestI) highestI = inc;
+    }
+
+
+    eventID = widget.profile.uid + '-' + (highestI + 1).toString();
+  }
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -57,14 +77,35 @@ class NewEventScreenState extends State<NewEventScreen> {
         newImage = File(pickedFile.path);
         imagePicked = true;
         print(pickedFile.path);
+        uploadImageToFirebase(context);
       } else {
         print('No image selected.');
       }
     });
   }
 
+  Future uploadImageToFirebase(BuildContext context) async {
+    String fileName = newImage.path;
+    firebase_storage.Reference firebaseStorageRef = firebase_storage
+        .FirebaseStorage.instance
+        .ref()
+        .child('event_pictures/$fileName');
+    firebase_storage.UploadTask uploadTask =
+        firebaseStorageRef.putFile(newImage);
+    firebase_storage.TaskSnapshot taskSnapshot =
+        await uploadTask.whenComplete(() => null);
+    taskSnapshot.ref.getDownloadURL().then(
+      (value) {
+        setState(() {
+          uploadedImage = value;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    getVenuesEvents();
     Row timeGraphic = new Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -329,7 +370,17 @@ class NewEventScreenState extends State<NewEventScreen> {
                   style: ElevatedButton.styleFrom(
                       textStyle: const TextStyle(fontSize: 18),
                       primary: Colors.blue[150]),
-                  onPressed: () {},
+                  onPressed: () {
+                    Event newEvent = new Event(
+                      eventID,
+                      eventName, 
+                      eventStartTime, 
+                      eventDuration, 
+                      eventPhotoURL, 
+                      venueId, 
+                      genres, 
+                      venue)
+                  },
                   child: const Text("Create Event")),
             )
           ],
