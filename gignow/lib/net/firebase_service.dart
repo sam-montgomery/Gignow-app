@@ -19,7 +19,7 @@ import 'package:gignow/widgets/video_post_widget.dart';
 import '../model/user.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
-import 'package:geolocator/geolocator.dart';
+
 import '../model/user.dart';
 import '../model/user.dart';
 import 'database.dart';
@@ -58,7 +58,6 @@ class FirebaseService {
   Future<UserModel> getUser(String userUid) async {
     DocumentReference docRef = users.doc(userUid);
     UserModel user;
-    await updateProfileLocation(userUid);
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
         Map<String, String> socials = new Map<String, String>();
@@ -78,8 +77,7 @@ class FirebaseService {
             snapshot.get('handle').toString(),
             snapshot.get('profile_picture_url').toString(),
             socials,
-            snapshot.get('venue'),
-            snapshot.get('position'));
+            snapshot.get('venue'));
       }
     });
 
@@ -108,8 +106,7 @@ class FirebaseService {
             snapshot.get('handle').toString(),
             snapshot.get('profile_picture_url').toString(),
             socials,
-            snapshot.get('venue'),
-            snapshot.get('position'));
+            snapshot.get('venue'));
       }
     });
 
@@ -244,18 +241,6 @@ class FirebaseService {
       "profile_picture_url": profilePictureUrl,
       "venue": venue
     }).then((value) => Navigator.pushNamed(context, '/'));
-    updateProfileLocation(auth.currentUser.uid);
-  }
-
-  void updateProfileLocation(String userUid) async {
-    Position userPos = await determinePosition();
-    double longitude = userPos.longitude;
-    double latitude = userPos.latitude;
-    GeoPoint geoPoint = GeoPoint(latitude, longitude);
-    firestoreInstance
-        .collection("Users")
-        .doc(userUid)
-        .update({"position": geoPoint});
   }
 
   Future<String> uploadVideo(videoID, filename, url) async {
@@ -824,8 +809,7 @@ class FirebaseService {
           element['handle'],
           element['profile_picture_url'],
           socials,
-          element['venue'],
-          element['position']);
+          element['venue']);
       artistsCards.add(card);
     });
     return artistsCards;
@@ -850,31 +834,7 @@ class FirebaseService {
     await docRef.delete();
   }
 
-  Future<Position> determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
-
+  //Ref - https://stackoverflow.com/questions/54852585/how-to-convert-a-duration-like-string-to-a-real-duration-in-flutter
   Duration parseDuration(String s) {
     int hours = 0;
     int minutes = 0;
