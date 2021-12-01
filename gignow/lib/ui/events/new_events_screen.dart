@@ -16,6 +16,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/ui/events/events_screen.dart';
+import 'package:gignow/ui/navBar/venue_nav_bar.dart';
 import 'package:gignow/widgets/event_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -54,10 +55,17 @@ class NewEventScreenState extends State<NewEventScreen> {
   bool imagePicked = false;
   String uploadedImage;
 
-  
+  static TextEditingController _eventTitleCont = TextEditingController();
+  TextFormField eventTitleField = new TextFormField(
+    controller: _eventTitleCont,
+    decoration: const InputDecoration(
+      border: UnderlineInputBorder(),
+      labelText: 'Enter an event title',
+    ),
+  );
 
-  Future<void> getVenuesEvents() async {
-    events = await FirebaseService().getAllEventsForVenue(widget.profile.uid);
+  Future<void> getVenuesEvents(UserModel user) async {
+    events = await FirebaseService().getAllEventsForVenue(user.uid);
 
     int highestI = 0;
     for (Event e in events) {
@@ -65,8 +73,8 @@ class NewEventScreenState extends State<NewEventScreen> {
       if (inc > highestI) highestI = inc;
     }
 
-
-    eventID = widget.profile.uid + '-' + (highestI + 1).toString();
+    eventID = user.uid + '-' + (highestI + 1).toString();
+    print("Event ID: " + eventID);
   }
 
   Future getImage() async {
@@ -83,6 +91,28 @@ class NewEventScreenState extends State<NewEventScreen> {
       }
     });
   }
+
+  List<String> _genres = [
+    "Pop",
+    "Rock",
+    "Metal",
+    "Accoustic",
+    "Folk",
+    "Country",
+    "Hip Hop",
+    "Jazz",
+    "Musical Theatre",
+    "Punk Rock",
+    "Heavy Metal",
+    "Electronic",
+    "Funk",
+    "House",
+    "Disco",
+    "EDM",
+    "Orchestra"
+  ];
+
+  List<String> selectedGenres;
 
   Future uploadImageToFirebase(BuildContext context) async {
     String fileName = newImage.path;
@@ -105,7 +135,9 @@ class NewEventScreenState extends State<NewEventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    getVenuesEvents();
+    UserModel user = widget.profile;
+    String currentImgUrl = user.profilePictureUrl;
+    getVenuesEvents(user);
     Row timeGraphic = new Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -213,28 +245,6 @@ class NewEventScreenState extends State<NewEventScreen> {
       timeGraphic,
     ]));
 
-    List<String> _genres = [
-      "Pop",
-      "Rock",
-      "Metal",
-      "Accoustic",
-      "Folk",
-      "Country",
-      "Hip Hop",
-      "Jazz",
-      "Musical Theatre",
-      "Punk Rock",
-      "Heavy Metal",
-      "Electronic",
-      "Funk",
-      "House",
-      "Disco",
-      "EDM",
-      "Orchestra"
-    ];
-
-    List<String> selectedGenres;
-
     final genreSelector = MultiSelectChipField(
       items: _genres
           .map((genre) => MultiSelectItem<String>(genre, genre))
@@ -297,8 +307,6 @@ class NewEventScreenState extends State<NewEventScreen> {
       ),
     );
 
-    UserModel user = widget.profile;
-    String currentImgUrl = user.profilePictureUrl;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -323,13 +331,7 @@ class NewEventScreenState extends State<NewEventScreen> {
             Row(
               children: [
                 SizedBox(width: 10),
-                Expanded(
-                    child: TextFormField(
-                  decoration: const InputDecoration(
-                    border: UnderlineInputBorder(),
-                    labelText: 'Enter an event title.',
-                  ),
-                )),
+                Expanded(child: eventTitleField),
                 IconButton(
                   iconSize: 35,
                   icon: const Icon(Icons.add_a_photo_outlined),
@@ -372,14 +374,19 @@ class NewEventScreenState extends State<NewEventScreen> {
                       primary: Colors.blue[150]),
                   onPressed: () {
                     Event newEvent = new Event(
-                      eventID,
-                      eventName, 
-                      eventStartTime, 
-                      eventDuration, 
-                      eventPhotoURL, 
-                      venueId, 
-                      genres, 
-                      venue)
+                        eventID,
+                        _eventTitleCont.text,
+                        eventStartTime,
+                        _duration,
+                        imagePicked ? uploadedImage : currentImgUrl,
+                        user.uid,
+                        genreOffer ? selectedGenres.toList().join(",") : "",
+                        user.toJson());
+                    firebaseService.createEvent(newEvent);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => VenueNavbar(2)),
+                    );
                   },
                   child: const Text("Create Event")),
             )

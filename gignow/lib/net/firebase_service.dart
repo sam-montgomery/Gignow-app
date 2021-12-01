@@ -345,6 +345,7 @@ class FirebaseService {
     final user = auth.currentUser;
     firestoreInstance.collection("Events").doc(newEvent.eventId).set({
       "eventId": newEvent.eventId,
+      "eventName": newEvent.eventName,
       "eventStartTime": newEvent.eventStartTime.toString(),
       "eventDuration": newEvent.eventDuration.toString(),
       "eventPhotoURL": newEvent.eventPhotoURL,
@@ -353,7 +354,7 @@ class FirebaseService {
       "venue": newEvent.venue,
       "applicants": "",
       "acceptedUid": newEvent.acceptedUid,
-      "confirmed": newEvent.confirmed
+      "confirmed": false
     });
   }
 
@@ -365,6 +366,7 @@ class FirebaseService {
       event.applicants.add(applicantUid);
       firestoreInstance.collection("Events").doc(event.eventId).set({
         "eventId": event.eventId,
+        "eventName": event.eventName,
         "eventStartTime": event.eventStartTime.toString(),
         "eventDuration": event.eventDuration.toString(),
         "eventPhotoURL": event.eventPhotoURL,
@@ -381,6 +383,7 @@ class FirebaseService {
   void acceptApplicant(Event event, String applicantUid) {
     events.doc(event.eventId).set({
       "eventId": event.eventId,
+      "eventName": event.eventName,
       "eventStartTime": event.eventStartTime.toString(),
       "eventDuration": event.eventDuration.toString(),
       "eventPhotoURL": event.eventPhotoURL,
@@ -397,6 +400,7 @@ class FirebaseService {
     event.applicants.remove(applicantUid);
     events.doc(event.eventId).set({
       "eventId": event.eventId,
+      "eventName": event.eventName,
       "eventStartTime": event.eventStartTime.toString(),
       "eventDuration": event.eventDuration.toString(),
       "eventPhotoURL": event.eventPhotoURL,
@@ -412,6 +416,7 @@ class FirebaseService {
   void confirmEvent(Event event) {
     firestoreInstance.collection("Events").doc(event.eventId).set({
       "eventId": event.eventId,
+      "eventName": event.eventName,
       "eventStartTime": event.eventStartTime.toString(),
       "eventDuration": event.eventDuration.toString(),
       "eventPhotoURL": event.eventPhotoURL,
@@ -633,7 +638,7 @@ class FirebaseService {
             doc['eventId'],
             doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            parseDuration(doc['eventFinishTime']),
+            parseDuration(doc['eventDuration']),
             doc['eventPhotoURL'],
             doc['venueId'],
             doc['genres'],
@@ -672,7 +677,7 @@ class FirebaseService {
             doc['eventId'],
             doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            parseDuration(doc['eventFinishTime']),
+            parseDuration(doc['eventDuration']),
             doc['eventPhotoURL'],
             doc['venueId'],
             doc['genres'],
@@ -711,7 +716,7 @@ class FirebaseService {
             doc['eventId'],
             doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            parseDuration(doc['eventFinishTime']),
+            parseDuration(doc['eventDuration']),
             doc['eventPhotoURL'],
             doc['venueId'],
             doc['genres'],
@@ -750,7 +755,7 @@ class FirebaseService {
             doc['eventId'],
             doc['eventName'],
             DateTime.parse(doc['eventStartTime']),
-            parseDuration(doc['eventFinishTime']),
+            parseDuration(doc['eventDuration']),
             doc['eventPhotoURL'],
             doc['venueId'],
             doc['genres'],
