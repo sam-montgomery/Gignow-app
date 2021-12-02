@@ -48,6 +48,10 @@ dependencies:
   video_compress: ^3.1.0
   cached_network_image: ^3.1.0
   tiktoklikescroller: ^0.1.8
+  geolocator: 7.6.2
+
+# dependency_overrides:
+#   geolocator: 7.6.2
 
 dev_dependencies:
   flutter_test:
