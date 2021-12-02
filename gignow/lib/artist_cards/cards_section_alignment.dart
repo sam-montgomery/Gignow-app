@@ -23,11 +23,11 @@ class CardsSectionAlignment extends StatefulWidget {
   List<UserModel> artists;
   CardsSectionAlignment(this.artists, BuildContext context) {
     cardsSize[0] = Size(MediaQuery.of(context).size.width * 0.9,
-        MediaQuery.of(context).size.height * 0.8);
+        MediaQuery.of(context).size.height * 2);
     cardsSize[1] = Size(MediaQuery.of(context).size.width * 0.9,
-        MediaQuery.of(context).size.height * 0.8);
+        MediaQuery.of(context).size.height * 2);
     cardsSize[2] = Size(MediaQuery.of(context).size.width * 0.9,
-        MediaQuery.of(context).size.height * 0.8);
+        MediaQuery.of(context).size.height * 2);
   }
 
   @override

@@ -20,15 +20,7 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
           if (snapshot.hasData) {
             List<UserModel> artists = snapshot.data;
             return Scaffold(
-              appBar: AppBar(
-                elevation: 0.0,
-                centerTitle: true,
-                backgroundColor: Colors.white,
-                leading: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.settings, color: Colors.grey)),
-              ),
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.grey[300],
               body: Column(children: <Widget>[
                 CardsSectionAlignment(artists, context),
               ]),
