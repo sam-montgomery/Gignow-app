@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:gignow/constants.dart';
 import 'package:gignow/main.dart';
 import 'package:gignow/net/authentication_service.dart';
@@ -135,6 +136,8 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
 
   Future createProfileAndUploadImageToFirebase(
       BuildContext context, String userUid) async {
+    Position userPos = await firebaseService.determinePosition();
+
     //final firebaseUser = context.watch<User>();
     String fileName = "profile_picture_" + userUid;
     firebase_storage.Reference firebaseStorageRef = firebase_storage
@@ -149,13 +152,14 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
       (value) {
         print("Done: $value");
         firebaseService.createProfile(
-            context,
-            _nameCont.text,
-            _phoneCont.text,
-            _handleCont.text,
-            selectedGenres.toList().join(","),
-            value,
-            (_accountType == "Venue"));
+          context,
+          _nameCont.text,
+          _phoneCont.text,
+          _handleCont.text,
+          selectedGenres.toList().join(","),
+          value,
+          (_accountType == "Venue"),
+        );
         cleanControllers();
       },
     );

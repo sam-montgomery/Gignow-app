@@ -20,7 +20,6 @@ class _VideoPostListState extends State<VideoPostList> {
             snapshot.connectionState == ConnectionState.done) {
           List<VideoPost> posts = snapshot.data;
           VideoPostWidget curVid = VideoPostWidget(posts[vidIndex]);
-          //previous vid, next vid
           return Stack(
             children: [
               curVid,
@@ -92,20 +91,6 @@ class _UsersVideoPostListState extends State<UsersVideoPostList> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<VideoPost> posts = snapshot.data;
-          if (posts.isEmpty) {
-            //return no posts yet
-            return Padding(
-              padding: EdgeInsets.only(top: 150),
-              child: Text(
-                "No Posts Yet",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey,
-                ),
-              ),
-            );
-          }
           return ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,

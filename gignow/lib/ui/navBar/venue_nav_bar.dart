@@ -52,7 +52,7 @@ class _VNavBarState extends State<VenueNavbar> {
             ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.chat_bubble),
-              label: ("Chats"),
+              label: ("Connections"),
             ),
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.profile_circled),

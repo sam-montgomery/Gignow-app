@@ -39,23 +39,22 @@ class UserAccountScreenState extends State<UserAccountScreen> {
           Center(
               child: Text(
             handle,
-            style: TextStyle(fontSize: 15, color: Colors.grey),
+            style: TextStyle(fontSize: 20),
           )),
           Container(
-            padding: EdgeInsets.all(16),
-            height: 200,
+            height: 250,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     CircleAvatar(
                       backgroundColor: Colors.white70,
                       minRadius: 60.0,
                       child: CircleAvatar(
-                        radius: 60.0,
+                        radius: 80.0,
                         backgroundImage: CachedNetworkImageProvider(
                             widget.profile.profilePictureUrl),
                       ),
@@ -66,7 +65,7 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                   height: 10,
                 ),
                 Text(
-                  '  $name',
+                  '$name',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
@@ -95,17 +94,6 @@ class UserAccountScreenState extends State<UserAccountScreen> {
               Column(
                 children: [
                   IconButton(
-                      icon: Icon(Icons.camera_alt_outlined,
-                          size: 30, color: Colors.grey),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/postvideo');
-                      }),
-                  Text("Add Media")
-                ],
-              ),
-              Column(
-                children: [
-                  IconButton(
                       icon: Icon(Icons.edit, color: Colors.grey),
                       onPressed: () {
                         Navigator.push(
@@ -116,14 +104,26 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                       }),
                   Text("Edit Profile")
                 ],
-              )
+              ),
             ],
+          ),
+          Center(
+            child: Column(
+              children: [
+                IconButton(
+                    icon: Icon(Icons.camera_alt_outlined,
+                        size: 30, color: Colors.red[300]),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/postvideo');
+                    }),
+                Text("Add Media")
+              ],
+            ),
           ),
           SizedBox(
             height: 20,
           ),
-          SingleChildScrollView(
-              child: UsersVideoPostList(auth.currentUser.uid)),
+          SingleChildScrollView(child: UsersVideoPostList(auth.currentUser.uid))
         ],
       ),
     );

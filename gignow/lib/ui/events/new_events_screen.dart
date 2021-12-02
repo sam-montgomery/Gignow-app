@@ -24,7 +24,6 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:duration_picker/duration_picker.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 
 class NewEventScreen extends StatefulWidget {
   UserModel profile;
