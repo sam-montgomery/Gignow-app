@@ -24,7 +24,6 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:duration_picker/duration_picker.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 
 class NewEventScreen extends StatefulWidget {
   UserModel profile;
@@ -171,30 +170,47 @@ class NewEventScreenState extends State<NewEventScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(15))),
                     ),
                     SizedBox(width: 10),
-                    Text(
-                      DateFormat('EEEE').format(eventStartTime) +
-                          " - " +
-                          (eventStartTime.hour == 0
-                              ? "00"
-                              : eventStartTime.hour.toString()) +
-                          ":" +
-                          (eventStartTime.minute == 0
-                              ? "00"
-                              : eventStartTime.minute.toString()) +
-                          " to " +
-                          (eventStartTime.add(_duration).hour == 0
-                              ? "00"
-                              : eventStartTime.add(_duration).hour.toString()) +
-                          ":" +
-                          (eventStartTime.add(_duration).minute == 0
-                              ? "00"
-                              : eventStartTime
-                                  .add(_duration)
-                                  .minute
-                                  .toString()),
-                      textAlign: TextAlign.left,
-                      style: inActiveScreen,
-                    )
+                    durationPicked
+                        ? Text(
+                            DateFormat('EEEE').format(eventStartTime) +
+                                " - " +
+                                (eventStartTime.hour == 0
+                                    ? "00"
+                                    : eventStartTime.hour.toString()) +
+                                ":" +
+                                (eventStartTime.minute == 0
+                                    ? "00"
+                                    : eventStartTime.minute.toString()) +
+                                " to " +
+                                (eventStartTime.add(_duration).hour == 0
+                                    ? "00"
+                                    : eventStartTime
+                                        .add(_duration)
+                                        .hour
+                                        .toString()) +
+                                ":" +
+                                (eventStartTime.add(_duration).minute == 0
+                                    ? "00"
+                                    : eventStartTime
+                                        .add(_duration)
+                                        .minute
+                                        .toString()),
+                            textAlign: TextAlign.left,
+                            style: inActiveScreen,
+                          )
+                        : Text(
+                            DateFormat('EEEE').format(eventStartTime) +
+                                " - " +
+                                (eventStartTime.hour == 0
+                                    ? "00"
+                                    : eventStartTime.hour.toString()) +
+                                ":" +
+                                (eventStartTime.minute == 0
+                                    ? "00"
+                                    : eventStartTime.minute.toString()),
+                            textAlign: TextAlign.left,
+                            style: inActiveScreen,
+                          )
                   ],
                 )
               : null,
@@ -214,7 +230,7 @@ class NewEventScreenState extends State<NewEventScreen> {
                   DatePicker.showDateTimePicker(context,
                       showTitleActions: true,
                       minTime: DateTime.now(),
-                      maxTime: DateTime.now().add(Duration(days: 7)),
+                      maxTime: DateTime.now().add(Duration(days: 28)),
                       onChanged: (eventStart) {}, onConfirm: (eventStart) {
                     print('confirm $eventStart');
                     timePicked = true;
@@ -234,7 +250,9 @@ class NewEventScreenState extends State<NewEventScreen> {
                     context: context,
                     initialTime: Duration(hours: 1),
                   );
-                  durationPicked = true;
+                  setState(() {
+                    durationPicked = true;
+                  });
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Duration: $_duration')));
                 },
@@ -384,6 +402,7 @@ class NewEventScreenState extends State<NewEventScreen> {
                         genreOffer ? selectedGenres.toList().join(",") : "",
                         user.toJson());
                     firebaseService.createEvent(newEvent);
+                    _eventTitleCont.clear();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => VenueNavbar(2)),

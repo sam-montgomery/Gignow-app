@@ -63,7 +63,7 @@ class _ArtistsEventListState extends State<ArtistsEventList> {
     String uid = widget.user.uid;
     List<Event> events = [];
     return FutureBuilder(
-        future: FirebaseService().getOpenEvents(),
+        future: FirebaseService().getAllEvents(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             events = (snapshot.data.length > 0 ? snapshot.data : events);
