@@ -15,6 +15,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gignow/ui/events/new_events_screen.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/widgets/event_list.dart';
+import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 
 import '../../model/user.dart';
 import '../navBar/venue_nav_bar.dart';
@@ -174,60 +175,42 @@ class EventsScreenState extends State<EventsScreen> {
     UserModel user = widget.profile;
     return Scaffold(
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-        SizedBox(height: 20),
-        Container(
-          decoration: BoxDecoration(
-            color: kButtonBackgroundColour,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
+        Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              height: (MediaQuery.of(context).size.height * 0.90),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  color: kButtonBackgroundColour,
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: ContainedTabBarView(
+                tabs: [
+                  Text(
+                    "Open Events",
+                    style: inActiveScreen,
+                  ),
+                  Text(
+                    "Upcoming Events",
+                    style: inActiveScreen,
+                  )
+                ],
+                views: [
+                  Container(
+                      color: kButtonBackgroundColour,
+                      child: ArtistsEventList(user)),
+                  Container(
+                      color: kButtonBackgroundColour,
+                      child: ArtistsUpcomingEventList(user)),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.50,
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        openPage = true;
-                      });
-                    },
-                    child: Center(
-                      child: Text("Open Event Applications",
-                          //textDirection: TextDirection.rtl,
-                          textAlign: TextAlign.center,
-                          style: openPage ? activeScreen : inActiveScreen),
-                    ),
-                  )),
-              SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.50,
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        openPage = false;
-                      });
-                    },
-                    child: Center(
-                      child: Text("Upcoming Events",
-                          style: openPage ? inActiveScreen : activeScreen),
-                    ),
-                  ))
-            ],
-          ),
-        ),
-        openPage
-            ? user.venue
-                ? Expanded(child: VenuesEventList(user))
-                : Expanded(child: ArtistsEventList(user))
-            : user.venue
-                ? Expanded(child: VenuesUpcomingEventList(user))
-                : Expanded(child: ArtistsUpcomingEventList(user))
+            )),
+        // openPage
+        //     ? user.venue
+        //         ? Expanded(child: VenuesEventList(user))
+        //         : Expanded(child: ArtistsEventList(user))
+        //     : user.venue
+        //         ? Expanded(child: VenuesUpcomingEventList(user))
+        //         : Expanded(child: ArtistsUpcomingEventList(user))
       ]),
       floatingActionButton: openPage
           ? user.venue

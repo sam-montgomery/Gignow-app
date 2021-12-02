@@ -72,7 +72,7 @@ Container generateApplicantTile(
     height: MediaQuery.of(context).size.height * 0.1,
     width: MediaQuery.of(context).size.height * 0.25,
     decoration: BoxDecoration(
-        color: kButtonBackgroundColour,
+        color: Colors.blue[800],
         borderRadius: BorderRadius.all(Radius.circular(15))),
     child: Column(
       children: [
@@ -354,14 +354,12 @@ Container generateOpenEventTile(
   DateTime eventFinishTime = event.eventStartTime.add(event.eventDuration);
   String finishingTime = eventFinishTime.hour.toString() +
       ':' +
-      (eventFinishTime.minute == 0
-          ? "00"
-          : eventFinishTime.minute.toString());
+      (eventFinishTime.minute == 0 ? "00" : eventFinishTime.minute.toString());
   return Container(
     height: MediaQuery.of(context).size.height * 0.1,
     width: MediaQuery.of(context).size.height * 0.1,
     decoration: BoxDecoration(
-        color: kButtonBackgroundColour,
+        color: Colors.blue[100],
         borderRadius: BorderRadius.all(Radius.circular(15))),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
