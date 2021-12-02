@@ -41,7 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         title: Text(
           handle,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(fontSize: 15, color: Colors.grey),
         ),
       ),
       // floatingActionButton: IconButton(
@@ -56,25 +56,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(
             height: 10,
           ),
-          // Center(
-          //     child: Text(
-          //   handle,
-          //   style: TextStyle(fontSize: 20),
-          // )),
           Container(
-            height: 250,
+            padding: EdgeInsets.all(16),
+            height: 200,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     CircleAvatar(
                       backgroundColor: Colors.white70,
                       minRadius: 60.0,
                       child: CircleAvatar(
-                        radius: 80.0,
+                        radius: 60.0,
                         backgroundImage: CachedNetworkImageProvider(
                             widget.profile.profilePictureUrl),
                       ),
