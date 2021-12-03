@@ -126,6 +126,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text("Socials")
                 ],
               ),
+              Column(
+                children: [
+                  IconButton(
+                      icon: Icon(Icons.person_add_alt_rounded,
+                          color: Colors.red[300]),
+                      onPressed: () {
+                        firebaseService.followUser(widget.profile.uid);
+                      }),
+                  Text("Follow")
+                ],
+              ),
             ],
           ),
           SizedBox(

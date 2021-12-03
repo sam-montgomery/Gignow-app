@@ -797,6 +797,38 @@ class FirebaseService {
     return posts;
   }
 
+  Future<List<VideoPost>> getFollowingVideoPosts() async {
+    List<VideoPost> posts = new List<VideoPost>();
+    var result = await videoPosts.get();
+    var userDoc = await users.doc(auth.currentUser.uid);
+    var following;
+    var doc;
+
+    await userDoc.get().then((snapshot) {
+      if (snapshot.exists) {
+        doc = snapshot.data();
+        following = doc['following'];
+        result.docs.forEach((element) async {
+          if (element.data().containsKey('videoURL')) {
+            DocumentReference ref = element['user'];
+            String userUid = ref.id;
+            if (following.contains(ref)) {
+              VideoPost post = VideoPost(
+                  element.id,
+                  userUid,
+                  element['postDate'],
+                  element['postDescription'],
+                  element['videoURL']);
+              posts.add(post);
+            }
+          }
+        });
+      }
+    });
+
+    return posts;
+  }
+
   Future<List<UserModel>> getArtistAccounts() async {
     List<UserModel> artistsCards = new List<UserModel>();
     var result = await users.where("venue", isEqualTo: false).get();
@@ -885,6 +917,26 @@ class FirebaseService {
     }
     micros = (double.parse(parts[parts.length - 1]) * 1000000).round();
     return Duration(hours: hours, minutes: minutes, microseconds: micros);
+  }
+
+  void followUser(String followedUserUid) async {
+    DocumentReference currentUserDoc = users.doc(auth.currentUser.uid);
+    DocumentReference followedUserDoc = users.doc(followedUserUid);
+    currentUserDoc.update({
+      "following": FieldValue.arrayUnion([followedUserDoc])
+    });
+    await followedUserDoc.get().then((res) {
+      if (res.get("following").contains(currentUserDoc)) {
+        String connectionID = "${auth.currentUser.uid}_${followedUserUid}";
+        connections.doc(connectionID).set({
+          "users": FieldValue.arrayUnion([currentUserDoc, followedUserDoc]),
+          // "users": FieldValue.arrayUnion([followedUserDoc])
+        });
+      }
+    });
+    // await users.doc(followedUserUid).get().then((value){
+
+    // });
   }
 
   FirebaseService();

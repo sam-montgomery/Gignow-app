@@ -11,63 +11,88 @@ class VideoPostList extends StatefulWidget {
 
 class _VideoPostListState extends State<VideoPostList> {
   int vidIndex = 0;
+  bool showFollowing = false;
+  FirebaseService firebaseService = FirebaseService();
+  List<Future> futures = [];
+  int futureIndex = 1;
+
   @override
   Widget build(BuildContext context) {
+    futures.add(firebaseService.getFollowingVideoPosts());
+    futures.add(firebaseService.getVideoPosts());
     return FutureBuilder(
-      future: FirebaseService().getVideoPosts(),
+      future: futures[futureIndex],
       builder: (context, snapshot) {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.done) {
           List<VideoPost> posts = snapshot.data;
-          VideoPostWidget curVid = VideoPostWidget(posts[vidIndex]);
-          //previous vid, next vid
-          return Stack(
-            children: [
-              curVid,
-              //VideoPostWidget(posts[vidIndex]),
-              Column(children: [
-                SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    MaterialButton(
-                      color: Colors.white,
-                      child: Text("Previous"),
-                      onPressed: () {
-                        if (vidIndex > 0) {
+          if (posts.length > 0) {
+            VideoPostWidget curVid = VideoPostWidget(posts[vidIndex]);
+            //previous vid, next vid
+            return Stack(
+              children: [
+                curVid,
+                //VideoPostWidget(posts[vidIndex]),
+                Column(children: [
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      MaterialButton(
+                        color: Colors.white,
+                        child: Text("Previous"),
+                        onPressed: () {
+                          if (vidIndex > 0) {
+                            setState(() {
+                              vidIndex--;
+                            });
+                          }
+                          //widget.createState();
+                        },
+                      ),
+                      MaterialButton(
+                        color: Colors.white,
+                        child: Text(
+                            futureIndex == 1 ? "Show Following" : "Show All"),
+                        onPressed: () {
                           setState(() {
-                            vidIndex--;
+                            if (futureIndex == 0) {
+                              futureIndex = 1;
+                            } else {
+                              futureIndex = 0;
+                            }
                           });
-                        }
-                        //widget.createState();
-                      },
-                    ),
-                    MaterialButton(
-                      color: Colors.white,
-                      child: Text("Next"),
-                      onPressed: () {
-                        if (vidIndex < posts.length - 1) {
-                          setState(() {
-                            vidIndex++;
-                          });
-                        }
-                        //widget.createState();
-                      },
-                    ),
-                  ],
-                ),
-              ])
-            ],
-          );
-          // return ListView.builder(
-          //     shrinkWrap: true,
-          //     itemCount: posts.length,
-          //     itemBuilder: (context, index) {
-          //       VideoPost post = posts[index];
-          //       return VideoPostWidget(post);
-          //     });
+                        },
+                      ),
+                      MaterialButton(
+                        color: Colors.white,
+                        child: Text("Next"),
+                        onPressed: () {
+                          if (vidIndex < posts.length - 1) {
+                            setState(() {
+                              vidIndex++;
+                            });
+                          }
+                          //widget.createState();
+                        },
+                      ),
+                    ],
+                  ),
+                ])
+              ],
+            );
+            // return ListView.builder(
+            //     shrinkWrap: true,
+            //     itemCount: posts.length,
+            //     itemBuilder: (context, index) {
+            //       VideoPost post = posts[index];
+            //       return VideoPostWidget(post);
+            //     });
+          } else {
+            return Container();
+          }
         } else {
           return Loading();
         }
