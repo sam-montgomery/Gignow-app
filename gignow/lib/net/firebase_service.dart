@@ -79,7 +79,8 @@ class FirebaseService {
             snapshot.get('profile_picture_url').toString(),
             socials,
             snapshot.get('venue'),
-            snapshot.get('position'));
+            snapshot.get('position'),
+            snapshot.get('followers'));
       }
     });
 
@@ -109,7 +110,8 @@ class FirebaseService {
             snapshot.get('profile_picture_url').toString(),
             socials,
             snapshot.get('venue'),
-            snapshot.get('position'));
+            snapshot.get('position'),
+            snapshot.get('followers'));
       }
     });
 
@@ -812,7 +814,7 @@ class FirebaseService {
           if (element.data().containsKey('videoURL')) {
             DocumentReference ref = element['user'];
             String userUid = ref.id;
-            if (following.contains(ref)) {
+            if (following != null && following.contains(ref)) {
               VideoPost post = VideoPost(
                   element.id,
                   userUid,
@@ -854,7 +856,8 @@ class FirebaseService {
           element['profile_picture_url'],
           socials,
           element['venue'],
-          element['position']);
+          element['position'],
+          element['followers']);
       artistsCards.add(card);
     });
     return artistsCards;
@@ -919,24 +922,78 @@ class FirebaseService {
     return Duration(hours: hours, minutes: minutes, microseconds: micros);
   }
 
-  void followUser(String followedUserUid) async {
+  void followUnfollowUser(String followedUserUid) async {
     DocumentReference currentUserDoc = users.doc(auth.currentUser.uid);
     DocumentReference followedUserDoc = users.doc(followedUserUid);
+    await currentUserDoc.get().then((currentUser) async {
+      var currentUserFollowing = currentUser.data()['following'];
+      try {
+        if (currentUserFollowing != null) {
+          if (currentUserFollowing.contains(followedUserDoc)) {
+            unFollowUser(currentUserDoc, followedUserDoc);
+          } else {
+            await followUser(currentUserDoc, followedUserDoc);
+          }
+        } else {
+          await followUser(currentUserDoc, followedUserDoc);
+        }
+      } catch (e) {
+        print(e.toString());
+      }
+    });
+  }
+
+  void followUser(DocumentReference currentUserDoc,
+      DocumentReference followedUserDoc) async {
     currentUserDoc.update({
       "following": FieldValue.arrayUnion([followedUserDoc])
     });
+    followedUserDoc.update({"followers": FieldValue.increment(1)});
     await followedUserDoc.get().then((res) {
-      if (res.get("following").contains(currentUserDoc)) {
-        String connectionID = "${auth.currentUser.uid}_${followedUserUid}";
-        connections.doc(connectionID).set({
-          "users": FieldValue.arrayUnion([currentUserDoc, followedUserDoc]),
-          // "users": FieldValue.arrayUnion([followedUserDoc])
-        });
+      var followedUserFollowing = res.data()['following'];
+      try {
+        if (followedUserFollowing != null) {
+          if (followedUserFollowing.contains(currentUserDoc)) {
+            String connectionID = "${currentUserDoc.id}_${followedUserDoc.id}";
+            connections.doc(connectionID).update({
+              "users": FieldValue.arrayUnion([currentUserDoc, followedUserDoc]),
+              // "users": FieldValue.arrayUnion([followedUserDoc])
+            });
+          }
+        }
+      } catch (e) {
+        print(e.toString());
       }
     });
-    // await users.doc(followedUserUid).get().then((value){
+  }
 
-    // });
+  void unFollowUser(DocumentReference currentUserDoc,
+      DocumentReference followedUserDoc) async {
+    currentUserDoc.update({
+      "following": FieldValue.arrayRemove([followedUserDoc])
+    });
+    followedUserDoc.update({"followers": FieldValue.increment(-1)});
+    String connectionID = "${currentUserDoc.id}_${followedUserDoc.id}";
+    DocumentReference connectionDoc = connections.doc(connectionID);
+    await connectionDoc.get().then((doc) {
+      if (doc.exists) {
+        connectionDoc.delete();
+      }
+    });
+    connectionID = "${followedUserDoc.id}_${currentUserDoc.id}";
+    connectionDoc = connections.doc(connectionID);
+    await connectionDoc.get().then((doc) {
+      if (doc.exists) {
+        connectionDoc.delete();
+      }
+    });
+  }
+
+  Future<int> getFollowerCount(String userUid) async {
+    DocumentReference userDoc = users.doc(userUid);
+    var followers =
+        await users.where('following', arrayContains: userDoc).get();
+    return followers.size;
   }
 
   FirebaseService();

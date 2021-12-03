@@ -12,6 +12,7 @@ class UserModel {
   Map<String, String> socials;
   bool venue;
   GeoPoint position;
+  int followers;
 
   // User({this.uid, this.firstName, this.lastName, this.profilePictureUrl});
   UserModel(
@@ -23,7 +24,8 @@ class UserModel {
       String profilePicUrl,
       Map<String, String> socials,
       bool venue,
-      GeoPoint position) {
+      GeoPoint position,
+      int followers) {
     this.uid = uid;
     this.name = name;
     this.genres = genres;
@@ -33,6 +35,7 @@ class UserModel {
     this.socials = socials;
     this.venue = venue;
     this.position = position;
+    this.followers = followers;
   }
 
   Map<String, dynamic> toJson() => {
@@ -44,7 +47,8 @@ class UserModel {
         'profile_picture_url': profilePictureUrl,
         'socials': socials,
         'venue': venue,
-        'position': position
+        'position': position,
+        'followers': followers
       };
 
   UserModel.empty();

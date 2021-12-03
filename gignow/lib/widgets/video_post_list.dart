@@ -21,7 +21,9 @@ class _VideoPostListState extends State<VideoPostList> {
     futures.add(firebaseService.getFollowingVideoPosts());
     futures.add(firebaseService.getVideoPosts());
     return FutureBuilder(
-      future: futures[futureIndex],
+      future: showFollowing
+          ? (firebaseService.getFollowingVideoPosts())
+          : firebaseService.getVideoPosts(),
       builder: (context, snapshot) {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.done) {
@@ -54,10 +56,12 @@ class _VideoPostListState extends State<VideoPostList> {
                       ),
                       MaterialButton(
                         color: Colors.white,
-                        child: Text(
-                            futureIndex == 1 ? "Show Following" : "Show All"),
+                        child:
+                            Text(showFollowing ? "Show All" : "Show Following"),
                         onPressed: () {
                           setState(() {
+                            showFollowing = !showFollowing;
+                            vidIndex = 0;
                             if (futureIndex == 0) {
                               futureIndex = 1;
                             } else {

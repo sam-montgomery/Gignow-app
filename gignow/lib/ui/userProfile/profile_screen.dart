@@ -75,6 +75,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             widget.profile.profilePictureUrl),
                       ),
                     ),
+                    SizedBox(width: 50),
+                    Column(
+                      children: [
+                        Text("Followers", style: TextStyle(fontSize: 15)),
+                        Text("${widget.profile.followers}",
+                            style: TextStyle(
+                                fontSize: 25, fontWeight: FontWeight.bold))
+                      ],
+                    )
                   ],
                 ),
                 SizedBox(
@@ -132,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icon(Icons.person_add_alt_rounded,
                           color: Colors.red[300]),
                       onPressed: () {
-                        firebaseService.followUser(widget.profile.uid);
+                        firebaseService.followUnfollowUser(widget.profile.uid);
                       }),
                   Text("Follow")
                 ],
