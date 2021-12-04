@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gignow/model/video_post.dart';
 import 'package:gignow/net/firebase_service.dart';
+import 'package:gignow/net/globals.dart';
+import 'package:gignow/net/video_ranking_service.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/widgets/video_post_widget.dart';
 
@@ -11,10 +14,12 @@ class VideoPostList extends StatefulWidget {
 
 class _VideoPostListState extends State<VideoPostList> {
   int vidIndex = 0;
+  final FirebaseAuth auth = FirebaseAuth.instance;
   bool showFollowing = false;
   FirebaseService firebaseService = FirebaseService();
   List<Future> futures = [];
   int futureIndex = 1;
+  Global global = Global();
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +28,15 @@ class _VideoPostListState extends State<VideoPostList> {
     return FutureBuilder(
       future: showFollowing
           ? (firebaseService.getFollowingVideoPosts())
-          : firebaseService.getVideoPosts(),
+          : VideoRankingService().getRankedVideos(auth.currentUser.uid),
+      // : firebaseService.getVideoPosts(),
       builder: (context, snapshot) {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.done) {
           List<VideoPost> posts = snapshot.data;
           if (posts.length > 0) {
-            VideoPostWidget curVid = VideoPostWidget(posts[vidIndex]);
+            VideoPostWidget curVid = VideoPostWidget(
+                posts[showFollowing ? global.followingVidIdx : global.vidIdx]);
             //previous vid, next vid
             return Stack(
               children: [
@@ -46,10 +53,18 @@ class _VideoPostListState extends State<VideoPostList> {
                         color: Colors.white,
                         child: Text("Previous"),
                         onPressed: () {
-                          if (vidIndex > 0) {
-                            setState(() {
-                              vidIndex--;
-                            });
+                          if (showFollowing) {
+                            if (global.followingVidIdx > 0) {
+                              setState(() {
+                                global.followingVidIdx--;
+                              });
+                            }
+                          } else {
+                            if (global.vidIdx > 0) {
+                              setState(() {
+                                global.vidIdx--;
+                              });
+                            }
                           }
                           //widget.createState();
                         },
@@ -61,7 +76,7 @@ class _VideoPostListState extends State<VideoPostList> {
                         onPressed: () {
                           setState(() {
                             showFollowing = !showFollowing;
-                            vidIndex = 0;
+                            // global.vidIdx = 0;
                             if (futureIndex == 0) {
                               futureIndex = 1;
                             } else {
@@ -74,10 +89,18 @@ class _VideoPostListState extends State<VideoPostList> {
                         color: Colors.white,
                         child: Text("Next"),
                         onPressed: () {
-                          if (vidIndex < posts.length - 1) {
-                            setState(() {
-                              vidIndex++;
-                            });
+                          if (showFollowing) {
+                            if (global.followingVidIdx < posts.length - 1) {
+                              setState(() {
+                                global.followingVidIdx++;
+                              });
+                            }
+                          } else {
+                            if (global.vidIdx < posts.length - 1) {
+                              setState(() {
+                                global.vidIdx++;
+                              });
+                            }
                           }
                           //widget.createState();
                         },

@@ -5,6 +5,7 @@ import 'package:gignow/cache_test.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/net/globals.dart';
+import 'package:gignow/net/video_ranking_service.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/ui/navBar/artist_nav_bar.dart';
 import 'package:gignow/ui/navBar/venue_nav_bar.dart';
@@ -20,6 +21,9 @@ import 'artist_cards/swipe_feed_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Global global = Global();
+  global.vidIdx = 0;
+  global.followingVidIdx = 0;
   //FirebaseService _firebaseService = FirebaseService();5
   await Firebase.initializeApp();
   runApp(MyApp());
@@ -53,6 +57,7 @@ class AuthenticationWrapper extends StatelessWidget {
     final firebaseUser = context.watch<User>();
     Global global = Global();
     FirebaseService _firebaseService = FirebaseService();
+
     if (firebaseUser != null) {
       return FutureBuilder(
           future: _firebaseService.getUser(firebaseUser.uid),

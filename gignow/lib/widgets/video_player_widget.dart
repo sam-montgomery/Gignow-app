@@ -40,7 +40,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     double playerWidth = MediaQuery.of(context).size.width;
     double playerHeight = (MediaQuery.of(context).size.height * 0.90);
     return FutureBuilder(
-        future: FirebaseService().getIsLikedAndNumLikes(videoPost),
+        future:
+            FirebaseService().getIsLikedAndNumLikesAndIsFollowing(videoPost),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             bool isLiked = snapshot.data['isLiked'];
@@ -249,12 +250,13 @@ class __VideoOverlayState extends State<_VideoOverlay> {
     double playerHeight = (MediaQuery.of(context).size.height * 0.90);
 
     return FutureBuilder(
-        future: FirebaseService().getIsLikedAndNumLikes(widget.videoPost),
+        future: FirebaseService()
+            .getIsLikedAndNumLikesAndIsFollowing(widget.videoPost),
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
             bool isLiked = snapshot.data['isLiked'];
-            print(isLiked);
+            bool isFollowing = snapshot.data['isFollowing'];
             if (isLiked) {
               likeColor = Colors.red;
             } else {
@@ -276,11 +278,17 @@ class __VideoOverlayState extends State<_VideoOverlay> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
+                              Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProfileScreen(widget.user)));
+                                      builder: (context) => ProfileScreen(
+                                          widget.user, isFollowing)),
+                                  (route) => false);
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => ProfileScreen(
+                              //             widget.user, isFollowing)));
                             },
                             child: CircleAvatar(
                                 backgroundColor: Colors.white70,

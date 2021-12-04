@@ -8,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gignow/model/event.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/model/video_post.dart';
+import 'package:gignow/net/globals.dart';
+import 'package:gignow/net/video_ranking_service.dart';
 import 'package:gignow/ui/chats/chats_screen.dart';
 import 'package:gignow/ui/chats/conversation_screen.dart';
 import 'package:gignow/ui/createProfile/create_profile_screen.dart';
@@ -80,7 +82,8 @@ class FirebaseService {
             socials,
             snapshot.get('venue'),
             snapshot.get('position'),
-            snapshot.get('followers'));
+            snapshot.get('followers'),
+            snapshot.get('following'));
       }
     });
 
@@ -111,7 +114,8 @@ class FirebaseService {
             socials,
             snapshot.get('venue'),
             snapshot.get('position'),
-            snapshot.get('followers'));
+            snapshot.get('followers'),
+            snapshot.get('following'));
       }
     });
 
@@ -244,7 +248,9 @@ class FirebaseService {
       "handle": handle,
       "genres": genres,
       "profile_picture_url": profilePictureUrl,
-      "venue": venue
+      "venue": venue,
+      "followers": 0,
+      "following": []
     }).then((value) => Navigator.pushNamed(context, '/'));
     updateProfileLocation(auth.currentUser.uid);
   }
@@ -293,10 +299,12 @@ class FirebaseService {
 
   void createVideoPost(DateTime date, String desc, String url) {
     final user = auth.currentUser;
+    List<String> genres = Global().currentUserModel.genres.split(",");
     firestoreInstance.collection("VideoPosts").add({
       "user": users.doc(user.uid),
       "postDate": date,
       "postDescription": desc,
+      "genres": genres,
       "videoURL": url,
     }).then((docRef) {
       // String dir = path.dirname(video.path);
@@ -308,9 +316,10 @@ class FirebaseService {
     });
   }
 
-  Future<Map> getIsLikedAndNumLikes(VideoPost videoPost) async {
+  Future<Map> getIsLikedAndNumLikesAndIsFollowing(VideoPost videoPost) async {
     final user = auth.currentUser;
     bool isLiked = false;
+    bool isFollowing = false;
     var doc = await firestoreInstance
         .collection("VideoPostLikes")
         .doc("${videoPost.postID}_${user.uid}")
@@ -322,7 +331,20 @@ class FirebaseService {
         .collection("VideoPostLikes")
         .where("videoPost", isEqualTo: videoPosts.doc(videoPost.postID))
         .get();
-    Map map = {'isLiked': isLiked, 'numLikes': res.size};
+
+    await users.doc(user.uid).get().then((curUser) {
+      var curUserFollowing = curUser.data()['following'];
+      if (curUserFollowing != null) {
+        if (curUserFollowing.contains(users.doc(videoPost.userUID))) {
+          isFollowing = true;
+        }
+      }
+    });
+    Map map = {
+      'isLiked': isLiked,
+      'numLikes': res.size,
+      'isFollowing': isFollowing
+    };
     return map;
   }
 
@@ -347,6 +369,7 @@ class FirebaseService {
       unLikeVideo(videoPost);
     } else {
       likeVideo(videoPost);
+      VideoRankingService().rankLikeVideo(videoPost, user.uid);
     }
   }
 
@@ -857,7 +880,8 @@ class FirebaseService {
           socials,
           element['venue'],
           element['position'],
-          element['followers']);
+          element['followers'],
+          element['following']);
       artistsCards.add(card);
     });
     return artistsCards;

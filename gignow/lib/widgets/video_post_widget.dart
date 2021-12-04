@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/model/video_post.dart';
 import 'package:gignow/net/firebase_service.dart';
+import 'package:gignow/net/globals.dart';
 import 'package:gignow/ui/loading.dart';
 import 'package:gignow/ui/userProfile/profile_screen.dart';
 import 'package:gignow/widgets/video_player_widget.dart';
@@ -19,6 +20,7 @@ class VideoPostWidget extends StatefulWidget {
 class _VideoPostWidgetState extends State<VideoPostWidget> {
   VideoPost post;
   _VideoPostWidgetState(this.post);
+  Global global = Global();
 
   VideoPlayerController _controller;
   FirebaseService firebaseService = FirebaseService();

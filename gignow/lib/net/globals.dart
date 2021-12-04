@@ -25,4 +25,20 @@ class Global {
   set previousSelection(int selection) {
     prevSelection = selection;
   }
+
+  int vidIdx;
+
+  int get videoIndex => vidIdx;
+
+  set videoIndex(int idx) {
+    vidIdx = idx;
+  }
+
+  int followingVidIdx;
+
+  int get followingVideoIndex => followingVidIdx;
+
+  set followingVideoIndex(int idx) {
+    followingVidIdx = idx;
+  }
 }

@@ -100,7 +100,8 @@ Container generateApplicantTile(
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ProfileScreen(applicant)));
+                          builder: (context) => ProfileScreen(applicant,
+                              false))); //need to change false to isFollowing
                 },
                 child: CircleAvatar(
                     backgroundColor: Colors.white70,
@@ -269,7 +270,8 @@ FutureBuilder generateUpcomingEventTile(
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ProfileScreen(applicant)));
+                            builder: (context) => ProfileScreen(applicant,
+                                false))); //need to change false to isFollowing
                   },
                   child: CircleAvatar(
                       backgroundColor: Colors.white70,

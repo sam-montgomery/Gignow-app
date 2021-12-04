@@ -19,7 +19,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   UserModel profile;
-  ProfileScreen(this.profile);
+  bool isFollowing;
+  ProfileScreen(this.profile, this.isFollowing);
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -36,6 +37,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String handle = widget.profile.handle;
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pushNamed(context, '/');
+          },
+        ),
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         centerTitle: true,
@@ -138,12 +145,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Column(
                 children: [
                   IconButton(
-                      icon: Icon(Icons.person_add_alt_1_rounded,
+                      icon: Icon(
+                          widget.isFollowing
+                              ? Icons.person_remove_alt_1_rounded
+                              : Icons.person_add_alt_rounded,
                           color: Colors.red[300]),
                       onPressed: () {
+                        setState(() {
+                          if (widget.isFollowing) {
+                            widget.profile.followers--;
+                          } else {
+                            widget.profile.followers++;
+                          }
+                          widget.isFollowing = !widget.isFollowing;
+                        });
                         firebaseService.followUnfollowUser(widget.profile.uid);
                       }),
-                  Text("Follow")
+                  Text(widget.isFollowing ? "Unfollow" : "Follow")
                 ],
               ),
             ],
