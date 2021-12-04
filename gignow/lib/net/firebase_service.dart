@@ -623,7 +623,7 @@ class FirebaseService {
             acceptedUid,
             confirmed));
       });
-      print("All events: " + returned.toString());
+      print("All open events: " + returned.toString());
     });
     return returned;
   }

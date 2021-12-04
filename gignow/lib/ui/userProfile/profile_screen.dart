@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Column(
                 children: [
                   IconButton(
-                      icon: Icon(Icons.person_add_alt_rounded,
+                      icon: Icon(Icons.person_add_alt_1_rounded,
                           color: Colors.red[300]),
                       onPressed: () {
                         firebaseService.followUnfollowUser(widget.profile.uid);

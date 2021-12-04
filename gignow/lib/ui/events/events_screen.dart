@@ -175,10 +175,11 @@ class EventsScreenState extends State<EventsScreen> {
     UserModel user = widget.profile;
     return Scaffold(
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        SizedBox(height: 45),
         Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              height: (MediaQuery.of(context).size.height * 0.90),
+              height: (MediaQuery.of(context).size.height * 0.82),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                   color: kButtonBackgroundColour,
@@ -197,10 +198,14 @@ class EventsScreenState extends State<EventsScreen> {
                 views: [
                   Container(
                       color: kButtonBackgroundColour,
-                      child: ArtistsEventList(user)),
+                      child: user.venue
+                          ? VenuesEventList(user)
+                          : ArtistsEventList(user)),
                   Container(
                       color: kButtonBackgroundColour,
-                      child: ArtistsUpcomingEventList(user)),
+                      child: user.venue
+                          ? VenuesUpcomingEventList(user)
+                          : ArtistsUpcomingEventList(user)),
                 ],
               ),
             )),

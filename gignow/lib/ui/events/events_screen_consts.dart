@@ -47,7 +47,7 @@ final TextStyle dayStyle =
     TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold);
 final TextStyle timeStyle = TextStyle(fontSize: 16, color: Colors.white);
 
-final TextStyle applicantGenreStyle = TextStyle(fontSize: 14);
+final TextStyle applicantGenreStyle = TextStyle(fontSize: 12);
 final TextStyle applicantNameStyle = TextStyle(fontSize: 16);
 
 Future<void> deleteEvent(Event event) async {
@@ -67,12 +67,25 @@ Future<void> confirmEvent(
 Container generateApplicantTile(
     BuildContext context, Event event, UserModel applicant) {
   String name = applicant.name;
-  String genres = applicant.genres.toString();
+  List<String> genres = applicant.genres.split(",");
+  String genreString = "";
+
+  if (applicant.genres.length > 22) {
+    for (String genre in genres) {
+      if (genreString.length + genre.length + 2 < 15) {
+        genreString.length == 0
+            ? genreString = genre
+            : genreString = genreString + ", " + genre;
+      }
+    }
+  } else
+    genreString = applicant.genres;
+
   return Container(
-    height: MediaQuery.of(context).size.height * 0.1,
+    height: MediaQuery.of(context).size.height * 0.095,
     width: MediaQuery.of(context).size.height * 0.25,
     decoration: BoxDecoration(
-        color: Colors.blue[800],
+        color: Colors.lightBlue,
         borderRadius: BorderRadius.all(Radius.circular(15))),
     child: Column(
       children: [
@@ -103,10 +116,9 @@ Container generateApplicantTile(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('$name', style: applicantNameStyle),
-                  Text('$genres', style: applicantGenreStyle)
+                  Text('$genreString', style: applicantGenreStyle)
                 ],
               ),
-              SizedBox(height: 15, width: 10),
               Expanded(
                   child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -177,7 +189,7 @@ Future<void> showApplicantsDialog(BuildContext context, Event event) async {
                         ? Container(
                             height: MediaQuery.of(context).size.height *
                                 (0.12 * applicants.length),
-                            width: MediaQuery.of(context).size.width * 0.9,
+                            width: MediaQuery.of(context).size.width * 0.8,
                             child: ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: applicants.length,
@@ -243,7 +255,7 @@ FutureBuilder generateUpcomingEventTile(
             height: MediaQuery.of(context).size.height * 0.1,
             width: MediaQuery.of(context).size.height * 0.1,
             decoration: BoxDecoration(
-                color: kButtonBackgroundColour,
+                color: Colors.blue[100],
                 borderRadius: BorderRadius.all(Radius.circular(15))),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
