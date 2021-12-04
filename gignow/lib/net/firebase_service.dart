@@ -241,6 +241,7 @@ class FirebaseService {
   void createProfile(context, String name, String phone, String handle,
       String genres, String profilePictureUrl, bool venue) {
     final user = auth.currentUser;
+    Map<String, int> genreScores = VideoRankingService().emptyGenreScores();
     firestoreInstance.collection("Users").doc(auth.currentUser.uid).set({
       "userUid": user.uid,
       "name": name,
@@ -250,7 +251,8 @@ class FirebaseService {
       "profile_picture_url": profilePictureUrl,
       "venue": venue,
       "followers": 0,
-      "following": []
+      "following": [],
+      "genreScores": genreScores
     }).then((value) => Navigator.pushNamed(context, '/'));
     updateProfileLocation(auth.currentUser.uid);
   }
