@@ -14,6 +14,7 @@ class UserModel {
   GeoPoint position;
   int followers;
   dynamic following;
+  bool offersOpen;
 
   // User({this.uid, this.firstName, this.lastName, this.profilePictureUrl});
   UserModel(
@@ -39,6 +40,7 @@ class UserModel {
     this.position = position;
     this.followers = followers;
     this.following = following;
+    this.offersOpen = false;
   }
 
   Map<String, dynamic> toJson() => {

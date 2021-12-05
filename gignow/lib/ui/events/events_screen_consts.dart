@@ -352,6 +352,7 @@ FutureBuilder generateUpcomingEventTile(
 Container generateOpenEventTile(
     BuildContext context, Event event, UserModel um) {
   bool venue = um.venue;
+  String vName = event.venue['name'];
   bool applied = false;
   bool accepted = false;
   if (event.applicants.contains(um.uid) || event.acceptedUid.isNotEmpty) {
@@ -408,13 +409,131 @@ Container generateOpenEventTile(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   alignment: Alignment.center,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white70,
-                    minRadius: 30.0,
+                  child: GestureDetector(
+                    onTap: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0))),
+                            content: Builder(
+                              builder: (context) {
+                                return Container(
+                                    alignment: Alignment.topCenter,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.4,
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.2,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                                topRight: Radius.circular(10.0),
+                                                topLeft: Radius.circular(10.0)),
+                                            image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: NetworkImage(
+                                                    event.eventPhotoURL)),
+                                          ),
+                                        ),
+                                        Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.1,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    bottomRight:
+                                                        Radius.circular(10.0),
+                                                    bottomLeft:
+                                                        Radius.circular(10.0))),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(6.0),
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        event.eventName,
+                                                        style:
+                                                            applicantGenreStyle,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        event.genres,
+                                                        style:
+                                                            applicantGenreStyle,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        vName,
+                                                        style:
+                                                            applicantGenreStyle,
+                                                      ),
+                                                      SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.02),
+                                                      Text(
+                                                        event.eventStartTime.day
+                                                                .toString() +
+                                                            "/" +
+                                                            event.eventStartTime
+                                                                .month
+                                                                .toString() +
+                                                            ": " +
+                                                            startingTime +
+                                                            " to " +
+                                                            finishingTime,
+                                                        style:
+                                                            applicantGenreStyle,
+                                                      )
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            )),
+                                      ],
+                                    ));
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
                     child: CircleAvatar(
-                      radius: 30.0,
-                      backgroundImage:
-                          NetworkImage(event.venue['profile_picture_url']),
+                      backgroundColor: Colors.white70,
+                      minRadius: 30.0,
+                      child: CircleAvatar(
+                        radius: 30.0,
+                        backgroundImage:
+                            NetworkImage(event.venue['profile_picture_url']),
+                      ),
                     ),
                   ),
                   height: MediaQuery.of(context).size.height * 0.07,

@@ -583,6 +583,27 @@ class FirebaseService {
     return applicant;
   }
 
+  void initOffers() async {
+    var res = await users.get();
+
+    res.docs.forEach((doc) async {
+      if (doc['venue'] == false) {
+        await users.doc(doc.id).update({"offersOpen": false});
+      }
+    });
+  }
+
+  void updateUserOffers(String userUid, bool offers) async {
+    Position userPos = await determinePosition();
+    double longitude = userPos.longitude;
+    double latitude = userPos.latitude;
+    GeoPoint geoPoint = GeoPoint(latitude, longitude);
+    firestoreInstance
+        .collection("Users")
+        .doc(userUid)
+        .update({"offersOpen": offers});
+  }
+
   Future<List<Event>> getAllEvents() async {
     List<Event> returned = [];
     await events.get().then((QuerySnapshot querySnapshot) {

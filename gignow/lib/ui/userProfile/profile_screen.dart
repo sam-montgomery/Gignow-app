@@ -148,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icon(
                           widget.isFollowing
                               ? Icons.person_remove_alt_1_rounded
-                              : Icons.person_add_alt_rounded,
+                              : Icons.person_add_alt_1_rounded,
                           color: Colors.red[300]),
                       onPressed: () {
                         setState(() {

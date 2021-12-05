@@ -33,7 +33,6 @@ bool openPage = true;
 
 class EventsScreenState extends State<EventsScreen> {
   final FirebaseAuth auth = FirebaseAuth.instance;
-  FirebaseService firebaseService = FirebaseService();
   List<Event> events = [];
   List<Event> openEvents = [];
   List<Event> upcomingEvents = [];
