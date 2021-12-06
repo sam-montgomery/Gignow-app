@@ -97,18 +97,33 @@ class _CardsSectionState extends State<CardsSectionAlignment>
                   // Add what the user swiped in the last frame to the alignment of the card
                   setState(() {
                     // 20 is the "speed" at which moves the card
-                    frontCardAlign = Alignment(
-                        frontCardAlign.x +
-                            20 *
-                                details.delta.dx /
-                                MediaQuery.of(context).size.width,
-                        frontCardAlign.y +
-                            40 *
-                                details.delta.dy /
-                                MediaQuery.of(context).size.height);
+                    if (!noArtistsLeft) {
+                      frontCardAlign = Alignment(
+                          frontCardAlign.x +
+                              20 *
+                                  details.delta.dx /
+                                  MediaQuery.of(context).size.width,
+                          frontCardAlign.y +
+                              40 *
+                                  details.delta.dy /
+                                  MediaQuery.of(context).size.height);
+                      frontCardRot = frontCardAlign.x;
+                    } //0 is the speed if no
+                    else
+                      frontCardAlign = Alignment(
+                          frontCardAlign.x +
+                              0 *
+                                  details.delta.dx /
+                                  MediaQuery.of(context).size.width,
+                          frontCardAlign.y +
+                              0 *
+                                  details.delta.dy /
+                                  MediaQuery.of(context).size.height);
+                    frontCardRot = frontCardAlign.x;
+                  }
 
-                    frontCardRot = frontCardAlign.x; // * rotation speed;
-                  });
+                      // * rotation speed;
+                      );
                 },
                 // When releasing the first card
                 onPanEnd: (_) {

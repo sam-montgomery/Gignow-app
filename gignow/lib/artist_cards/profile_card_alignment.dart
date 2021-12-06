@@ -83,7 +83,7 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
                 alignment: Alignment.topLeft,
                 child: widget.isCard
                     ? Text("")
-                    : Icon(Icons.arrow_back_rounded, color: Colors.grey))),
+                    : Icon(Icons.arrow_back_rounded, color: Colors.black))),
         Expanded(
           child: Card(
             child: !widget.isCard
@@ -125,6 +125,15 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
                                     textAlign: TextAlign.start,
                                     style: TextStyle(color: Colors.white)),
                                 Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                                FloatingActionButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        widget.isCard = false;
+                                      });
+                                    },
+                                    backgroundColor: Colors.grey,
+                                    child: Icon(Icons.info_rounded,
+                                        color: Colors.white)),
                               ],
                             )),
                       )

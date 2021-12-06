@@ -877,13 +877,13 @@ class FirebaseService {
     return posts;
   }
 
-  Future<List<UserModel>> getArtistAccounts() async {
+  Future<List<UserModel>> getArtistAccounts(
+      List<String> genreFilters, double distanceFilter) async {
     List<UserModel> artistsCards = new List<UserModel>();
     var result = await users.where("venue", isEqualTo: false).get();
     result.docs.forEach((element) async {
       // DocumentReference ref = element['user'];
       // String userUid = ref.id;
-
       Map<String, String> socials = new Map<String, String>();
       if (element.data().containsKey("socials")) {
         var x = element.get('socials');
@@ -905,7 +905,20 @@ class FirebaseService {
           element['position'],
           element['followers'],
           element['following']);
-      artistsCards.add(card);
+      bool filter = false;
+      double distance = Geolocator.distanceBetween(
+          Global().currentUserModel.position.latitude,
+          Global().currentUserModel.position.longitude,
+          card.position.latitude,
+          card.position.longitude);
+      for (int i = 0; i < genreFilters.length; i++) {
+        if ((card.genres.contains(genreFilters[i]) &&
+            distance <= distanceFilter)) {
+          filter = true;
+          artistsCards.add(card);
+          break;
+        }
+      }
     });
     return artistsCards;
   }
