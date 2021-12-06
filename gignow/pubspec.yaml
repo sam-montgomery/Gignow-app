@@ -41,6 +41,7 @@ dependencies:
   contained_tab_bar_view: ^0.8.0
   numberpicker: ^2.1.1
   duration_picker: ^1.1.0+1
+  geolocator: 7.6.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -48,7 +49,6 @@ dependencies:
   video_compress: ^3.1.0
   cached_network_image: ^3.1.0
   tiktoklikescroller: ^0.1.8
-  geolocator: 7.6.2
   sortedmap: ^0.5.1
 
 # dependency_overrides:
@@ -57,6 +57,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_driver:
+    sdk: flutter
+  test: 1.17.10
 
 
 # For information on the generic Dart part of this file, see the

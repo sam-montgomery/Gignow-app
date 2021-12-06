@@ -64,6 +64,124 @@ Future<void> confirmEvent(
   FirebaseService().confirmEvent(event);
 }
 
+AlertDialog generateEventDialog(Event event, UserModel um) {
+  String startingTime = event.eventStartTime.hour.toString() +
+      ':' +
+      (event.eventStartTime.minute == 0
+          ? "00"
+          : event.eventStartTime.minute.toString());
+  DateTime eventFinishTime = event.eventStartTime.add(event.eventDuration);
+  String finishingTime = eventFinishTime.hour.toString() +
+      ':' +
+      (eventFinishTime.minute == 0 ? "00" : eventFinishTime.minute.toString());
+  bool applied = false;
+  bool accepted = false;
+  if (event.applicants.contains(um.uid) || event.acceptedUid.isNotEmpty) {
+    applied = true;
+  }
+  if (event.acceptedUid == um.uid) {
+    accepted = true;
+  }
+  return AlertDialog(
+    backgroundColor: Colors.transparent,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+    content: Builder(
+      builder: (context) {
+        return Container(
+            alignment: Alignment.topCenter,
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10.0),
+                        topLeft: Radius.circular(10.0)),
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: NetworkImage(event.eventPhotoURL)),
+                  ),
+                ),
+                Container(
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(10.0),
+                            bottomLeft: Radius.circular(10.0))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                event.eventName,
+                                style: applicantNameStyle,
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                event.genres,
+                                style: applicantGenreStyle,
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                event.venue['name'],
+                                style: applicantGenreStyle,
+                              ),
+                              SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.02),
+                              Text(
+                                event.eventStartTime.day.toString() +
+                                    "/" +
+                                    event.eventStartTime.month.toString() +
+                                    ": " +
+                                    startingTime +
+                                    " to " +
+                                    finishingTime,
+                                style: applicantGenreStyle,
+                              )
+                            ],
+                          ),
+                          RaisedButton(
+                            child: Text(applied ? 'Applied' : 'Apply'),
+                            color: Colors.lightBlue,
+                            onPressed: () {
+                              if (!applied) {
+                                applyForEvent(event, um.uid);
+
+                                applied = true;
+                                Navigator.of(context).push(
+                                    new MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                  return new ArtistNavbar(1);
+                                }));
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    )),
+              ],
+            ));
+      },
+    ),
+  );
+}
+
 Container generateApplicantTile(
     BuildContext context, Event event, UserModel applicant) {
   String name = applicant.name;
@@ -414,115 +532,7 @@ Container generateOpenEventTile(
                       await showDialog(
                         context: context,
                         builder: (context) {
-                          return AlertDialog(
-                            backgroundColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0))),
-                            content: Builder(
-                              builder: (context) {
-                                return Container(
-                                    alignment: Alignment.topCenter,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.4,
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.2,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                                topRight: Radius.circular(10.0),
-                                                topLeft: Radius.circular(10.0)),
-                                            image: DecorationImage(
-                                                fit: BoxFit.fill,
-                                                image: NetworkImage(
-                                                    event.eventPhotoURL)),
-                                          ),
-                                        ),
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.1,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.only(
-                                                    bottomRight:
-                                                        Radius.circular(10.0),
-                                                    bottomLeft:
-                                                        Radius.circular(10.0))),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(6.0),
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        event.eventName,
-                                                        style:
-                                                            applicantGenreStyle,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        event.genres,
-                                                        style:
-                                                            applicantGenreStyle,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        vName,
-                                                        style:
-                                                            applicantGenreStyle,
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.02),
-                                                      Text(
-                                                        event.eventStartTime.day
-                                                                .toString() +
-                                                            "/" +
-                                                            event.eventStartTime
-                                                                .month
-                                                                .toString() +
-                                                            ": " +
-                                                            startingTime +
-                                                            " to " +
-                                                            finishingTime,
-                                                        style:
-                                                            applicantGenreStyle,
-                                                      )
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            )),
-                                      ],
-                                    ));
-                              },
-                            ),
-                          );
+                          return generateEventDialog(event, um);
                         },
                       );
                     },
