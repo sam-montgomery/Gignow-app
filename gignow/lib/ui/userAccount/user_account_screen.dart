@@ -10,9 +10,11 @@ import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:gignow/ui/userAccount/edit_socials_screen.dart';
+import 'package:gignow/widgets/user_posts_grid.dart';
 import 'package:gignow/widgets/video_post_list.dart';
 import 'package:gignow/widgets/video_post_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:gignow/widgets/user_posts_grid.dart';
 
 //Profile UI https://medium.com/@palmeiro.leonardo/simple-profile-screen-with-flutter-fe2f1f7cfaf5
 class UserAccountScreen extends StatefulWidget {
@@ -32,6 +34,7 @@ class UserAccountScreenState extends State<UserAccountScreen> {
     String handle = widget.profile.handle;
     return Scaffold(
       body: ListView(
+        shrinkWrap: true,
         children: <Widget>[
           SizedBox(
             height: 10,
@@ -60,6 +63,24 @@ class UserAccountScreenState extends State<UserAccountScreen> {
                             widget.profile.profilePictureUrl),
                       ),
                     ),
+                    SizedBox(width: 50),
+                    Column(
+                      children: [
+                        Text("${widget.profile.followers}",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Followers"),
+                      ],
+                    ),
+                    SizedBox(width: 50),
+                    Column(
+                      children: [
+                        Text("${widget.profile.followers}",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Following"),
+                      ],
+                    )
                   ],
                 ),
                 SizedBox(
@@ -122,8 +143,13 @@ class UserAccountScreenState extends State<UserAccountScreen> {
           SizedBox(
             height: 20,
           ),
-          SingleChildScrollView(
-              child: UsersVideoPostList(auth.currentUser.uid)),
+          // SingleChildScrollView(
+          //     child: UsersVideoPostList(auth.currentUser.uid)),
+          Column(
+            children: <Widget>[
+              SizedBox(height: 400, child: UserPostGrid()),
+            ],
+          )
         ],
       ),
     );
