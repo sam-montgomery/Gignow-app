@@ -74,8 +74,15 @@ class VideoRankingService {
     Map userGenreScores = await getUserGenreScores(likerUid);
     await videoPosts.get().then((QuerySnapshot querySnapshot) async {
       querySnapshot.docs.forEach((post) {
-        VideoPost vPost = VideoPost(post.id, post['user'].id, post['postDate'],
-            post['postDescription'], post['videoURL']);
+        VideoPost vPost = VideoPost(
+            post.id,
+            post['user'].id,
+            post['postDate'],
+            post['postDescription'],
+            post['videoURL'],
+            post.data().containsKey('thumbnailURL')
+                ? post['thumbnailURL']
+                : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
         List<dynamic> postGenres = post['genres'];
         int postScore = 0;
         // List<String> postGenres = await getUserGenres(post['user'].id);

@@ -107,44 +107,44 @@ class ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-  Widget eventMessageTile(Event event, bool sentByMe) {
-    return Row(
-      mainAxisAlignment:
-          sentByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  bottomRight:
-                      sentByMe ? Radius.circular(0) : Radius.circular(24),
-                  topRight: Radius.circular(24),
-                  bottomLeft:
-                      sentByMe ? Radius.circular(24) : Radius.circular(0)),
-              color: sentByMe ? Colors.lightBlueAccent : Colors.grey[400]),
-          padding: EdgeInsets.all(16),
-          child: RaisedButton(
-                            child: Text(applied ? 'Applied' : 'Apply'),
-                            color: Colors.lightBlue,
-                            onPressed: () {
-                              if (!applied) {
-                                applyForEvent(event, um.uid);
+  // Widget eventMessageTile(Event event, bool sentByMe) {
+  //   return Row(
+  //     mainAxisAlignment:
+  //         sentByMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+  //     children: [
+  //       Container(
+  //         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+  //         decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.only(
+  //                 topLeft: Radius.circular(24),
+  //                 bottomRight:
+  //                     sentByMe ? Radius.circular(0) : Radius.circular(24),
+  //                 topRight: Radius.circular(24),
+  //                 bottomLeft:
+  //                     sentByMe ? Radius.circular(24) : Radius.circular(0)),
+  //             color: sentByMe ? Colors.lightBlueAccent : Colors.grey[400]),
+  //         padding: EdgeInsets.all(16),
+  //         child: RaisedButton(
+  //                           child: Text(applied ? 'Applied' : 'Apply'),
+  //                           color: Colors.lightBlue,
+  //                           onPressed: () {
+  //                             if (!applied) {
+  //                               applyForEvent(event, um.uid);
 
-                                applied = true;
-                                Navigator.of(context).push(
-                                    new MaterialPageRoute(
-                                        builder: (BuildContext context) {
-                                  return new ArtistNavbar(1);
-                                }));
-                              }
-                            },
-                          ),
-          ),
-        ),
-      ],
-    );
-  }
+  //                               applied = true;
+  //                               Navigator.of(context).push(
+  //                                   new MaterialPageRoute(
+  //                                       builder: (BuildContext context) {
+  //                                 return new ArtistNavbar(1);
+  //                               }));
+  //                             }
+  //                           },
+  //                         ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget messages() {
     return StreamBuilder(

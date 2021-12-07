@@ -147,7 +147,11 @@ class UserAccountScreenState extends State<UserAccountScreen> {
           //     child: UsersVideoPostList(auth.currentUser.uid)),
           Column(
             children: <Widget>[
-              SizedBox(height: 400, child: UserPostGrid()),
+              SizedBox(
+                  height: 400,
+                  child: UserPostGrid(
+                    userUid: widget.profile.uid,
+                  )),
             ],
           )
         ],

@@ -299,7 +299,8 @@ class FirebaseService {
     }
   }
 
-  void createVideoPost(DateTime date, String desc, String url) {
+  void createVideoPost(
+      DateTime date, String desc, String url, String thumbnailURL) {
     final user = auth.currentUser;
     List<String> genres = Global().currentUserModel.genres.split(",");
     firestoreInstance.collection("VideoPosts").add({
@@ -308,6 +309,7 @@ class FirebaseService {
       "postDescription": desc,
       "genres": genres,
       "videoURL": url,
+      "thumbnailURL": thumbnailURL
     }).then((docRef) {
       // String dir = path.dirname(video.path);
       // String newPath = path.join(dir, "${docRef.id}.mp4");
@@ -315,6 +317,7 @@ class FirebaseService {
       // // uploadVideo(
       // //     docRef.id, newPath, "https://gignow-310714.ew.r.appspot.com/upload");
       // uploadVideoPHP(newPath);
+      print("Video Posted");
     });
   }
 
@@ -490,8 +493,16 @@ class FirebaseService {
       if (element.data().containsKey('videoURL')) {
         DocumentReference ref = element['user'];
         String userUid = ref.id;
-        VideoPost post = VideoPost(element.id, userUid, element['postDate'],
-            element['postDescription'], element['videoURL']);
+
+        VideoPost post = VideoPost(
+            element.id,
+            userUid,
+            element['postDate'],
+            element['postDescription'],
+            element['videoURL'],
+            element.data().containsKey('thumbnailURL')
+                ? element['thumbnailURL']
+                : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
         posts.add(post);
       }
     });
@@ -505,8 +516,15 @@ class FirebaseService {
       if (element.data().containsKey('videoURL')) {
         DocumentReference ref = element['user'];
         String userUid = ref.id;
-        VideoPost post = VideoPost(element.id, userUid, element['postDate'],
-            element['postDescription'], element['videoURL']);
+        VideoPost post = VideoPost(
+            element.id,
+            userUid,
+            element['postDate'],
+            element['postDescription'],
+            element['videoURL'],
+            element.data().containsKey('thumbnailURL')
+                ? element['thumbnailURL']
+                : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
         VideoPostWidget postWidget = VideoPostWidget(post);
         posts.add(postWidget);
       }
@@ -837,8 +855,15 @@ class FirebaseService {
       if (element.data().containsKey('videoURL')) {
         DocumentReference ref = element['user'];
         String userUid = ref.id;
-        VideoPost post = VideoPost(element.id, userUid, element['postDate'],
-            element['postDescription'], element['videoURL']);
+        VideoPost post = VideoPost(
+            element.id,
+            userUid,
+            element['postDate'],
+            element['postDescription'],
+            element['videoURL'],
+            element.data().containsKey('thumbnailURL')
+                ? element['thumbnailURL']
+                : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
         posts.add(post);
       }
     });
@@ -866,7 +891,9 @@ class FirebaseService {
                   userUid,
                   element['postDate'],
                   element['postDescription'],
-                  element['videoURL']);
+                  element['videoURL'],
+                  element['thumbnailURL'] ??
+                      "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
               posts.add(post);
             }
           }
