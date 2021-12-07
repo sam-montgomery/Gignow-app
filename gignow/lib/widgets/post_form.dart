@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:http/http.dart' as http;
 import 'package:video_compress/video_compress.dart';
-import 'package:thumbnails/thumbnails.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -94,8 +93,9 @@ class _PostFormState extends State<PostForm> {
     //   print(res);
     // });
     var now = DateTime.now();
-    String fileName = "video-" + now.toString();
-    String thumbnailFileName = "thumbnail-" + now.toString();
+    String fileName = "video-" + now.microsecondsSinceEpoch.toString();
+    String thumbnailFileName =
+        "thumbnail-" + DateTime.now().microsecondsSinceEpoch.toString();
     firebase_storage.Reference firebaseStorageRef = firebase_storage
         .FirebaseStorage.instance
         .ref()

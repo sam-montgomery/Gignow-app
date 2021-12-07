@@ -829,13 +829,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.0"
-  thumbnails:
-    dependency: "direct main"
-    description:
-      name: thumbnails
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   tiktoklikescroller:
     dependency: "direct main"
     description:
