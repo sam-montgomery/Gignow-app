@@ -142,8 +142,6 @@ class UserAccountScreenState extends State<UserAccountScreen> {
           SizedBox(
             height: 20,
           ),
-          // SingleChildScrollView(
-          //     child: UsersVideoPostList(auth.currentUser.uid)),
           Column(
             children: <Widget>[
               SizedBox(

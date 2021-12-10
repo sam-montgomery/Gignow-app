@@ -16,6 +16,7 @@ import 'package:gignow/ui/userProfile/socials_screen.dart';
 import 'package:gignow/widgets/video_post_list.dart';
 import 'package:gignow/widgets/video_post_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:gignow/widgets/user_posts_grid.dart';
 
 class ProfileScreen extends StatefulWidget {
   UserModel profile;
@@ -178,7 +179,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(
             height: 20,
           ),
-          SingleChildScrollView(child: UsersVideoPostList(widget.profile.uid))
+          Column(
+            children: <Widget>[
+              SizedBox(
+                  height: 400,
+                  child: UserPostGrid(
+                    userUid: widget.profile.uid,
+                  )),
+            ],
+          )
         ],
       ),
     );
