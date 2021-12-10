@@ -17,4 +17,31 @@ class Event {
   Event(this.eventId, this.eventName, this.eventStartTime, this.eventDuration,
       this.eventPhotoURL, this.venueId, this.genres, this.venue,
       [this.applicants, this.acceptedUid, this.confirmed]);
+
+  Map<String, dynamic> toJson() => {
+        'eventId': eventId,
+        'eventName': eventName,
+        'eventStartTime': eventStartTime,
+        'eventDuration': eventDuration,
+        'eventPhotoURL': eventPhotoURL,
+        'venueId': venueId,
+        'genres': genres,
+        'venue': venue,
+        'applicants': applicants,
+        'acceptedUid': acceptedUid,
+        'confirmed': confirmed
+      };
+
+  Event.fromJson(Map<String, dynamic> json)
+      : eventId = json['eventId'],
+        eventName = json['eventName'],
+        eventStartTime = json['eventStartTime'],
+        eventDuration = json['eventDuration'],
+        eventPhotoURL = json['eventPhotoURL'],
+        venueId = json['venueId'],
+        genres = json['genres'],
+        venue = json['venue'],
+        applicants = json['applicants'],
+        acceptedUid = json['acceptedUid'],
+        confirmed = json['confirmed'];
 }
