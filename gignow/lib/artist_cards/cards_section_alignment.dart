@@ -64,8 +64,17 @@ class _CardsSectionState extends State<CardsSectionAlignment>
     //   cards.add(ProfileCardAlignment(profileIndex));
     //   profileIndex++;
     // }
+
     for (cardsCounter = 0; cardsCounter < 3; cardsCounter++) {
-      cards.add(ProfileCardAlignment(artists[cardsCounter]));
+      if (artists.length != 0) {
+        if (artists.length <= cardsCounter) {
+          cards.add(ProfileCardAlignment(null));
+        } else {
+          cards.add(ProfileCardAlignment(artists[cardsCounter]));
+        }
+      } else {
+        cards.add(ProfileCardAlignment(null));
+      }
     }
 
     frontCardAlign = cardsAlign[2];

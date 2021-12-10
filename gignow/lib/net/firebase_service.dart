@@ -692,6 +692,19 @@ class FirebaseService {
     return returned;
   }
 
+  // Future<List<String>> getConnections() async {
+  //   List<String> returned = [];
+  //   await connections
+  //       .where("users", arrayContains: Global().currentUserModel.uid)
+  //       .get()
+  //       .then((QuerySnapshot querySnapshot) {
+  //     querySnapshot.docs.forEach((doc) {
+  //       for(int i = 0; i < )
+  //     });
+  //   });
+  //   return returned;
+  // }
+
   Future<List<Event>> getAllEventsForVenue(String venueId) async {
     List<Event> returned = [];
     await events
@@ -905,8 +918,26 @@ class FirebaseService {
     return posts;
   }
 
-  Future<List<UserModel>> getArtistAccounts(
-      List<String> genreFilters, double distanceFilter) async {
+  Future<bool> usersAreConnected(String userUid1, String userUid2) async {
+    String potentialComb1 = "${userUid1}_${userUid2}";
+    String potentialComb2 = "${userUid2}_${userUid1}";
+    bool exists = false;
+    await connections.doc(potentialComb1).get().then((doc) {
+      if (doc.exists) {
+        exists = true;
+      }
+    });
+
+    await connections.doc(potentialComb2).get().then((doc) {
+      if (doc.exists) {
+        exists = true;
+      }
+    });
+    return exists;
+  }
+
+  Future<List<UserModel>> getArtistAccounts(List<String> genreFilters,
+      double distanceFilter, List<String> connectionUids) async {
     List<UserModel> artistsCards = new List<UserModel>();
     var result = await users.where("venue", isEqualTo: false).get();
     result.docs.forEach((element) async {
@@ -921,6 +952,9 @@ class FirebaseService {
           socials.addAll({item: x[item]});
         });
       }
+      // print(genreFilters);
+      // print(distanceFilter);
+      bool connected = connectionUids.contains(element.id);
       UserModel card = UserModel(
           element.id,
           element['name'],
@@ -941,7 +975,8 @@ class FirebaseService {
           card.position.longitude);
       for (int i = 0; i < genreFilters.length; i++) {
         if ((card.genres.contains(genreFilters[i]) &&
-            distance <= distanceFilter)) {
+            distance <= distanceFilter &&
+            !connected)) {
           filter = true;
           artistsCards.add(card);
           break;
@@ -1082,6 +1117,22 @@ class FirebaseService {
     var followers =
         await users.where('following', arrayContains: userDoc).get();
     return followers.size;
+  }
+
+  Future<List<String>> getUserConnectionsUids(String curUserUid) async {
+    List<String> connectionUids = [];
+    // var result = await videoPosts.where("user", isEqualTo: userDocRef).get();
+    // result.docs.forEach((element) async {
+    DocumentReference curDocRef = users.doc(curUserUid);
+    var result =
+        await connections.where("users", arrayContains: curDocRef).get();
+    result.docs.forEach((doc) {
+      String id = doc.id;
+      String connectedId = id.replaceAll("_", "");
+      connectedId = connectedId.replaceAll(curUserUid, "");
+      connectionUids.add(connectedId);
+    });
+    return connectionUids;
   }
 
   FirebaseService();

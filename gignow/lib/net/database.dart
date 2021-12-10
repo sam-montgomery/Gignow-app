@@ -69,6 +69,13 @@ class DatabaseMethods {
         .snapshots();
   }
 
+  Future<Stream<QuerySnapshot>> getConnections(String uid) async {
+    return FirebaseFirestore.instance
+        .collection("Connections")
+        .where("users", arrayContains: uid)
+        .snapshots();
+  }
+
   // Future<Stream<QuerySnapshot>> getConnections(String uid) async {
   //   return FirebaseFirestore.instance
   //       .collection("Connections")

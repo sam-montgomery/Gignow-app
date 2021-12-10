@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:gignow/net/globals.dart';
 
 import '../model/user.dart';
 import '../net/firebase_service.dart';
@@ -20,6 +23,23 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
   //final int cardNum;
   _ProfileCardAlignementState();
   FirebaseService firebaseService = FirebaseService();
+
+  // double distance = Geolocator.distanceBetween(
+  //         .position.latitude,
+  //         Global().currentUserModel.position.longitude,
+  //         artist.position.latitude,
+  //         card.position.longitude);
+
+  String getDistance(UserModel artist, UserModel venue) {
+    return (Geolocator.distanceBetween(
+                    artist.position.latitude,
+                    artist.position.longitude,
+                    venue.position.latitude,
+                    venue.position.longitude) /
+                1000)
+            .toStringAsFixed(0) +
+        'km';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +71,10 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("No more artists in search",
+                    Text("No more artists in your current search",
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20.0,
+                            fontSize: 16.0,
                             fontWeight: FontWeight.w700)),
                     Padding(padding: EdgeInsets.only(bottom: 8.0)),
                   ],
@@ -66,6 +86,7 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
   }
 
   Widget artistCard() {
+    UserModel user = Global().currentUserModel;
     UserModel artist = widget.artist;
     return Column(
       children: [
@@ -122,6 +143,10 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
                                         fontWeight: FontWeight.w700)),
                                 Padding(padding: EdgeInsets.only(bottom: 8.0)),
                                 Text(artist.genres,
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(color: Colors.white)),
+                                Padding(padding: EdgeInsets.only(bottom: 8.0)),
+                                Text(getDistance(artist, user),
                                     textAlign: TextAlign.start,
                                     style: TextStyle(color: Colors.white)),
                                 Padding(padding: EdgeInsets.only(bottom: 8.0)),

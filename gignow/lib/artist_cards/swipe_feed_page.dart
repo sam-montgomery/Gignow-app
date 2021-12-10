@@ -1,7 +1,12 @@
+import 'dart:ffi';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/loading.dart';
+import 'package:gignow/ui/navBar/venue_nav_bar.dart';
 import 'package:multi_select_flutter/chip_field/multi_select_chip_field.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import '../constants.dart';
@@ -26,7 +31,7 @@ List<String> genreFilters = [
   "EDM",
   "Orchestra"
 ];
-double distance = 2000000;
+double distance = 2000000000;
 
 class SwipeFeedPage extends StatefulWidget {
   @override
@@ -37,32 +42,69 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
   FirebaseService firebaseService = FirebaseService();
   @override
   Widget build(BuildContext context) {
+    //wrap futurebuilder with anouther futurebuilder
+    // future gets list of userUids that current user is connected to
+    //
+
     return FutureBuilder(
-        future: firebaseService.getArtistAccounts(genreFilters, distance),
-        builder: (builder, snapshot) {
-          if (snapshot.hasData) {
-            List<UserModel> artists = snapshot.data;
-            return Scaffold(
-              appBar: AppBar(
-                elevation: 0.0,
-                centerTitle: true,
-                backgroundColor: Colors.white,
-                leading: IconButton(
-                    onPressed: () {
-                      showFiltersPopUp(context);
-                    },
-                    icon: Icon(Icons.settings, color: Colors.grey)),
-              ),
-              backgroundColor: Colors.white,
-              body: Column(children: <Widget>[
-                CardsSectionAlignment(artists, context),
-              ]),
-            );
+        future: firebaseService
+            .getUserConnectionsUids(FirebaseAuth.instance.currentUser.uid),
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.done) {
+            List<String> connectionUids = snapshot.data;
+            return FutureBuilder(
+                future: firebaseService.getArtistAccounts(
+                    genreFilters, distance, connectionUids),
+                builder: (builder, snapshot) {
+                  if (snapshot.hasData &&
+                      snapshot.connectionState == ConnectionState.done) {
+                    List<UserModel> artists = snapshot.data;
+                    return Scaffold(
+                      appBar: AppBar(
+                        elevation: 0.0,
+                        centerTitle: true,
+                        backgroundColor: Colors.white,
+                        leading: IconButton(
+                            onPressed: () {
+                              showFiltersPopUp(context);
+                            },
+                            icon: Icon(Icons.settings, color: Colors.grey)),
+                      ),
+                      backgroundColor: Colors.white,
+                      body: Column(children: <Widget>[
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              WidgetSpan(
+                                  child: Icon(Icons.arrow_back,
+                                      size: 20, color: Colors.redAccent)),
+                              TextSpan(
+                                  text: "Ignore       ",
+                                  style: TextStyle(color: Colors.red)),
+                              TextSpan(
+                                  text: "       Connect",
+                                  style: TextStyle(color: Colors.greenAccent)),
+                              WidgetSpan(
+                                  child: Icon(Icons.arrow_forward,
+                                      size: 20, color: Colors.greenAccent)),
+                            ],
+                          ),
+                        ),
+                        CardsSectionAlignment(artists, context),
+                      ]),
+                    );
+                  } else {
+                    return Loading();
+                  }
+                });
           } else {
             return Loading();
           }
         });
   }
+
+  double _currentSliderValue = 1000;
 
   Future<String> showFiltersPopUp(BuildContext context) {
     List<String> _genres = [
@@ -85,7 +127,7 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
       "Orchestra"
     ];
 
-    List<String> selectedGenres;
+    List<String> selectedGenres = _genres;
 
     final genreSelector = MultiSelectChipField(
       items: _genres
@@ -103,8 +145,6 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
       },
     );
 
-    double _currentSliderValue = 40;
-
     return showDialog(
         context: context,
         builder: (context) {
@@ -118,7 +158,7 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
                 Slider(
                     value: _currentSliderValue,
                     min: 0,
-                    max: 200,
+                    max: 1000,
                     divisions: 10,
                     label: _currentSliderValue.round().toString() + "km",
                     onChanged: (double value) {
@@ -131,11 +171,11 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
                     elevation: 5.0,
                     child: Text("Ok"),
                     onPressed: () {
-                      genreFilters = selectedGenres;
-                      distance = _currentSliderValue * 1000;
-                      firebaseService.getArtistAccounts(genreFilters, distance);
-                      SwipeFeedPage();
-                      Navigator.of(context).pop();
+                      setState(() {
+                        genreFilters = selectedGenres;
+                        distance = _currentSliderValue * 1000;
+                      });
+                      Navigator.pop(context);
                     })
               ],
             ),
