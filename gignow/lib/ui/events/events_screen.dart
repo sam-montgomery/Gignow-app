@@ -176,7 +176,7 @@ class EventsScreenState extends State<EventsScreen> {
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         SizedBox(height: 45),
         Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             child: Container(
               height: (MediaQuery.of(context).size.height * 0.82),
               alignment: Alignment.center,
@@ -196,12 +196,12 @@ class EventsScreenState extends State<EventsScreen> {
                 ],
                 views: [
                   Container(
-                      color: kButtonBackgroundColour,
+                      color: Colors.white,
                       child: user.venue
                           ? VenuesEventList(user)
                           : ArtistsEventList(user)),
                   Container(
-                      color: kButtonBackgroundColour,
+                      color: Colors.white,
                       child: user.venue
                           ? VenuesUpcomingEventList(user)
                           : ArtistsUpcomingEventList(user)),

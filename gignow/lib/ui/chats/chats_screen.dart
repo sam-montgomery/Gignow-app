@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gignow/constants.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/net/database.dart';
 import 'package:gignow/net/firebase_service.dart';
@@ -120,9 +121,9 @@ class ChatScreenState extends State<ChatsScreen> {
           appBar: AppBar(
             title: Text(
               "Chats",
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.white),
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: kButtonBackgroundColour,
             centerTitle: true,
           ),
           body: Container(
