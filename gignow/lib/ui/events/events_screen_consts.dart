@@ -702,10 +702,7 @@ Container generateOpenEventTile(
                             )),
                       ],
                     )
-                  : SizedBox(width: 10),
-              SizedBox(
-                width: 10,
-              )
+                  : SizedBox(width: 0),
             ],
           ),
         ),
