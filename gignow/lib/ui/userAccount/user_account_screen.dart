@@ -16,7 +16,6 @@ import 'package:gignow/widgets/video_post_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:gignow/widgets/user_posts_grid.dart';
 
-//Profile UI https://medium.com/@palmeiro.leonardo/simple-profile-screen-with-flutter-fe2f1f7cfaf5
 class UserAccountScreen extends StatefulWidget {
   final UserModel profile;
   UserAccountScreen(this.profile);
