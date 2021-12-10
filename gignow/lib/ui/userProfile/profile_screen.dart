@@ -49,6 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         title: Text(
           handle,
+          key: ValueKey('UserProfileHandleText'),
           style: TextStyle(fontSize: 15, color: Colors.grey),
         ),
       ),
@@ -87,6 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Column(
                       children: [
                         Text("${widget.profile.followers}",
+                            key: ValueKey("FollowerCountText"),
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold)),
                         Text("Followers"),
@@ -155,6 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Column(
                 children: [
                   IconButton(
+                      key: ValueKey("FollowUnfollowBtn"),
                       icon: Icon(
                           widget.isFollowing
                               ? Icons.person_remove_alt_1_rounded
@@ -171,7 +174,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         });
                         firebaseService.followUnfollowUser(widget.profile.uid);
                       }),
-                  Text(widget.isFollowing ? "Unfollow" : "Follow")
+                  Text(
+                    widget.isFollowing ? "Unfollow" : "Follow",
+                    key: ValueKey("FollowUnfollowBtnText"),
+                  )
                 ],
               ),
             ],

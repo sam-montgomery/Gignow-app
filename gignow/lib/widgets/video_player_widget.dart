@@ -277,6 +277,7 @@ class __VideoOverlayState extends State<_VideoOverlay> {
                             width: 10,
                           ),
                           GestureDetector(
+                            key: ValueKey("UserVideoProfileBtn"),
                             onTap: () {
                               Navigator.pushAndRemoveUntil(
                                   context,
@@ -304,6 +305,7 @@ class __VideoOverlayState extends State<_VideoOverlay> {
                             width: 10,
                           ),
                           Text(widget.user.handle,
+                              key: ValueKey("UserVideoHandle"),
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,

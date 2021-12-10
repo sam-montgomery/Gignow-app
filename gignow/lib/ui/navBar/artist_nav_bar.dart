@@ -26,8 +26,10 @@ class _ANavBarState extends State<ArtistNavbar> {
   Widget build(BuildContext context) {
     int _currentIndex = widget.prev;
     final tabs = [
-      Center(child: VideoPostList()),
-      Center(child: _firebaseService.getEventsPage(auth.currentUser.uid)),
+      Center(key: ValueKey("ArtistHomeFeed"), child: VideoPostList()),
+      Center(
+          key: ValueKey("EventsPage"),
+          child: _firebaseService.getEventsPage(auth.currentUser.uid)),
       Center(child: PostForm()),
       Center(child: _firebaseService.getChatsScreenView(auth.currentUser.uid)),
       Center(child: _firebaseService.getFirstView(auth.currentUser.uid))
@@ -39,23 +41,29 @@ class _ANavBarState extends State<ArtistNavbar> {
           type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.home),
+              icon: Icon(
+                CupertinoIcons.home,
+                key: ValueKey("NavBarHomeBtn"),
+              ),
               label: ("Home"),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_rounded),
+              icon: Icon(Icons.calendar_today_rounded,
+                  key: ValueKey("NavBarEventsBtn")),
               label: ("Events"),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.add),
+              icon: Icon(Icons.add, key: ValueKey("NavBarPostBtn")),
               label: ("New Post"),
             ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.chat_bubble),
+              icon: Icon(CupertinoIcons.chat_bubble,
+                  key: ValueKey("NavBarChatBtn")),
               label: ("Chats"),
             ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.profile_circled),
+              icon: Icon(CupertinoIcons.profile_circled,
+                  key: ValueKey("NavBarProfileBtn")),
               label: ("Profile"),
             )
           ],

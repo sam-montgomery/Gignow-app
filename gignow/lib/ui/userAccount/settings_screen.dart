@@ -37,6 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           Card(
             child: ListTile(
+                key: ValueKey("LogoutBtn"),
                 title: Text("Logout"),
                 onTap: () {
                   auth.signOut();

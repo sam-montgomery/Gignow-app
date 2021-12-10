@@ -37,6 +37,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
     );
 
     final email = TextFormField(
+      key: ValueKey("emailField"),
       controller: _emailField,
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
@@ -59,6 +60,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
         style: TextStyle(backgroundColor: kErrorColor, color: Colors.white));
 
     final password = TextFormField(
+      key: ValueKey("passwordField"),
       controller: _passwordField,
       autofocus: false,
       obscureText: true,
@@ -72,6 +74,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
     );
 
     final registerPassword = TextFormField(
+        key: ValueKey("registerPasswordField"),
         controller: _registerPasswordField,
         autofocus: false,
         obscureText: true,
@@ -91,6 +94,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
         ]));
 
     final loginButton = FormButton(
+        key: ValueKey("loginButton"),
         press: () async {
           try {
             bool loginSuccess = await context
@@ -112,6 +116,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
         text: "Log In");
 
     final registerButton = FormButton(
+        key: ValueKey("RegisterBtn"),
         press: () async {
           try {
             String registerResult = await context
@@ -144,6 +149,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
     );
 
     final registerLabel = FlatButton(
+      key: ValueKey("OpenRegisterBtn"),
       child: Text(
         'No Account? Register',
         style: TextStyle(color: kHintColor),

@@ -323,6 +323,8 @@ PODS:
   - GTMSessionFetcher/Core (1.5.0)
   - image_picker (0.0.1):
     - Flutter
+  - integration_test (0.0.1):
+    - Flutter
   - leveldb-library (1.22.1)
   - libwebp (1.2.1):
     - libwebp/demux (= 1.2.1)
@@ -348,8 +350,6 @@ PODS:
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
-  - thumbnails (0.0.1):
-    - Flutter
   - url_launcher (0.0.1):
     - Flutter
   - video_compress (0.3.0):
@@ -370,11 +370,11 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
-  - thumbnails (from `.symlinks/plugins/thumbnails/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
   - video_compress (from `.symlinks/plugins/video_compress/ios`)
   - video_player (from `.symlinks/plugins/video_player/ios`)
@@ -417,6 +417,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   permission_handler:
@@ -425,8 +427,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
-  thumbnails:
-    :path: ".symlinks/plugins/thumbnails/ios"
   url_launcher:
     :path: ".symlinks/plugins/url_launcher/ios"
   video_compress:
@@ -460,6 +460,7 @@ SPEC CHECKSUMS:
   gRPC-Core: 4afa11bfbedf7cdecd04de535a9e046893404ed5
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   image_picker: 50e7c7ff960e5f58faa4d1f4af84a771c671bc4a
+  integration_test: 7db6d89f336f671dcbc7563ee27a5b08f6f8aee1
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
@@ -468,7 +469,6 @@ SPEC CHECKSUMS:
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
-  thumbnails: bb4f4e9bb4b51c8ae4e6ad9a2fa81373f9b634ad
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   video_compress: fce97e4fb1dfd88175aa07d2ffc8a2f297f87fbe
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e

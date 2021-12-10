@@ -191,6 +191,7 @@ class CreateProfileScreenState extends State<CreateProfileScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           SizedBox(height: 15),
           Row(
+            key: ValueKey('AccountTypeSelectionRow'),
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[

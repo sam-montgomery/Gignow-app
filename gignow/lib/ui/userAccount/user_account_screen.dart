@@ -102,6 +102,7 @@ class UserAccountScreenState extends State<UserAccountScreen> {
               Column(
                 children: [
                   IconButton(
+                      key: ValueKey("ProfileSettingsBtn"),
                       icon: Icon(
                         Icons.settings,
                         color: Colors.grey,

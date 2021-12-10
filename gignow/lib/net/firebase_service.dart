@@ -892,8 +892,9 @@ class FirebaseService {
                   element['postDate'],
                   element['postDescription'],
                   element['videoURL'],
-                  element['thumbnailURL'] ??
-                      "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
+                  element.data().containsKey('thumbnailURL')
+                      ? element['thumbnailURL']
+                      : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
               posts.add(post);
             }
           }
