@@ -20,18 +20,65 @@ void main() {
 
   tearDown(() {});
   test("Test Create Account", () async {
-    // when(_auth.createUserWithEmailAndPassword(
-    //         email: "createaccount1@test.com", password: "123456"))
-    //     .thenAnswer((realInvocation) => null);
+    when(_auth.createUserWithEmailAndPassword(
+            email: "createaccount1@test.com", password: "123456"))
+        .thenAnswer((realInvocation) => null);
 
     expect(
         await authenticationService.signUp(
             email: "createaccount1test.com", password: "123456"),
         'Success');
+  });
+
+  test("Email already exists Test", () async {
+    when(_auth.createUserWithEmailAndPassword(
+            email: "createaccount1@test.com", password: "12345678"))
+        .thenAnswer((realInvocation) => throw FirebaseAuthException(
+            code: "email-already-in-use",
+            message:
+                "The email address is already in use by another account."));
+
     expect(
         await authenticationService.signUp(
+            email: "createaccount1@test.com", password: "12345678"),
+        "The email address is already in use by another account.");
+  });
+
+  test("Create Account w/ invalid Email Test", () async {
+    when(_auth.createUserWithEmailAndPassword(
+            email: "testcom", password: "123456"))
+        .thenAnswer((realInvocation) => throw FirebaseAuthException(
+            code: "invalid-email",
+            message: "The email address is badly formatted."));
+
+    expect(
+        await authenticationService.signUp(
+            email: "testcom", password: "123456"),
+        "The email address is badly formatted.");
+  });
+
+  test("Login w/ valid details", () async {
+    when(_auth.signInWithEmailAndPassword(
+            email: "createaccount1@test.com", password: "123456"))
+        .thenAnswer((realInvocation) => null);
+
+    expect(
+        await authenticationService.signIn(
             email: "createaccount1@test.com", password: "123456"),
-        'Success');
+        true);
+  });
+
+  test("Login w/ incorrect password", () async {
+    when(_auth.signInWithEmailAndPassword(
+            email: "createaccount1@test.com", password: "1234567"))
+        .thenAnswer((realInvocation) => throw FirebaseAuthException(
+            code: "wrong-password",
+            message:
+                "The password is invalid or the user does not have a password."));
+    expect(
+        await authenticationService.signIn(
+            email: "createaccount1@test.com", password: "1234567"),
+        false);
   });
 }
 

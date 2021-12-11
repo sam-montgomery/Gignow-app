@@ -29,13 +29,11 @@ class AuthenticationService {
       return true;
     } on FirebaseAuthException catch (error) {
       errorMessage = error.message;
+      // if (errorMessage != null) {
+      //   print(Future.error(errorMessage));
+      // }
+      return false;
     }
-
-    if (errorMessage != null) {
-      print(Future.error(errorMessage));
-    }
-
-    return false;
   }
 
   /// There are a lot of different ways on how you can do exception handling.
