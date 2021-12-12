@@ -41,6 +41,7 @@ class UserAccountScreenState extends State<UserAccountScreen> {
           Center(
               child: Text(
             handle,
+            key: ValueKey("UserAccountHandleText"),
             style: TextStyle(fontSize: 15, color: Colors.grey),
           )),
           Container(

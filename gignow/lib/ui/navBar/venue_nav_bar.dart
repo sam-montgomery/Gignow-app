@@ -26,7 +26,7 @@ class _VNavBarState extends State<VenueNavbar> {
   Widget build(BuildContext context) {
     int _currentIndex = widget.prev;
     final tabs = [
-      Center(child: SwipeFeedPage()),
+      Center(key: ValueKey("DiscoverSwipeFeedPage"), child: SwipeFeedPage()),
       Center(child: VideoPostList()),
       Center(child: _firebaseService.getEventsPage(auth.currentUser.uid)),
       Center(child: _firebaseService.getChatsScreenView(auth.currentUser.uid)),
@@ -55,7 +55,8 @@ class _VNavBarState extends State<VenueNavbar> {
               label: ("Chats"),
             ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.profile_circled),
+              icon: Icon(CupertinoIcons.profile_circled,
+                  key: ValueKey("VenueNavBarProfileBtn")),
               label: ("Profile"),
             )
           ],

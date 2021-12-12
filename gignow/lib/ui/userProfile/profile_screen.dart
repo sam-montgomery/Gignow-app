@@ -40,6 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
+          key: ValueKey("ProfileScreenBackBtn"),
           onPressed: () {
             Navigator.pushNamed(context, '/');
           },

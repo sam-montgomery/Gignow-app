@@ -22,7 +22,7 @@ void main() {
   // FirebaseAuth _auth = FirebaseAuth.instance;
 
   // AuthenticationService authenticationService = AuthenticationService(_auth);
-  group('Login Tests', () {
+  group('Artist Login Tests', () {
     final emailField = find.byValueKey('emailField');
     final passwordField = find.byValueKey('passwordField');
     final regPasswordField = find.byValueKey('registerPasswordField');
@@ -43,6 +43,13 @@ void main() {
     final profileNavBarBtn = find.byValueKey("NavBarProfileBtn");
     final profileSettingsBtn = find.byValueKey("ProfileSettingsBtn");
     final settingsLogoutBtn = find.byValueKey("LogoutBtn");
+    final userAccountHandle = find.byValueKey("UserAccountHandleText");
+
+    test("Correct Account shown on Profile Page", () async {
+      await driver.tap(profileNavBarBtn);
+      final userAccountHandleText = await driver.getText(userAccountHandle);
+      expect(userAccountHandleText, "@McFly");
+    });
 
     // RUN THESE TESTS LAST AS PROFILE CANNOT BE CREATED AS CANT UPLOAD IMAGE
     // AND NEEDS LOGGED IN FOR OTHER TESTS
@@ -72,6 +79,7 @@ void main() {
     // });
   });
   group('Video/Profile Tests', () {
+    final navBarHomeBtn = find.byValueKey("NavBarHomeBtn");
     final userVidProfileBtn = find.byValueKey('UserVideoProfileBtn');
     final userVidHandle = find.byValueKey('UserVideoHandle');
     final userProfileFollowerCount = find.byValueKey('FollowerCountText');
@@ -79,6 +87,7 @@ void main() {
     final userProfileHandle = find.byValueKey('UserProfileHandleText');
     final followUnfollowBtnText = find.byValueKey('FollowUnfollowBtnText');
     test('User Profile Loaded w/ correct Handle', () async {
+      await driver.tap(navBarHomeBtn);
       final vidHandle = await driver.getText(userVidHandle);
       await driver.tap(userVidProfileBtn);
       final profileHandle = await driver.getText(userProfileHandle);
@@ -95,6 +104,8 @@ void main() {
       // var finalFollowerCount = await driver.getText(userProfileFollowerCount);
       // var finalFollowerCount =
       //     await driver.getText(find.byValueKey('FollowerCountText'));
+      var finalFollowerCount =
+          await driver.getText(find.byValueKey('FollowerCountText'));
       var finalFollowUnfollowBtnText =
           await driver.getText(followUnfollowBtnText);
       if (initialFollowUnfollowBtnText == "Follow") {
@@ -103,8 +114,8 @@ void main() {
         assert(finalFollowUnfollowBtnText == "Follow");
       }
 
-      // assert(int.parse(finalFollowerCount) ==
-      //     (int.parse(initialFollowerCount) + 1));
+      assert(int.parse(finalFollowerCount) ==
+          (int.parse(initialFollowerCount) + 1));
     });
 
     test('Unfollow Button Increments Follower Count & Button Text Changed',
@@ -128,11 +139,75 @@ void main() {
     });
   });
 
-  // test('Successful Sign In', () async {
-  //   await driver.tap(button);
-  //   expect(1, 1);
-  //   // bool loginResult = await authenticationService.signIn(
-  //   //     email: "test@test.com", password: "123456");
-  //   // expect(loginResult, true);
-  // });
+  void logout(bool isArtist) async {
+    final profileNavBarBtn = isArtist
+        ? find.byValueKey("NavBarProfileBtn")
+        : find.byValueKey("VenueNavBarProfileBtn");
+    final profileSettingsBtn = find.byValueKey("ProfileSettingsBtn");
+    final settingsLogoutBtn = find.byValueKey("LogoutBtn");
+
+    await driver.tap(profileNavBarBtn);
+    await driver.tap(profileSettingsBtn);
+    await driver.tap(settingsLogoutBtn);
+  }
+
+  group("Logout Tests", () {
+    final profileBackBtn = find.byValueKey("ProfileScreenBackBtn");
+    final loginButton = find.byValueKey('loginButton');
+    test('Login Screen opened on Logout', () async {
+      await driver.tap(profileBackBtn);
+      await logout(true);
+      await driver.waitFor(loginButton);
+      assert(loginButton != null);
+    });
+  });
+
+  group("Venue Login Tests", () {
+    final emailField = find.byValueKey('emailField');
+    final passwordField = find.byValueKey('passwordField');
+    final regPasswordField = find.byValueKey('registerPasswordField');
+    final loginButton = find.byValueKey('loginButton');
+    final discoverPage = find.byValueKey("DiscoverSwipeFeedPage");
+    test("Discover Page loaded on venue login", () async {
+      await driver.tap(emailField);
+      await driver.enterText("bcctest@test.com"); //venue account
+      await driver.tap(passwordField);
+      await driver.enterText("123456");
+      await driver.tap(loginButton);
+      await driver.waitFor(discoverPage);
+      assert(discoverPage != null);
+    });
+
+    final venueProfileNavBarBtn = find.byValueKey("VenueNavBarProfileBtn");
+    final profileSettingsBtn = find.byValueKey("ProfileSettingsBtn");
+    final settingsLogoutBtn = find.byValueKey("LogoutBtn");
+    final userAccountHandle = find.byValueKey("UserAccountHandleText");
+
+    test("Correct Account shown on Profile Page", () async {
+      await driver.tap(venueProfileNavBarBtn);
+      final userAccountHandleText = await driver.getText(userAccountHandle);
+      expect(userAccountHandleText, "@BelfastCC");
+    });
+  });
+
+  group("Register Tests", () {
+    final emailField = find.byValueKey('emailField');
+    final regPasswordField = find.byValueKey('registerPasswordField');
+    final registerBtn = find.byValueKey("RegisterBtn");
+    final openRegisterBtn = find.byValueKey("OpenRegisterBtn");
+    final createProfileAccountTypeSelection =
+        find.byValueKey("AccountTypeSelectionRow");
+    test('Create Profile Screen Loaded on Register', () async {
+      await logout(false);
+      await driver.tap(openRegisterBtn);
+      await driver.tap(emailField);
+      await driver.enterText("testingreg@test.com");
+      await driver.tap(regPasswordField);
+      await driver.enterText("123456");
+      await driver.tap(registerBtn);
+      await driver.waitFor(createProfileAccountTypeSelection);
+
+      assert(createProfileAccountTypeSelection != null);
+    });
+  });
 }
