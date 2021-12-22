@@ -27,9 +27,12 @@ import '../model/user.dart';
 import 'database.dart';
 
 class FirebaseService {
-  final firestoreInstance = FirebaseFirestore.instance;
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestoreInstance;
+  // final firestoreInstance = FirebaseFirestore.instance;
+  // final FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseAuth auth;
   CollectionReference users = FirebaseFirestore.instance.collection('Users');
+
   CollectionReference videoPosts =
       FirebaseFirestore.instance.collection('VideoPosts');
   CollectionReference events = FirebaseFirestore.instance.collection('Events');
@@ -1135,5 +1138,14 @@ class FirebaseService {
     return connectionUids;
   }
 
-  FirebaseService();
+  FirebaseService() {
+    this.firestoreInstance = FirebaseFirestore.instance;
+    this.auth = FirebaseAuth.instance;
+  }
+
+  FirebaseService.withInstance(
+      FirebaseFirestore firestoreInstance, FirebaseAuth authInstance) {
+    this.firestoreInstance = firestoreInstance;
+    this.auth = authInstance;
+  }
 }

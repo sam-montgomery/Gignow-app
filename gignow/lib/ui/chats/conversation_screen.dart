@@ -47,6 +47,7 @@ class ConversationScreenState extends State<ConversationScreen> {
     if (messageTextEditingController != "") {
       String message = messageTextEditingController.text;
       var lastMessageTimeStamp = DateTime.now();
+      messageTextEditingController.text = "";
 
       Map<String, dynamic> messageInfoMap = {
         "message": message,
@@ -66,7 +67,6 @@ class ConversationScreenState extends State<ConversationScreen> {
           "lastMessageSentTimeStamp": lastMessageTimeStamp,
           "lastMessageSentBy": myUID
         };
-        messageTextEditingController.text = "";
       });
     }
   }

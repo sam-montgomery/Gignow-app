@@ -51,6 +51,7 @@ dependencies:
   cached_network_image: ^3.1.0
   tiktoklikescroller: ^0.1.8
   sortedmap: ^0.5.1
+  
 
 # dependency_overrides:
 #   geolocator: 7.6.2
