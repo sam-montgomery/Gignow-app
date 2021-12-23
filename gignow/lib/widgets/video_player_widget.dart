@@ -316,6 +316,7 @@ class __VideoOverlayState extends State<_VideoOverlay> {
                         //mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           MaterialButton(
+                            key: ValueKey("likeUnlikeBtn"),
                             shape: CircleBorder(),
                             onPressed: () async {
                               // setState(() {
@@ -334,6 +335,7 @@ class __VideoOverlayState extends State<_VideoOverlay> {
                                 color: likeColor, size: playerWidth * 0.08),
                           ),
                           Text("${numLikes.toString()}",
+                              key: ValueKey("NumLikesTxt"),
                               style: TextStyle(
                                 color: Colors.white,
                               )),
@@ -359,6 +361,7 @@ class __VideoOverlayState extends State<_VideoOverlay> {
                         width: 10,
                       ),
                       Text(widget.videoPost.postDescription,
+                          key: ValueKey("UserVideoDesc"),
                           textAlign: TextAlign.left,
                           style: TextStyle(color: Colors.white)),
                     ],

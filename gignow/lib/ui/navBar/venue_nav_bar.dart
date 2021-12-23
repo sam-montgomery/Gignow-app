@@ -51,7 +51,8 @@ class _VNavBarState extends State<VenueNavbar> {
               label: ("Events"),
             ),
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.chat_bubble),
+              icon: Icon(CupertinoIcons.chat_bubble,
+                  key: ValueKey("VenueNavBarChatBtn")),
               label: ("Chats"),
             ),
             BottomNavigationBarItem(

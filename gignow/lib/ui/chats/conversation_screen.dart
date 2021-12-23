@@ -428,6 +428,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                   children: [
                     Expanded(
                         child: TextField(
+                      key: ValueKey("MessageField"),
                       controller: messageTextEditingController,
                       decoration: InputDecoration(
                           border: InputBorder.none,
@@ -435,6 +436,7 @@ class ConversationScreenState extends State<ConversationScreen> {
                           hintStyle: TextStyle(fontWeight: FontWeight.w400)),
                     )),
                     GestureDetector(
+                        key: ValueKey("SendBtn"),
                         onTap: () {
                           addMessage();
                           messageTextEditingController.text = "";

@@ -130,6 +130,7 @@ class ChatScreenState extends State<ChatsScreen> {
               margin: EdgeInsets.symmetric(horizontal: 20),
               child: Expanded(
                 child: ListView(
+                  key: ValueKey("ChatScreenConnectionsList"),
                   shrinkWrap: true,
                   children: [
                     Row(

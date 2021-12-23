@@ -13,7 +13,8 @@ class ProfileCardAlignment extends StatefulWidget {
   //final int cardNum;
   bool isCard = true;
   UserModel artist;
-  ProfileCardAlignment(this.artist);
+  int cardIndex;
+  ProfileCardAlignment(this.artist, this.cardIndex);
   ProfileCardAlignment.emptyCard();
   @override
   _ProfileCardAlignementState createState() => _ProfileCardAlignementState();
@@ -137,6 +138,8 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(artist.name,
+                                    key: ValueKey(
+                                        "ArtistCardNameTxt${widget.cardIndex}"),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20.0,

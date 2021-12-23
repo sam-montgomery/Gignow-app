@@ -17,8 +17,6 @@ void main() {
     }
   });
 
-  final button = find.byType('FloatingActionButton');
-
   // FirebaseAuth _auth = FirebaseAuth.instance;
 
   // AuthenticationService authenticationService = AuthenticationService(_auth);
@@ -118,7 +116,7 @@ void main() {
           (int.parse(initialFollowerCount) + 1));
     });
 
-    test('Unfollow Button Increments Follower Count & Button Text Changed',
+    test('Unfollow Button Decrements Follower Count & Button Text Changed',
         () async {
       var initialFollowUnfollowBtnText =
           await driver.getText(followUnfollowBtnText);

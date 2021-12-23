@@ -47,6 +47,7 @@ class ChatRoomListTileState extends State<ChatRoomListTile> {
           ? Padding(
               padding: const EdgeInsets.all(6.0),
               child: GestureDetector(
+                key: ValueKey("OpenConversationBtn"),
                 onTap: () {
                   Navigator.push(
                       context,

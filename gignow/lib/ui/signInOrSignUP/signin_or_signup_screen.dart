@@ -166,6 +166,7 @@ class SignInOrSignUpState extends State<SignInOrSignUp> {
     );
 
     final signInLabel = FlatButton(
+      key: ValueKey("OpenLoginBtn"),
       child: Text(
         'Already Registered? Sign In',
         style: TextStyle(color: kHintColor),
