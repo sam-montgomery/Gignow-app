@@ -74,13 +74,14 @@ class VideoRankingService {
     Map userGenreScores = await getUserGenreScores(likerUid);
     await videoPosts.get().then((QuerySnapshot querySnapshot) async {
       querySnapshot.docs.forEach((post) {
+        Map<String, dynamic> dataMap = post.data as Map<String, dynamic>;
         VideoPost vPost = VideoPost(
             post.id,
             post['user'].id,
             post['postDate'],
             post['postDescription'],
             post['videoURL'],
-            post.data().containsKey('thumbnailURL')
+            dataMap.containsKey('thumbnailURL')
                 ? post['thumbnailURL']
                 : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
         List<dynamic> postGenres = post['genres'];
@@ -165,14 +166,14 @@ class VideoRankingService {
     var vidUser = users.doc(post.userUID);
     List<String> vidGenres = [];
     await vidUser.get().then((vUser) {
-      String strGenres = vUser.data()['genres'];
+      String strGenres = vUser['genres'];
       vidGenres = strGenres.split(",");
     });
 
     var likerUser = users.doc(likerUid);
     Map<String, dynamic> genreScores = new Map<String, dynamic>();
     await likerUser.get().then((lUser) {
-      genreScores = lUser.data()['genreScores'];
+      genreScores = lUser['genreScores'];
     });
     vidGenres.forEach((genre) {
       genreScores[genre] += 1;

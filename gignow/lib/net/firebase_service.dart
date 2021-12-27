@@ -31,13 +31,16 @@ class FirebaseService {
   // final firestoreInstance = FirebaseFirestore.instance;
   // final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseAuth auth;
-  CollectionReference users = FirebaseFirestore.instance.collection('Users');
-
-  CollectionReference videoPosts =
-      FirebaseFirestore.instance.collection('VideoPosts');
-  CollectionReference events = FirebaseFirestore.instance.collection('Events');
-  CollectionReference connections =
-      FirebaseFirestore.instance.collection('Connections');
+  CollectionReference users;
+  // CollectionReference users = FirebaseFirestore.instance.collection('Users');
+  CollectionReference videoPosts;
+  // CollectionReference videoPosts =
+  //     FirebaseFirestore.instance.collection('VideoPosts');
+  CollectionReference events;
+  // CollectionReference events = FirebaseFirestore.instance.collection('Events');
+  CollectionReference connections;
+  // CollectionReference connections =
+  // FirebaseFirestore.instance.collection('Connections');
 
   Future<String> getProfilePicURL(String userUid) async {
     DocumentReference docRef = users.doc(userUid);
@@ -66,8 +69,9 @@ class FirebaseService {
     await updateProfileLocation(userUid);
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
+        Map<String, dynamic> dataMap = snapshot.data as Map<String, dynamic>;
         Map<String, String> socials = new Map<String, String>();
-        if (snapshot.data().containsKey("socials")) {
+        if (dataMap.containsKey("socials")) {
           var x = snapshot.get('socials');
           x.keys.forEach((item) {
             // print(item);
@@ -98,8 +102,9 @@ class FirebaseService {
     UserModel user;
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
+        Map<String, dynamic> dataMap = snapshot.data as Map<String, dynamic>;
         Map<String, String> socials = new Map<String, String>();
-        if (snapshot.data().containsKey("socials")) {
+        if (dataMap.containsKey("socials")) {
           var x = snapshot.get('socials');
           x.keys.forEach((item) {
             print(item);
@@ -260,6 +265,24 @@ class FirebaseService {
     updateProfileLocation(auth.currentUser.uid);
   }
 
+  void createProfileNoContext(String name, String phone, String handle,
+      String genres, String profilePictureUrl, bool venue) {
+    final user = auth.currentUser;
+    Map<String, int> genreScores = VideoRankingService().emptyGenreScores();
+    firestoreInstance.collection("Users").doc(auth.currentUser.uid).set({
+      "userUid": user.uid,
+      "name": name,
+      "phoneNumber": phone,
+      "handle": handle,
+      "genres": genres,
+      "profile_picture_url": profilePictureUrl,
+      "venue": venue,
+      "followers": 0,
+      "following": [],
+      "genreScores": genreScores
+    });
+  }
+
   void updateProfileLocation(String userUid) async {
     Position userPos = await determinePosition();
     double longitude = userPos.longitude;
@@ -341,7 +364,7 @@ class FirebaseService {
         .get();
 
     await users.doc(user.uid).get().then((curUser) {
-      var curUserFollowing = curUser.data()['following'];
+      var curUserFollowing = curUser['following'];
       if (curUserFollowing != null) {
         if (curUserFollowing.contains(users.doc(videoPost.userUID))) {
           isFollowing = true;
@@ -493,7 +516,8 @@ class FirebaseService {
     List<VideoPost> posts = new List<VideoPost>();
     var result = await videoPosts.get();
     result.docs.forEach((element) async {
-      if (element.data().containsKey('videoURL')) {
+      Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
+      if (dataMap.containsKey('videoURL')) {
         DocumentReference ref = element['user'];
         String userUid = ref.id;
 
@@ -503,7 +527,7 @@ class FirebaseService {
             element['postDate'],
             element['postDescription'],
             element['videoURL'],
-            element.data().containsKey('thumbnailURL')
+            dataMap.containsKey('thumbnailURL')
                 ? element['thumbnailURL']
                 : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
         posts.add(post);
@@ -516,16 +540,18 @@ class FirebaseService {
     List<VideoPostWidget> posts = new List<VideoPostWidget>();
     var result = await videoPosts.get();
     result.docs.forEach((element) async {
-      if (element.data().containsKey('videoURL')) {
+      Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
+      if (dataMap.containsKey('videoURL')) {
         DocumentReference ref = element['user'];
         String userUid = ref.id;
+
         VideoPost post = VideoPost(
             element.id,
             userUid,
             element['postDate'],
             element['postDescription'],
             element['videoURL'],
-            element.data().containsKey('thumbnailURL')
+            dataMap.containsKey('thumbnailURL')
                 ? element['thumbnailURL']
                 : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
         VideoPostWidget postWidget = VideoPostWidget(post);
@@ -537,28 +563,29 @@ class FirebaseService {
 
   Future<Event> getEvent(String eventId) async {
     await events.doc(eventId).get().then((value) {
+      Map<String, dynamic> dataMap = value.data as Map<String, dynamic>;
       List<String> applicants;
       String acceptedUid;
       bool confirmed;
       try {
-        applicants = value.data()['applicants'].split(',') ?? null;
+        applicants = dataMap['applicants'].split(',') ?? null;
       } on Error catch (_) {}
       try {
-        acceptedUid = value.data()['acceptedUid'] ?? null;
+        acceptedUid = dataMap['acceptedUid'] ?? null;
       } on Error catch (_) {}
       try {
-        confirmed = value.data()['confirmed'] ?? false;
+        confirmed = dataMap['confirmed'] ?? false;
       } on Error catch (_) {}
 
       Event event = Event(
-          value.data()['eventId'],
-          value.data()['eventName'],
-          DateTime.parse(value.data()['eventStartTime']),
-          parseDuration(value.data()['eventDuration']),
-          value.data()['eventPhotoURL'],
-          value.data()['venueId'],
-          value.data()['genres'],
-          value.data()['venue'],
+          dataMap['eventId'],
+          dataMap['eventName'],
+          DateTime.parse(dataMap['eventStartTime']),
+          parseDuration(dataMap['eventDuration']),
+          dataMap['eventPhotoURL'],
+          dataMap['venueId'],
+          dataMap['genres'],
+          dataMap['venue'],
           applicants,
           acceptedUid,
           confirmed);
@@ -868,7 +895,8 @@ class FirebaseService {
     DocumentReference userDocRef = users.doc(uid);
     var result = await videoPosts.where("user", isEqualTo: userDocRef).get();
     result.docs.forEach((element) async {
-      if (element.data().containsKey('videoURL')) {
+      Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
+      if (dataMap.containsKey('videoURL')) {
         DocumentReference ref = element['user'];
         String userUid = ref.id;
         VideoPost post = VideoPost(
@@ -877,7 +905,7 @@ class FirebaseService {
             element['postDate'],
             element['postDescription'],
             element['videoURL'],
-            element.data().containsKey('thumbnailURL')
+            dataMap.containsKey('thumbnailURL')
                 ? element['thumbnailURL']
                 : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
         posts.add(post);
@@ -898,7 +926,8 @@ class FirebaseService {
         doc = snapshot.data();
         following = doc['following'];
         result.docs.forEach((element) async {
-          if (element.data().containsKey('videoURL')) {
+          Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
+          if (dataMap.containsKey('videoURL')) {
             DocumentReference ref = element['user'];
             String userUid = ref.id;
             if (following != null && following.contains(ref)) {
@@ -908,7 +937,7 @@ class FirebaseService {
                   element['postDate'],
                   element['postDescription'],
                   element['videoURL'],
-                  element.data().containsKey('thumbnailURL')
+                  dataMap.containsKey('thumbnailURL')
                       ? element['thumbnailURL']
                       : "https://cdn.shopify.com/s/files/1/2018/8867/files/play-button.png");
               posts.add(post);
@@ -946,8 +975,9 @@ class FirebaseService {
     result.docs.forEach((element) async {
       // DocumentReference ref = element['user'];
       // String userUid = ref.id;
+      Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
       Map<String, String> socials = new Map<String, String>();
-      if (element.data().containsKey("socials")) {
+      if (dataMap.containsKey("socials")) {
         var x = element.get('socials');
         x.keys.forEach((item) {
           // print(item);
@@ -1052,7 +1082,7 @@ class FirebaseService {
     DocumentReference currentUserDoc = users.doc(auth.currentUser.uid);
     DocumentReference followedUserDoc = users.doc(followedUserUid);
     await currentUserDoc.get().then((currentUser) async {
-      var currentUserFollowing = currentUser.data()['following'];
+      var currentUserFollowing = currentUser['following'];
       try {
         if (currentUserFollowing != null) {
           if (currentUserFollowing.contains(followedUserDoc)) {
@@ -1076,7 +1106,7 @@ class FirebaseService {
     });
     followedUserDoc.update({"followers": FieldValue.increment(1)});
     await followedUserDoc.get().then((res) {
-      var followedUserFollowing = res.data()['following'];
+      var followedUserFollowing = res['following'];
       try {
         if (followedUserFollowing != null) {
           if (followedUserFollowing.contains(currentUserDoc)) {
@@ -1138,14 +1168,26 @@ class FirebaseService {
     return connectionUids;
   }
 
+  String test() {
+    return auth.currentUser.uid;
+  }
+
   FirebaseService() {
     this.firestoreInstance = FirebaseFirestore.instance;
     this.auth = FirebaseAuth.instance;
+    this.users = firestoreInstance.collection('Users');
+    this.videoPosts = firestoreInstance.collection('VideoPosts');
+    this.events = firestoreInstance.collection('Events');
+    this.connections = firestoreInstance.collection('Connections');
   }
 
   FirebaseService.withInstance(
       FirebaseFirestore firestoreInstance, FirebaseAuth authInstance) {
     this.firestoreInstance = firestoreInstance;
     this.auth = authInstance;
+    this.users = firestoreInstance.collection('Users');
+    this.videoPosts = firestoreInstance.collection('VideoPosts');
+    this.events = firestoreInstance.collection('Events');
+    this.connections = firestoreInstance.collection('Connections');
   }
 }
