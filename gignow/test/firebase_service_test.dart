@@ -3,6 +3,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:gignow/model/user.dart';
 import 'package:gignow/net/authentication_service.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:mockito/mockito.dart';
@@ -34,15 +35,36 @@ void main() {
   CollectionReference videoPosts = firestore.collection("VideoPosts");
   CollectionReference connections = firestore.collection("Connections");
   CollectionReference videoPostLikes = firestore.collection("VideoPostLikes");
-  test('FakeFirestore Test', () async {
-    // await firestore.collection('test').doc("ABC").set({
-    //   'message': 'Hello world!',
-    //   'created_at': FieldValue.serverTimestamp(),
-    // });
 
-    var createdDoc = await firestore.collection('test').doc("ABC").get();
-    assert(createdDoc.exists);
+  group('User Tests', () {
+    test('Create Profile', () async {
+      when(_user.uid).thenAnswer((realInvocation) => "testUser1");
+      firebaseService.createProfileNoContext("Test User", "02890999000",
+          "@TestUser", "Pop,Rock", "tinyurl.com/4dcv7uf7", false);
 
-    // assert(firebaseService.test() == "ABCDEFGH");
+      var doc = await users.doc("testUser1").get();
+
+      assert(doc.exists);
+    });
+
+    test('Get User', () async {
+      UserModel testUser = await firebaseService.getUser("testUser1");
+      assert(testUser.uid == "testUser1" &&
+          testUser.name == "Test User" &&
+          testUser.phone == "02890999000" &&
+          testUser.handle == "@TestUser" &&
+          testUser.genres == "Pop,Rock" &&
+          testUser.profilePictureUrl == "tinyurl.com/4dcv7uf7" &&
+          testUser.venue == false);
+    });
+
+    test('Get Profile Picture URL', () async {
+      String url = await firebaseService.getProfilePicURL("testUser1");
+      assert(url == "tinyurl.com/4dcv7uf7");
+    });
+
+    test('Get Artist Accounts', () async {
+      // List<UserModel> artists = await firebaseService.getArtistAccounts(genreFilters, distanceFilter, connectionUids)
+    });
   });
 }

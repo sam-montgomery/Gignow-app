@@ -66,11 +66,12 @@ class FirebaseService {
   Future<UserModel> getUser(String userUid) async {
     DocumentReference docRef = users.doc(userUid);
     UserModel user;
-    await updateProfileLocation(userUid);
+    // await updateProfileLocation(userUid);
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
-        Map<String, dynamic> dataMap = snapshot.data as Map<String, dynamic>;
+        Map<String, dynamic> dataMap = snapshot.data() as Map<String, dynamic>;
         Map<String, String> socials = new Map<String, String>();
+
         if (dataMap.containsKey("socials")) {
           var x = snapshot.get('socials');
           x.keys.forEach((item) {
@@ -102,7 +103,7 @@ class FirebaseService {
     UserModel user;
     await docRef.get().then((snapshot) {
       if (snapshot.exists) {
-        Map<String, dynamic> dataMap = snapshot.data as Map<String, dynamic>;
+        Map<String, dynamic> dataMap = snapshot.data() as Map<String, dynamic>;
         Map<String, String> socials = new Map<String, String>();
         if (dataMap.containsKey("socials")) {
           var x = snapshot.get('socials');
@@ -268,7 +269,9 @@ class FirebaseService {
   void createProfileNoContext(String name, String phone, String handle,
       String genres, String profilePictureUrl, bool venue) {
     final user = auth.currentUser;
-    Map<String, int> genreScores = VideoRankingService().emptyGenreScores();
+    Map<String, int> genreScores =
+        VideoRankingService.withInstance(firestoreInstance, auth)
+            .emptyGenreScores();
     firestoreInstance.collection("Users").doc(auth.currentUser.uid).set({
       "userUid": user.uid,
       "name": name,
@@ -516,7 +519,7 @@ class FirebaseService {
     List<VideoPost> posts = new List<VideoPost>();
     var result = await videoPosts.get();
     result.docs.forEach((element) async {
-      Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
+      Map<String, dynamic> dataMap = element.data() as Map<String, dynamic>;
       if (dataMap.containsKey('videoURL')) {
         DocumentReference ref = element['user'];
         String userUid = ref.id;
@@ -540,7 +543,7 @@ class FirebaseService {
     List<VideoPostWidget> posts = new List<VideoPostWidget>();
     var result = await videoPosts.get();
     result.docs.forEach((element) async {
-      Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
+      Map<String, dynamic> dataMap = element.data() as Map<String, dynamic>;
       if (dataMap.containsKey('videoURL')) {
         DocumentReference ref = element['user'];
         String userUid = ref.id;
@@ -563,7 +566,7 @@ class FirebaseService {
 
   Future<Event> getEvent(String eventId) async {
     await events.doc(eventId).get().then((value) {
-      Map<String, dynamic> dataMap = value.data as Map<String, dynamic>;
+      Map<String, dynamic> dataMap = value.data() as Map<String, dynamic>;
       List<String> applicants;
       String acceptedUid;
       bool confirmed;
@@ -895,7 +898,7 @@ class FirebaseService {
     DocumentReference userDocRef = users.doc(uid);
     var result = await videoPosts.where("user", isEqualTo: userDocRef).get();
     result.docs.forEach((element) async {
-      Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
+      Map<String, dynamic> dataMap = element.data() as Map<String, dynamic>;
       if (dataMap.containsKey('videoURL')) {
         DocumentReference ref = element['user'];
         String userUid = ref.id;
@@ -926,7 +929,7 @@ class FirebaseService {
         doc = snapshot.data();
         following = doc['following'];
         result.docs.forEach((element) async {
-          Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
+          Map<String, dynamic> dataMap = element.data() as Map<String, dynamic>;
           if (dataMap.containsKey('videoURL')) {
             DocumentReference ref = element['user'];
             String userUid = ref.id;
@@ -975,7 +978,7 @@ class FirebaseService {
     result.docs.forEach((element) async {
       // DocumentReference ref = element['user'];
       // String userUid = ref.id;
-      Map<String, dynamic> dataMap = element.data as Map<String, dynamic>;
+      Map<String, dynamic> dataMap = element.data() as Map<String, dynamic>;
       Map<String, String> socials = new Map<String, String>();
       if (dataMap.containsKey("socials")) {
         var x = element.get('socials');

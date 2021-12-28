@@ -17,11 +17,10 @@ class VideoScore {
 }
 
 class VideoRankingService {
-  final firestoreInstance = FirebaseFirestore.instance;
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  CollectionReference users = FirebaseFirestore.instance.collection('Users');
-  CollectionReference videoPosts =
-      FirebaseFirestore.instance.collection('VideoPosts');
+  FirebaseFirestore firestoreInstance;
+  FirebaseAuth auth;
+  CollectionReference users;
+  CollectionReference videoPosts;
 
   static List<String> _genres = [
     "Pop",
@@ -74,7 +73,7 @@ class VideoRankingService {
     Map userGenreScores = await getUserGenreScores(likerUid);
     await videoPosts.get().then((QuerySnapshot querySnapshot) async {
       querySnapshot.docs.forEach((post) {
-        Map<String, dynamic> dataMap = post.data as Map<String, dynamic>;
+        Map<String, dynamic> dataMap = post.data() as Map<String, dynamic>;
         VideoPost vPost = VideoPost(
             post.id,
             post['user'].id,
@@ -199,5 +198,20 @@ class VideoRankingService {
       genreScores.addAll({genre: 0});
     });
     return genreScores;
+  }
+
+  VideoRankingService.withInstance(
+      FirebaseFirestore firestoreInstance, FirebaseAuth authInstance) {
+    this.firestoreInstance = firestoreInstance;
+    this.auth = authInstance;
+    this.users = firestoreInstance.collection('Users');
+    this.videoPosts = firestoreInstance.collection('VideoPosts');
+  }
+
+  VideoRankingService() {
+    this.firestoreInstance = FirebaseFirestore.instance;
+    this.auth = FirebaseAuth.instance;
+    this.users = firestoreInstance.collection('Users');
+    this.videoPosts = firestoreInstance.collection('VideoPosts');
   }
 }
