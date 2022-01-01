@@ -208,4 +208,32 @@ void main() {
       assert(createProfileAccountTypeSelection != null);
     });
   });
+
+  group("Event Tests", () {
+    // final emailField = find.byValueKey('emailField');
+    // final passwordField = find.byValueKey('passwordField');
+    // final regPasswordField = find.byValueKey('registerPasswordField');
+    // final loginButton = find.byValueKey('loginButton');
+    // final discoverPage = find.byValueKey("DiscoverSwipeFeedPage");
+    // test("Discover Page loaded on venue login", () async {
+    //   await driver.tap(emailField);
+    //   await driver.enterText("bcctest@test.com"); //venue account
+    //   await driver.tap(passwordField);
+    //   await driver.enterText("123456");
+    //   await driver.tap(loginButton);
+    //   await driver.waitFor(discoverPage);
+    //   assert(discoverPage != null);
+    // });
+
+    // final venueProfileNavBarBtn = find.byValueKey("VenueNavBarProfileBtn");
+    // final profileSettingsBtn = find.byValueKey("ProfileSettingsBtn");
+    // final settingsLogoutBtn = find.byValueKey("LogoutBtn");
+    // final userAccountHandle = find.byValueKey("UserAccountHandleText");
+
+    // test("Correct Account shown on Profile Page", () async {
+    //   await driver.tap(venueProfileNavBarBtn);
+    //   final userAccountHandleText = await driver.getText(userAccountHandle);
+    //   expect(userAccountHandleText, "@BelfastCC");
+    // });
+  });
 }
