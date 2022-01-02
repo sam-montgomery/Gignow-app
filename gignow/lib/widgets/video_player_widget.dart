@@ -7,6 +7,7 @@ import 'package:gignow/ui/loading.dart';
 import 'package:gignow/ui/userProfile/profile_screen.dart';
 import 'package:video_player/video_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/services.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   VideoPost videoPost;
@@ -342,7 +343,8 @@ class __VideoOverlayState extends State<_VideoOverlay> {
                           MaterialButton(
                             shape: CircleBorder(),
                             onPressed: () {
-                              print('1');
+                              Clipboard.setData(ClipboardData(
+                                  text: "${widget.videoPost.videoURL}"));
                             },
                             //height: playerHeight * 0.03,
                             child: Icon(Icons.share,
