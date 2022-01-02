@@ -345,6 +345,8 @@ class __VideoOverlayState extends State<_VideoOverlay> {
                             onPressed: () {
                               Clipboard.setData(ClipboardData(
                                   text: "${widget.videoPost.videoURL}"));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Link Copied')));
                             },
                             //height: playerHeight * 0.03,
                             child: Icon(Icons.share,

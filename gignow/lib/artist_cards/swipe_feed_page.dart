@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:gignow/model/user.dart';
 import 'package:gignow/net/firebase_service.dart';
 import 'package:gignow/ui/loading.dart';
@@ -145,6 +146,8 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
       },
     );
 
+    TextEditingController distanceController = TextEditingController();
+
     return showDialog(
         context: context,
         builder: (context) {
@@ -154,18 +157,14 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               //mainAxisAlignment: MainAxisSize.max,
               children: <Widget>[
-                Text("Range: "),
-                Slider(
-                    value: _currentSliderValue,
-                    min: 0,
-                    max: 1000,
-                    divisions: 10,
-                    label: _currentSliderValue.round().toString() + "km",
-                    onChanged: (double value) {
-                      setState(() {
-                        _currentSliderValue = value;
-                      });
-                    }),
+                TextField(
+                  controller: distanceController,
+                  decoration: new InputDecoration(labelText: "Distance(Km)"),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ], // Only numbers can be entered
+                ),
                 genreSelector,
                 MaterialButton(
                     elevation: 5.0,
@@ -173,7 +172,7 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
                     onPressed: () {
                       setState(() {
                         genreFilters = selectedGenres;
-                        distance = _currentSliderValue * 1000;
+                        distance = double.parse(distanceController.text) * 1000;
                       });
                       Navigator.pop(context);
                     })
@@ -183,6 +182,7 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
         });
   }
 }
+  
 
 // content: TextField(controller: customController),
 //             actions: <Widget>[
