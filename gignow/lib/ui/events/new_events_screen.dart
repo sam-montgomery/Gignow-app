@@ -286,7 +286,7 @@ class NewEventScreenState extends State<NewEventScreen> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: SwitchListTile(
-              title: const Text("Send event offers based on genres:"),
+              title: const Text("Add Genres to Event:"),
               value: genreOffer,
               onChanged: (offer) {
                 setState(() {

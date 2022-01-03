@@ -100,12 +100,15 @@ class VideoRankingService {
     List<VideoScore> videoScores = await getVideoScores(userUid) ?? [];
     List<VideoPost> posts = [];
 
-    videoScores.sort((a, b) => a.score.compareTo(b.score));
+    videoScores.sort((b, a) => b.score.compareTo(a.score));
 
-    videoScores.forEach((videoScore) {
-      posts.add(videoScore.post);
-    });
+    // videoScores.forEach((videoScore) {
+    //   posts.add(videoScore.post);
+    // });
 
+    for (int i = videoScores.length - 1; i >= 0; i--) {
+      posts.add(videoScores[i].post);
+    }
     return posts;
   }
   // Map<String, int> videoPostScoresMap = new Map<String, int>();

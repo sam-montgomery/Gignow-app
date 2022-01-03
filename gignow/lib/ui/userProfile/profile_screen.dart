@@ -96,14 +96,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                     SizedBox(width: 50),
-                    Column(
-                      children: [
-                        Text("${widget.profile.followers}",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("Following"),
-                      ],
-                    )
                   ],
                 ),
                 SizedBox(
