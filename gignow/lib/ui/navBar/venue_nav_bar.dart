@@ -27,7 +27,7 @@ class _VNavBarState extends State<VenueNavbar> {
     int _currentIndex = widget.prev;
     final tabs = [
       Center(key: ValueKey("DiscoverSwipeFeedPage"), child: SwipeFeedPage()),
-      Center(child: VideoPostList()),
+      Center(key: ValueKey("VenueHomeFeed"), child: VideoPostList()),
       Center(child: _firebaseService.getEventsPage(auth.currentUser.uid)),
       Center(child: _firebaseService.getChatsScreenView(auth.currentUser.uid)),
       Center(child: _firebaseService.getFirstView(auth.currentUser.uid))
@@ -47,7 +47,8 @@ class _VNavBarState extends State<VenueNavbar> {
               label: ("Home"),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_rounded),
+              icon: Icon(Icons.calendar_today_rounded,
+                  key: ValueKey("VenueNavBarEventsBtn")),
               label: ("Events"),
             ),
             BottomNavigationBarItem(

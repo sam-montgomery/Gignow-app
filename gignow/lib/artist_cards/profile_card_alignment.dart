@@ -146,10 +146,14 @@ class _ProfileCardAlignementState extends State<ProfileCardAlignment> {
                                         fontWeight: FontWeight.w700)),
                                 Padding(padding: EdgeInsets.only(bottom: 8.0)),
                                 Text(artist.genres,
+                                    key: ValueKey(
+                                        "ArtistGenres${widget.cardIndex}"),
                                     textAlign: TextAlign.start,
                                     style: TextStyle(color: Colors.white)),
                                 Padding(padding: EdgeInsets.only(bottom: 8.0)),
                                 Text(getDistance(artist, user),
+                                    key: ValueKey(
+                                        "ArtistDistance${widget.cardIndex}"),
                                     textAlign: TextAlign.start,
                                     style: TextStyle(color: Colors.white)),
                                 Padding(padding: EdgeInsets.only(bottom: 8.0)),

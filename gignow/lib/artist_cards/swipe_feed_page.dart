@@ -70,7 +70,9 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
                             onPressed: () {
                               showFiltersPopUp(context);
                             },
-                            icon: Icon(Icons.settings, color: Colors.grey)),
+                            icon: Icon(Icons.settings,
+                                key: ValueKey("OpenDiscoverFilters"),
+                                color: Colors.grey)),
                       ),
                       backgroundColor: Colors.white,
                       body: Column(children: <Widget>[
@@ -158,6 +160,7 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
               //mainAxisAlignment: MainAxisSize.max,
               children: <Widget>[
                 TextField(
+                  key: ValueKey("DistanceFilterInput"),
                   controller: distanceController,
                   decoration: new InputDecoration(labelText: "Distance(Km)"),
                   keyboardType: TextInputType.number,
@@ -167,6 +170,7 @@ class _SwipeFeedPageState extends State<SwipeFeedPage> {
                 ),
                 genreSelector,
                 MaterialButton(
+                    key: ValueKey("FiltersOkayBtn"),
                     elevation: 5.0,
                     child: Text("Ok"),
                     onPressed: () {

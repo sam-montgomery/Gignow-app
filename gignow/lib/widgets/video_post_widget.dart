@@ -57,6 +57,7 @@ class _VideoPostWidgetState extends State<VideoPostWidget> {
               if (snapshot.hasData) {
                 UserModel user = snapshot.data;
                 return Card(
+                    key: ValueKey("VideoPost"),
                     color: Colors.grey[200],
                     // shape: RoundedRectangleBorder(
                     //     borderRadius: BorderRadius.circular(40)),

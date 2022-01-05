@@ -220,7 +220,7 @@ class EventsScreenState extends State<EventsScreen> {
           ? user.venue
               ? FloatingActionButton(
                   splashColor: kButtonBackgroundColour,
-                  child: Icon(Icons.add),
+                  child: Icon(Icons.add, key: ValueKey("CreateEventBtn")),
                   onPressed: () {
                     Navigator.push(
                         context,

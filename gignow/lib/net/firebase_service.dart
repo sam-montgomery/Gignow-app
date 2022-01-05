@@ -297,6 +297,15 @@ class FirebaseService {
         .update({"position": geoPoint});
   }
 
+  void updateProfileLocationManual(
+      String userUid, double longitude, double latitude) async {
+    GeoPoint geoPoint = GeoPoint(latitude, longitude);
+    firestoreInstance
+        .collection("Users")
+        .doc(userUid)
+        .update({"position": geoPoint});
+  }
+
   Future<String> uploadVideo(videoID, filename, url) async {
     Map<String, String> videoUrl = {"videoID": videoID};
     String queryString = Uri(queryParameters: videoUrl).query;
@@ -1032,6 +1041,15 @@ class FirebaseService {
     DatabaseMethods().createChatRoom(_id, userUidA, userUidB);
   }
 
+  void createConnectionNoChatRoom(String userUidA, String userUidB) {
+    String _id = "${userUidA}_${userUidB}";
+    DocumentReference refA = users.doc(userUidA);
+    DocumentReference refB = users.doc(userUidB);
+    firestoreInstance.collection("Connections").doc(_id).set({
+      "users": [refA, refB]
+    });
+  }
+
   void updateSocials(String userUid, Map<String, String> socials) {
     users.doc(userUid).update({"socials": socials});
   }
@@ -1116,6 +1134,31 @@ class FirebaseService {
             String connectionID = "${currentUserDoc.id}_${followedUserDoc.id}";
             connections.doc(connectionID).update({
               "users": FieldValue.arrayUnion([currentUserDoc, followedUserDoc]),
+              // "users": FieldValue.arrayUnion([followedUserDoc])
+            });
+          }
+        }
+      } catch (e) {
+        print(e.toString());
+      }
+    });
+  }
+
+  void followUserUid(String currentUserUid, String followedUserDocUid) async {
+    DocumentReference currentUserDoc = users.doc(currentUserUid);
+    DocumentReference followedUserDoc = users.doc(followedUserDocUid);
+    currentUserDoc.set({
+      "following": ([followedUserDoc])
+    });
+    followedUserDoc.update({"followers": FieldValue.increment(1)});
+    await followedUserDoc.get().then((res) {
+      var followedUserFollowing = res['following'];
+      try {
+        if (followedUserFollowing != null) {
+          if (followedUserFollowing.contains(currentUserDoc)) {
+            String connectionID = "${currentUserDoc.id}_${followedUserDoc.id}";
+            connections.doc(connectionID).set({
+              "users": [currentUserDoc, followedUserDoc],
               // "users": FieldValue.arrayUnion([followedUserDoc])
             });
           }
