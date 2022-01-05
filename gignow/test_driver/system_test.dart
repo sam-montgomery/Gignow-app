@@ -188,6 +188,29 @@ void main() {
     });
   });
 
+  group('Discover Tests', () {
+    final discoverBtn = find.byValueKey("NavBarDiscoverBtn");
+    final artistNameTxt = find.byValueKey("ArtistCardNameTxt0"); //First card
+    final venueChatNavBtn = find.byValueKey("VenueNavBarChatBtn");
+    test('Swipe Right on Artist Card', () async {
+      await driver.tap(discoverBtn);
+      final artistName = await driver.getText(artistNameTxt);
+      // final name = await driver.get
+
+      //swipe right
+      await driver.scroll(artistNameTxt, 500, 0, Duration(seconds: 1));
+
+      //Navigate to chats screen
+      await driver.tap(venueChatNavBtn);
+
+      final chatArtistName = find.text(artistName.toString());
+
+      await driver.waitFor(chatArtistName);
+
+      assert(chatArtistName != null);
+    });
+  });
+
   group("Register Tests", () {
     final emailField = find.byValueKey('emailField');
     final regPasswordField = find.byValueKey('registerPasswordField');

@@ -361,6 +361,7 @@ class FirebaseService {
 
   Future<Map> getIsLikedAndNumLikesAndIsFollowing(VideoPost videoPost) async {
     final user = auth.currentUser;
+    final userUid = auth.currentUser.uid;
     bool isLiked = false;
     bool isFollowing = false;
     var doc = await firestoreInstance
@@ -375,7 +376,7 @@ class FirebaseService {
         .where("videoPost", isEqualTo: videoPosts.doc(videoPost.postID))
         .get();
 
-    await users.doc(user.uid).get().then((curUser) {
+    await users.doc(userUid).get().then((curUser) {
       var curUserFollowing = curUser['following'];
       if (curUserFollowing != null) {
         if (curUserFollowing.contains(users.doc(videoPost.userUID))) {
@@ -1171,6 +1172,29 @@ class FirebaseService {
 
   void unFollowUser(DocumentReference currentUserDoc,
       DocumentReference followedUserDoc) async {
+    currentUserDoc.update({
+      "following": FieldValue.arrayRemove([followedUserDoc])
+    });
+    followedUserDoc.update({"followers": FieldValue.increment(-1)});
+    String connectionID = "${currentUserDoc.id}_${followedUserDoc.id}";
+    DocumentReference connectionDoc = connections.doc(connectionID);
+    await connectionDoc.get().then((doc) {
+      if (doc.exists) {
+        connectionDoc.delete();
+      }
+    });
+    connectionID = "${followedUserDoc.id}_${currentUserDoc.id}";
+    connectionDoc = connections.doc(connectionID);
+    await connectionDoc.get().then((doc) {
+      if (doc.exists) {
+        connectionDoc.delete();
+      }
+    });
+  }
+
+  void unFollowUserUid(String currentUserUid, String followedUserDocUid) async {
+    DocumentReference currentUserDoc = users.doc(currentUserUid);
+    DocumentReference followedUserDoc = users.doc(followedUserDocUid);
     currentUserDoc.update({
       "following": FieldValue.arrayRemove([followedUserDoc])
     });

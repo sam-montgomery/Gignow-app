@@ -19,6 +19,17 @@ void main() {
   final regPasswordField = find.byValueKey('registerPasswordField');
   final loginButton = find.byValueKey('loginButton');
   final artistHomeFeed = find.byValueKey('ArtistHomeFeed');
+  void logout(bool isArtist) async {
+    final profileNavBarBtn = isArtist
+        ? find.byValueKey("NavBarProfileBtn")
+        : find.byValueKey("VenueNavBarProfileBtn");
+    final profileSettingsBtn = find.byValueKey("ProfileSettingsBtn");
+    final settingsLogoutBtn = find.byValueKey("LogoutBtn");
+
+    await driver.tap(profileNavBarBtn);
+    await driver.tap(profileSettingsBtn);
+    await driver.tap(settingsLogoutBtn);
+  }
 
   group('Login Screen Tests', () {
     test('Error message displayed on invalid login', () async {
@@ -181,8 +192,10 @@ void main() {
   group('Discover Tests', () {
     final artistNameTxt = find.byValueKey("ArtistCardNameTxt0"); //First card
     final venueChatNavBtn = find.byValueKey("VenueNavBarChatBtn");
-
+    final backBtn = find.pageBack();
     test('Swipe Right on Artist', () async {
+      await driver.tap(backBtn);
+      await logout(true);
       await driver.tap(emailField);
       await driver.enterText("venue@test.com"); //venue account
       await driver.tap(passwordField);
@@ -203,6 +216,41 @@ void main() {
       await driver.waitFor(chatArtistName);
 
       assert(chatArtistName != null);
+    });
+    final discoverBtn = find.byValueKey("NavBarDiscoverBtn");
+    final filtersBtn = find.byValueKey("OpenDiscoverFilters");
+    final distanceFilter = find.byValueKey("DistanceFilterInput");
+    final popGenre = find.text("Pop");
+    final okBtn = find.byValueKey("FiltersOkayBtn");
+
+    test('Apply Filters', () async {
+      await driver.tap(discoverBtn);
+      await driver.tap(filtersBtn);
+      await driver.tap(distanceFilter);
+      await driver.enterText("10");
+      await driver.tap(popGenre);
+      await driver.tap(okBtn);
+
+      final artist1DistanceTxt = find.byValueKey("ArtistDistance0");
+      final artist2DistanceTxt = find.byValueKey("ArtistDistance1");
+
+      final artist1GenresWidget = find.byValueKey("ArtistGenres0");
+      final artist2GenresWidget = find.byValueKey("ArtistGenres1");
+
+      final artistDistance1Str = await driver.getText(artist1DistanceTxt);
+      final artistDistance1 = int.parse(
+          artistDistance1Str.substring(0, artistDistance1Str.indexOf("km")));
+
+      final artistDistance2Str = await driver.getText(artist2DistanceTxt);
+      final artistDistance2 = int.parse(
+          artistDistance2Str.substring(0, artistDistance2Str.indexOf("km")));
+
+      final artist1Genres = await driver.getText(artist1GenresWidget);
+      final artist2Genres = await driver.getText(artist2GenresWidget);
+
+      assert(artistDistance1 < 10 && artistDistance2 < 10);
+
+      assert(artist1Genres.contains("Pop") && artist2Genres.contains("Pop"));
     });
   });
 }

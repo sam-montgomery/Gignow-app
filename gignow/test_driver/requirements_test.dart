@@ -293,16 +293,16 @@ void main() {
       when(_user.uid).thenAnswer((realInvocation) => "NotConnectedUser3");
       firebaseService.createProfileNoContext("User 3", "02890999000", "@ncu3",
           "Pop,Rock", "tinyurl.com/4dcv7uf7", false);
-      //Set location to Portrush
+      //Set location to Moscow
       firebaseService.updateProfileLocationManual(
-          "NotConnectedUser3", 55.2042, -6.6527);
+          "NotConnectedUser3", 55.7558, 37.6173);
 
       List<String> genres = ["Pop", "Rock"];
       Global().currentUserModel.position =
           GeoPoint(54.5973, -5.9301); //Belfast City Hall GeoPoint
       List<String> connectedUserUids = ["ConnectedUser1"];
 
-      double distanceKm = 10;
+      double distanceKm = 1000;
       List<UserModel> filteredArtists = await firebaseService.getArtistAccounts(
           genres, distanceKm * 1000, connectedUserUids);
 
@@ -317,9 +317,6 @@ void main() {
           notConnectedUser2Found = true;
         }
       });
-
-      // assert(notConnectedUser2Found && notConnectedUser1Found);
-      // assert(filteredArtists.length == 2); //only 2 artists returned
     });
   });
 

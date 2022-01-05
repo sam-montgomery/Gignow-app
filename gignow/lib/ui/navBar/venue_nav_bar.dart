@@ -39,7 +39,8 @@ class _VNavBarState extends State<VenueNavbar> {
           type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.eye_fill),
+              icon: Icon(CupertinoIcons.eye_fill,
+                  key: ValueKey("NavBarDiscoverBtn")),
               label: ("Discover"),
             ),
             BottomNavigationBarItem(
